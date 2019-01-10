@@ -1,0 +1,51 @@
+---
+title: "Week 1 Lab"
+author: "David Gerard"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Instructions
+
+- Create a new R Markdown document. Number each of the following exercises. 
+  Write your code solutions in code chunks. 
+  
+- Don't keep extraneous code. Only what is minimally sufficient to answer the 
+  questions to stay in the file.
+
+# Exercises
+
+1. Sum up all even numbers from 10 to 1002 (look at the help page of `sum()` 
+   and `seq()`)
+
+```{r, echo = FALSE, eval = FALSE}
+sum(seq(10, 1002, by = 2))
+```
+
+2. Create a vector of strings where the elements are `"Hello"`, `"world!"`, 
+   `"How"`, `"are"`, and `"you?"`. Combine all of these words together into one
+   string, separated by underscores (look at help page of `paste()`)
+   
+```{r, echo = FALSE, eval = FALSE}
+string_vec <- c("Hello", "world!", "How", "are", "you?")
+paste(string_vec, collapse = "_")
+```
+   
+3. What happend when you sum `"1"` with `2`?
+
+```{r, echo = FALSE, eval = FALSE}
+## You get an error
+"1" + 2
+```
+
+4. You can comment out code using hashtags `#` at the start of a line. That is,
+   the code will no longer run. Comments are great to make code more readable.
+   Comment out the code in the previous chunk and rerun.
+   
+
+
+

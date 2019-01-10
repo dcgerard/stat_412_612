@@ -1,5 +1,5 @@
 ---
-title: "Week 1 Worksheet: Installing R, Rmarkdown, Rbasics"
+title: "Week 1 Worksheet: Installing R, R Markdown, R Basics"
 author: "David Gerard"
 date: "`r Sys.Date()`"
 output: pdf_document
@@ -8,6 +8,7 @@ urlcolor: "blue"
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+inline <- function(x = "") paste0("`` `r ", x, "` ``")
 ```
 
 ## Learning Objectives
@@ -16,7 +17,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 - Understand the basics of R (Chapters 1, 2, and 4)
 
-- Rmarkdown (Chapter 27)
+- R Markdown (Chapter 27)
 
 ## Installations
 
@@ -55,28 +56,28 @@ knitr::opts_chunk$set(echo = TRUE)
 - You can use R as a powerful calculator. Try typing some of the following
   commands into the command prompt:
   
-```{r, eval = FALSE}
-3 * 7
-9 / 3
-4 + 6
-3 - 9
-(3 + 5) * 6
-3 ^ 2
-4 ^ 2
-```
+    ```{r, eval = FALSE}
+    3 * 7
+    9 / 3
+    4 + 6
+    3 - 9
+    (3 + 5) * 6
+    3 ^ 2
+    4 ^ 2
+    ```
 
 - What do you think `%%` does? Try it out on a few examples:
 
-```{r, eval=FALSE}
-1 %% 2
-2 %% 2
-3 %% 2
-4 %% 2
-1 %% 3
-2 %% 3
-3 %% 3
-4 %% 3
-```
+    ```{r, eval=FALSE}
+    1 %% 2
+    2 %% 2
+    3 %% 2
+    4 %% 2
+    1 %% 3
+    2 %% 3
+    3 %% 3
+    4 %% 3
+    ```
 
 - In general if you don't know what something does, there are three things you can do:
 
@@ -133,34 +134,34 @@ knitr::opts_chunk$set(echo = TRUE)
        
 - You **assign** variables values with `<-` (you can also use `=`, but only 
   noobs do that). For example, assign `x` the value of `7`.
-```{r, eval = FALSE}
-x <- 7
-```
+    ```{r, eval = FALSE}
+    x <- 7
+    ```
 
 - If you type `x` now into the command promt, it will return what is stored in
   `x`:
-```{r, eval = FALSE}
-x
-```
+    ```{r, eval = FALSE}
+    x
+    ```
 
 - Creating variables is useful because it allows you to reuse those values
   over and over again.
   
 - You can apply arithmetic operations to variables as you would to numbers.
-```{r, eval = FALSE}
-y <- 9
-x + y
-x * y
-x / y
-x - y
-```
+    ```{r, eval = FALSE}
+    y <- 9
+    x + y
+    x * y
+    x / y
+    x - y
+    ```
 
 - You assign strings and logicals via:
 
-```{r}
-z <- "I AM A STRING"
-x <- TRUE
-```
+    ```{r}
+    z <- "I AM A STRING"
+    x <- TRUE
+    ```
 
 - Notice that we overwrote `x` to now be `TRUE` instead of 7. This is possible 
   in R (in other languages the type is pre-defined and not changed easily).
@@ -177,26 +178,26 @@ x <- TRUE
 - Variables are **case sensitive**, so `Variable` is different from `variable`.
   Try this out:
 
-```{r, eval = FALSE}
-variable <- 1
-Variable <- 2
-variable
-Variable
-```
+    ```{r, eval = FALSE}
+    variable <- 1
+    Variable <- 2
+    variable
+    Variable
+    ```
 
 - When I write a variable inline, it will look like `this`.
 
 - Exercise: Why doesn't this code work?
 
-```{r, eval=FALSE}
-my_variable <- 10
-my_variab1e
-```
+    ```{r, eval=FALSE}
+    my_variable <- 10
+    my_variab1e
+    ```
 
-```{r, eval = FALSE}
-data0 <- 1
-dataO
-```
+    ```{r, eval = FALSE}
+    data0 <- 1
+    dataO
+    ```
 
   
 ### Functions
@@ -205,60 +206,60 @@ dataO
   new objects. Let's look at a 
   simple function that takes the log of a number:
   
-```{r, eval=FALSE}
-log(x = 4, base = 2)
-```
+    ```{r, eval=FALSE}
+    log(x = 4, base = 2)
+    ```
   
 - The inputs are called "arguments". Generally, every function will be for the
   form:
   
-```{r, eval = FALSE}
-function_name(arg1 = val1, arg2 = val2, ...)
-```
+    ```{r, eval = FALSE}
+    function_name(arg1 = val1, arg2 = val2, ...)
+    ```
 
 - If you do not specify the name of the argument, R will assume you are 
   assigning in their order.
   
-```{r, eval = FALSE}
-log(4, 2)
-```
+    ```{r, eval = FALSE}
+    log(4, 2)
+    ```
 
 - You can change the order of the arguments if you specify them.
 
-```{r, eval = FALSE}
-log(base = 2, x = 4)
-```
+    ```{r, eval = FALSE}
+    log(base = 2, x = 4)
+    ```
 
 - To see the list of all possible arguments of a function, use the `help()` 
   function:
   
-```{r, eval=FALSE}
-help(log)
-```
+    ```{r, eval=FALSE}
+    help(log)
+    ```
 
 - In the help file, there are often **default** values for an argument. For 
   example, the following indicates the the default value of `base` is `exp(1)`.
   
-```{r, eval = FALSE}
-log(x, base = exp(1))
-```
+    ```{r, eval = FALSE}
+    log(x, base = exp(1))
+    ```
   
 - This indicates that you can omit the `base` argument and R will assume that 
   it should be `exp(1)`.
   
-```{r}
-log(x = 4, base = exp(1))
-log(x = 4)
-```
+    ```{r}
+    log(x = 4, base = exp(1))
+    log(x = 4)
+    ```
 
 - If an argument does not have a default, then it must be specified when calling
   a function.
   
 - Type this:
 
-```{r, eval = FALSE}
-log(x = 4,
-```
+    ```{r, eval = FALSE}
+    log(x = 4,
+    ```
 
 - The "+" indicates that R is expecting more input (you forgot either a
   parentheses or a quotation mark). You can get back to the prompt by hitting
@@ -281,17 +282,17 @@ log(x = 4,
   and datasets that are not available by default. Do this now with the 
   tidyverse package:
   
-```{r, eval = FALSE}
-install.packages("tidyverse")
-```
+    ```{r, eval = FALSE}
+    install.packages("tidyverse")
+    ```
 
 - You will only need to install a package once per computer. Once it is 
   installed you can gain access to all of the functions and datasets in a
   package by using the `library()` function. 
   
-```{r, eval=FALSE}
-library(tidyverse)
-```
+    ```{r, eval=FALSE}
+    library(tidyverse)
+    ```
 
 - You will need to run `library()` at the start of every R session if you 
   want to use the functions in a package.
@@ -307,25 +308,102 @@ library(tidyverse)
         that (it makes things more confusing in more advanced R).
       - But lots of base R functions have periods in them: `is.na()`, 
         `which.max()`, `data.frame()`, etc.
+        
+### Vectors and Indexing
 
-## Rmarkdown
+- In statistics we deal with data. To manage and analyze data in R, we need a 
+  way to store those data.
+  
+- The most basic and useful way to store data is in a vector.
+- A vector is a sequence of data elements.
 
-- Rmarkdown is a file format that is a combination of plain text and R code.
+- It's tempting to use the word "list" to describe it, however a List is 
+  actually a very specific thing   in R. 
+  
+-  Vectors are great because we can perform opertations on every single value 
+  in a vector without iterating through it.
+  
+- For those of you who have used Python before, you might be used to writing 
+  for-loops to work on values in a list. That's not necessary here.
+  
+- Vectors are created in R using the `c()` function.
+
+- "c" stands for concatonate, which means stick together.
+
+- Create a of numbers now:
+
+    ```{r, eval=FALSE}
+    my_first_vector <- c(3, 6, 2, 5)
+    ```
+
+- **Exercise**: What does `my_first_vector + 4` do?
+
+- **Exercise**: What does `my_first_vector * 4` do?
+
+- You can refer to individual elements of a vector using brackets `[]`
+
+    ```{r, eval = FALSE}
+    my_first_vector[1]
+    my_first_vector[2]
+    my_first_vector[3]
+    my_first_vector[4]
+    ```
+
+- You can refer to multiple elements in a vector by creating an indexing vector
+  first.
+  
+    ```{r, eval = FALSE}
+    indexing_vector <- c(2, 4)
+    my_first_vector[indexing_vector]
+    ```
+
+- You can skip the intermediate step by placing `c(2, 4)` directly in the 
+  brackets.
+  
+    ```{r, eval = FALSE}
+    my_first_vector[c(2, 4)]
+    ```
+
+- You can create a vector in a sequence using the `seq()` function. 
+
+- **Exercise**: Read up on the `seq()` function to create a vector of even 
+  numbers from 52 to 1000. Then extract the 3rd and 29th elements from this
+  vector.
+  
+    ```{r, eval = FALSE, echo = FALSE}
+    newvec <- seq(52, 1000, by = 2)
+    newvec[c(3, 29)]
+    ```
+
+- You can extract elements of a vector by using logicals. What does the 
+  following code do?
+  
+    ```{r, eval = FALSE}
+    logvec <- c(TRUE, FALSE, FALSE, TRUE)
+    my_first_vector[logvec]
+    ```
+  
+
+## R Markdown
+
+- R Markdown is a file format that is a combination of plain text and R code.
+
+- A free book on R Markdown is available here: https://bookdown.org/yihui/rmarkdown/
 
 - You write code and commentary of code in one file. You may then compile 
-  (RStudio calls this "Knitting") the Rmarkdown file to many different kinds
+  (RStudio calls this "Knitting") the R Markdown file to many different kinds
   of output: pdf (including beamer presentations), html (including various
   presentation formats), Word, PowerPoint, etc.
 
-- Rmarkdown is useful for:
+- R Markdown is useful for:
 
     1. Communication of statistical results.
     2. Collaborating with other data scientists.
     3. Using it as a modern lab notebook to *do* data science.
     
-- *You will use Rmarkdown for all assignments in this class.*
+- *You will use R Markdown for all assignments in this class.*
 
-- Open up a new Rmarkdown file:
+- Open up a new R Markdown file:
 
 ![](./figures/rmarkdown.png)\ 
 
@@ -334,35 +412,77 @@ library(tidyverse)
 ![](./figures/rmarkdown_options.png)\ 
 
 
-- You should now have a rudimentary Rmarkdown file.
+- You should now have a rudimentary R Markdown file.
 
 - Save a copy of this file in your "analysis" folder in the "week1" project.
 
-- Rmarkdown contains three things
+- R Markdown contains three things
 
     1. A YAML (Yet Another Markup Language) header that controls options for
-       the Rmarkdown document.
-    2. Code **chunks** --- bits of R code that look like this that are 
-       surrounded by "```{r}" and "```". Only valid R code should go in here.
+       the R Markdown document. These are surrounded by `---`.
+    2. Code **chunks** --- bits of R code that that are 
+       surrounded by ` ```{r} ` and ` ``` `. Only valid R code should go in 
+       here.
     3. Plain text that contains simple formatting options.
     
-- All of these are are displayed in the default Rmarkdown file. You can compile
+- All of these are are displayed in the default R Markdown file. You can compile
   this file by clicking the "Knit" button at the top of the screen or by 
   typing CONTROL + SHIFT + K. Do this now.
     
-- Here is Hadley's brief intro to formatting text in Rmarkdown:
+### Formatting markdown
 
-```{r, comment="", echo=FALSE}
-cat(readr::read_file("./formatting.md"))
-```
+- Here is Hadley's brief intro to formatting text in R Markdown:
 
-- You can insert new code-chunks using CONTROL + ALT + i.
+    ```{r, comment="", echo=FALSE}
+    cat(readr::read_file("./formatting.md"))
+    ```
+
+### Code Chunks
+
+- You can insert new code-chunks using CONTROL + ALT + I (or using the 
+  "Insert" button at the top of RStudio).
+
+- You write all R code in chunks. You can send the current line of R code (the
+  line where the cursor is) using CONTROL + ENTER (or the "Run" button at the 
+  top of RStudio).
+  
+- You can run all of the code in a chunk using CONTROL + ALT + C (or using 
+  the "Run" button at the top of RStudio).
+  
+- You can run all of the code in the next chunk using CONTROL + ALT + N (or
+  using the "Run" button at the top of RStudio).
 
 
+### YAML Header
 
+- My typical YAML header will looks like this
 
+    ```{r, comment="", echo=FALSE}
+    cat(readr::read_file("./yaml_header.md"))
+    ```
 
+- All of those settings are fairly self-explanatory.
 
+- The full list of outputs supported is here: https://rmarkdown.rstudio.com/formats.html
+    
+- The `r inline("Sys.Date()")` will insert the current date.
+
+### Inline R Code
+
+- Sometimes, you want to write the output of some R code inline (rather than
+as the output of some chunk). You can do this by placing code within 
+`r inline("")`. 
+
+- I used this in the previous section for automatically writing the date. 
+
+    ```{r}
+    my_name <- "David"
+    ```
+
+- Then "my name is `r inline("my_name")`" will result in "my name is `r my_name`".
+
+- For a more realistic example, you might calculate the $p$-value from a linear
+  regression, then write this $p$-value in the paragraph of a report.
 
 
 

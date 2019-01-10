@@ -8,3 +8,6 @@
 *~
 *.#*
 sensitive/
+*.aux
+*.log
+*.out
