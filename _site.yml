@@ -1,0 +1,16 @@
+name: "Stat614"
+output_dir: "."
+navbar:
+  title: "Teaching Website for STAT 412/612"
+  left:
+    - text: "Home"
+      href: index.html
+    - text: "Data"
+      href: data.html
+  right:
+    - icon: fa-github
+      href: https://github.com/dcgerard/stat_412_612
+output:
+  html_document:
+    theme: cosmo
+
