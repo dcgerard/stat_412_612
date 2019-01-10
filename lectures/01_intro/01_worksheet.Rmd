@@ -475,9 +475,9 @@ as the output of some chunk). You can do this by placing code within
 
 - I used this in the previous section for automatically writing the date. 
 
-  ```{r}
-  my_name <- "David"
-  ```
+```{r}
+my_name <- "David"
+```
 
 - Then "my name is `r inline("my_name")`" will result in "my name is `r my_name`".
 
