@@ -13,6 +13,11 @@ This website contains the teaching materials for STAT 412/612 Statistical
 Programming in R, taught during the Spring semester of 2019 at American 
 University by [David Gerard](https://dcgerard.github.io/).
 
+# Administrative
+
+- [Syllabus](./admin/syllabus_412_612.pdf)
+- [Tentative Schedule](./admin/teaching_plan_412_612.pdf)
+
 # Lectures
 
 - 01 Introduction:
