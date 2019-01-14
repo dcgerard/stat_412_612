@@ -37,7 +37,7 @@ paste(string_vec, collapse = "_")
    
 3. What happend when you sum `"1"` with `2`?
 
-```{r, echo = FALSE, eval = FALSE}
+```{r, echo = FALSE, eval = FALSE, error=TRUE}
 ## You get an error
 "1" + 2
 ```
@@ -46,6 +46,17 @@ paste(string_vec, collapse = "_")
    the code will no longer run. Comments are great to make code more readable.
    Comment out the code in the previous chunk and rerun.
    
+```{r, echo = FALSE, eval = FALSE}
+## "1" + 2
+```
+   
+5. If we list all the natural numbers below 10 that are multiples of 3 or 5, we get 3, 5, 6 and 9. The sum of these multiples is 23. Find the sum of all the multiples of 3 or 5 below 1000.
 
+This last one requires that you have some knowledge of logicals.
+
+```{r, echo = FALSE, eval = FALSE}
+int_vec <- 1:999
+sum(int_vec[((int_vec %% 3) == 0) | ((int_vec %% 5) == 0)])
+```
 
 

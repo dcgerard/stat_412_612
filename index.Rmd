@@ -24,6 +24,11 @@ University by [David Gerard](https://dcgerard.github.io/).
     - [Data Science and R](./lectures/01_intro/01_data_science_and_r.pdf)
     - [Good File Organization](./lectures/01_intro/01_file_system.pdf)
     - [Worksheet: R Basics and Rmarkdown](./lectures/01_intro/01_worksheet.pdf)
+    - [Lab Questions](./lectures/01_intro/01_lab.pdf)
+    
+# Homeworks
+
+- [Homework 1](./hw/hw1/hw1.pdf)
 
     
     
