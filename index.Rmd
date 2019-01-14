@@ -27,7 +27,7 @@ University by [David Gerard](https://dcgerard.github.io/).
     - [Logicals](./lectures/01_intro/01_logic.pdf)
     - [Lab Questions](./lectures/01_intro/01_lab.pdf)
 - 02 More on Programming
-    - [Pipes and Functions](./lectures./02_functions_pipes/02_functions_pipes.pdf)
+    - [Pipes and Functions](./lectures/02_functions_pipes/02_functions_pipes.pdf)
     
 # Homeworks
 
