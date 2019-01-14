@@ -23,8 +23,11 @@ University by [David Gerard](https://dcgerard.github.io/).
 - 01 Introduction:
     - [Data Science and R](./lectures/01_intro/01_data_science_and_r.pdf)
     - [Good File Organization](./lectures/01_intro/01_file_system.pdf)
-    - [Worksheet: R Basics and Rmarkdown](./lectures/01_intro/01_worksheet.pdf)
+    - [Worksheet: R Basics and R Markdown](./lectures/01_intro/01_worksheet.pdf)
+    - [Logicals](./lectures/01_intro/01_logic.pdf)
     - [Lab Questions](./lectures/01_intro/01_lab.pdf)
+- 02 More on Programming
+    - [Pipes and Functions](./lectures./02_functions_pipes/02_functions_pipes.pdf)
     
 # Homeworks
 

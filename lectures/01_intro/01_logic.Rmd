@@ -1,0 +1,132 @@
+---
+title: "Logicals"
+author: "David Gerard"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Learning Objectives
+
+- Boolean logic and R.
+- Subsetting using logicals.
+
+# Logicals
+
+- A logical is a variable that can take on either `TRUE` or `FALSE`.
+
+- Since 13 is greater than 4, the following is returned `TRUE`
+    ```{r}
+    13 > 4
+    ```
+    
+    and the following is returned `FALSE`
+    
+    ```{r}
+    13 < 4
+    ```
+    
+- Use `>=` and `<=` to test for "greater than or equal" and "less than or equal", respectively
+
+    ```{r}
+    4 > 4
+    4 >= 4
+    4 < 4
+    4 <= 4
+    ```
+
+- Use `==` comparisons to test if two quantities are equal:
+
+    ```{r}
+    13 == 4
+    ```
+
+- Use `!=` to test if two quantities are *not* equal:
+
+    ```{r}
+    13 != 4
+    ```
+    
+- These operations can be vectorized:
+
+    ```{r}
+    x <- c(1, 2, 3, 4)
+    y <- c(1, 4, 4, 4)
+    x == y
+    x != y
+    x > y
+    x < y
+    ```
+    
+- Use "and" `&` to test if both of two conditions are `TRUE`
+
+    ```{r}
+    TRUE & TRUE
+    TRUE & FALSE
+    FALSE & TRUE
+    FALSE & FALSE
+    ```
+
+
+- Use "or" `|` to test if either (or both) of two conditions are `TRUE`
+
+    ```{r}
+    TRUE | TRUE
+    TRUE | FALSE
+    FALSE | TRUE
+    FALSE | FALSE
+    ```
+    
+- `&` and `|` can also be vectorized:
+
+    ```{r}
+    x <- c(1, 2, 3, 4)
+    y <- c(1, 4, 4, 4)
+    (x < 3) & (y >= 4)
+    (x < 3) | (y >= 4)
+    ```
+    
+- Use logicals to extract elements of vectors
+
+```{r}
+x <- 1:5
+x[c(TRUE, FALSE, TRUE, TRUE, FALSE)]
+logvec <- c(TRUE, FALSE, TRUE, TRUE, FALSE)
+x[logvec]
+logvec <- c(TRUE, FALSE, TRUE, TRUE, TRUE)
+x[logvec]
+```
+
+
+- Use logicals to extract elements of a vector that satisfy some condition
+    ```{r}
+    x <- 1:5
+    logvec <- x < 3
+    logvec
+    x[logvec]
+    ```
+    
+1. **Exercise**: If we list all the natural numbers below 10 that are multiples of 3 or 5, we get 3, 5, 6 and 9. The sum of these multiples is 23. Find the sum of all the multiples of 3 or 5 below 1000.
+
+```{r, echo = FALSE, eval = FALSE}
+int_vec <- 1:999
+sum(int_vec[((int_vec %% 3) == 0) | ((int_vec %% 5) == 0)])
+```
+
+2. **Exercise**: What the sum of all integers that are either (divisible by 4 and less than 700) or (divisible by 3 and between 500 and 1000)?
+
+```{r, echo = FALSE, eval = FALSE}
+intvec <- 1:1000
+(((intvec %% 4) == 0) & intvec < 700) &
+  (((intvec %% 3) == 0) & intvec > 500) ->
+  logvec
+sum(intvec[logvec])
+```
+
+
+
+    
+

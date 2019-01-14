@@ -1,0 +1,590 @@
+---
+title: "Functions"
+author: "David Gerard and Jane Wall"
+date: "`r Sys.Date()`"
+output:
+  pdf_document: default
+  html_document: default
+  word_document: default
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Learning Objectives
+
+- Piping
+- Creating Functions
+- Chapters 17 through 19 in [RDS](https://r4ds.had.co.nz/)
+
+## Magrittr and the `%>%`
+
+- When doing multiple operations to a dataset, we can:
+
+    - create intermediate objects
+    - overwrite the original object
+    - nest commands
+    - use pipe
+
+- Suppose we want to calculate the average kpg (kilometers per gallon) for cars that are automatic and those that are manual. Since the data are given in mpg (miles per gallon) we need to accomplish the following tasks:
+
+    - Convert the mpg to kpg
+    - Group the data by transmission type
+    - Calculate average mpg within each type.
+
+- Load data and tidyverse:
+    ```{r}
+    suppressMessages(library(tidyverse))
+    data("mtcars")
+    km_in_mile <- 1.60934
+    ```
+
+- Create intermediate objects
+    ```{r}
+    mtcars1 <- mutate(mtcars, kpg = mpg * km_in_mile)
+    mtcars2 <- group_by(mtcars1, am)
+    summarize(mtcars2, ave_mpg = mean(mpg))
+    ```
+
+- Overwrite the original object
+    ```{r}
+    mtcars <- mutate(mtcars, kpg = mpg * km_in_mile)
+    mtcars <- group_by(mtcars, am)
+    summarize(mtcars, ave_mpg = mean(mpg))
+    ```
+
+- Nest commands
+    ```{r}
+    summarize(group_by(mutate(mtcars, kpg = mpg * km_in_mile), am), ave_mpg = mean(mpg))
+    ```
+
+- Use pipe
+    ```{r}
+    mtcars %>%
+      mutate(kpg = mpg * km_in_mile) %>%
+      group_by(am) %>%
+      summarise(ave_mpg = mean(mpg))
+    ```
+
+
+- **Exercise**: In the `mtcars` dataset, use the four different techniques for chaining to calculate the median weight (variable `wt` in lbs) for all cars that have at least 6 cylinders (variable `cyl`) and the median weight for all cars that have less than 6 cylinders.
+
+    ```{r, echo = FALSE, eval = FALSE}
+    mtcars %>%
+      mutate(min_6 = cyl >= 6) %>%
+      group_by(min_6) %>%
+      summarize(med_wt = median(wt))
+    
+    mtcars2 <- mutate(mtcars, min_6 = cyl >= 6)
+    mtcars3 <- group_by(mtcars2, min_6)
+    summarize(mtcars3, med_wt = median(wt))
+    
+    mtcars <- mutate(mtcars, min_6 = cyl >= 6)
+    mtcars <- group_by(mtcars2, min_6)
+    summarize(mtcars, med_wt = median(wt))
+    
+    summarize(group_by(mutate(mtcars, min_6 = cyl >= 6), min_6), med_wt = median(wt))
+    ```
+
+### Other magrittr tools
+
+- T-pipe, %T>% returns left-hand side instead of right-hand side
+
+    ```{r Tpipe}
+    library(magrittr)
+    rnorm(100) %>%
+      matrix(ncol = 2) %>%
+      plot() %>%
+      str()
+    rnorm(100) %>%
+      matrix(ncol = 2) %T>%
+      plot() %>%
+      str()
+    ```
+
+- Explode to refer to variables without having to attach the dataset using `%$%`.
+
+    ```{r explode}
+    cor(mtcars$disp, mtcars$mpg)
+    mtcars %$%
+      cor(disp, mpg)
+    attach(mtcars)
+    cor(disp, mpg)
+    ```
+
+- Assignment with %<>% replaces the object on the left.  
+
+- **Exercise**: Try taking the nycflights13 flights dataset (from the library nycflights13) 
+and replacing it with only those 
+flights from JFK that were over 2000 miles long, keeping only the origin, 
+destination, distance, flight time and carrier.
+
+    ```{r assignpipe, echo = FALSE, eval=  FALSE}
+    library(nycflights13)
+    library(tidyverse)
+    flights %<>% filter(origin == "JFK", distance > 2000)  %>%
+      select(origin, dest, distance, air_time, carrier)
+    flights
+    ```
+
+- DCG Opinion: I've never seen anyone use this before. I would avoid it since
+  it is obfuscating the assignment and makes the code harder to read.
+
+## Functions
+
+- When to write a function and why to write a function
+
+- Steps to creating a function:
+
+    1. figure out the logic in a simple case
+    2. name it something meaningful - usually a verb
+    3. list the inputs inside function(x,y,z)
+    4. place code for function in a {} block 
+    5. test your function with some different inputs
+    6. add error-checking of inputs
+
+- Example from our book follows.
+    ```{r bookexample_rescale}
+    df <- tibble::tibble(
+      a = rnorm(10),
+      b = rnorm(10),
+      c = rnorm(10),
+      d = rnorm(10)
+    )
+    
+    df$a <- (df$a - min(df$a, na.rm = TRUE)) / 
+      (max(df$a, na.rm = TRUE) - min(df$a, na.rm = TRUE))
+    df$b <- (df$b - min(df$b, na.rm = TRUE)) / 
+      (max(df$b, na.rm = TRUE) - min(df$a, na.rm = TRUE))
+    df$c <- (df$c - min(df$c, na.rm = TRUE)) / 
+      (max(df$c, na.rm = TRUE) - min(df$c, na.rm = TRUE))
+    df$d <- (df$d - min(df$d, na.rm = TRUE)) / 
+      (max(df$d, na.rm = TRUE) - min(df$d, na.rm = TRUE))
+    ```
+
+- How many inputs does each line have?
+    ```{r redo1}
+    x <- df$a
+    (x - min(x, na.rm = TRUE)) / (max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
+    # get rid of duplication
+    rng <- range(x, na.rm = TRUE)
+    (x - rng[1]) / (rng[2] - rng[1])
+    # make it into a function and test it
+    rescale01 <- function(x) {
+      rng <- range(x, na.rm = TRUE)
+      (x - rng[1]) / (rng[2] - rng[1])
+    }
+    rescale01(c(0, 5, 10))
+    rescale01(c(-10, 0, 10))
+    rescale01(c(1, 2, 3, NA, 5))
+    df$a <- rescale01(df$a)
+    df$b <- rescale01(df$b)
+    df$c <- rescale01(df$c)
+    df$d <- rescale01(df$d)
+    ```
+
+- Now, if we have a change in requirements, we only have to change it in one place.  For instance, perhaps we want to handle columns that have Inf as one of the values.
+
+    ```{r rescale_with_Inf}
+    x <- c(1:10, Inf)
+    rescale01(x)
+    rescale01 <- function(x) {
+      rng <- range(x, na.rm = TRUE, finite = TRUE)
+      (x - rng[1]) / (rng[2] - rng[1])
+    }
+    rescale01(x)
+    ```
+
+- Do's and do not's of function naming:
+
+    * pick either snake_case or camelCase but don't use both
+    * meaningful names (preferably verbs)
+    * for a family of functions, start with the same word
+    * try not to overwrite common functions or variables
+    * use lots of comments in your code, particularly to explain the "why"
+      of your code or to break up your code into sections using something 
+      like `# load data --------------------`
+
+
+### Function Documentation
+
+- This is a DCG opinion section.
+
+- It is good practice to always precede a function with documentation on 
+    
+    1. What does it do?
+    2. What are the inputs?
+    3. What are the outputs?
+
+- Use comments to do this.
+
+- Here is an example of me re-writing the `sum()` function.
+
+    ```{r}
+    # Sums up the elements of a numeric vector.
+    #
+    # x: a vector of numerics to be summed.
+    #
+    # returns: The sum of x
+    sum2 <- function(x) {
+      stopifnot(is.numeric(x))
+      
+      sum_val <- 0
+      for (index in seq_along(x)) {
+        sum_val <- sum_val + x[index]
+      }
+      
+      return(sum_val)
+    }
+    
+    sum2(c(1, 5, 21))
+    ```
+
+- **Exercise**: Re-write the the function `range()`, including documentation
+  at the top of the function.
+  
+    ```{r, eval = FALSE, echo = FALSE}
+    # Returns the minimum and maximum elements of a numeric vector.
+    # 
+    # x: A numeric vector
+    #
+    # returns: A vector length 2. The first element is the minimum of x and the
+    #          second element is the maximum of x.
+    range2 <- function(x) {
+      return(c(min(x), max(x)))
+    }
+    ```
+    
+- **Exercise**: Write `both_na()`, a function that takes two vectors of the 
+  same length and returns the number of positions that have an `NA` in both 
+  vectors. Include documentation.
+  
+  
+    ```{r, eval = FALSE, echo = FALSE}
+    # Returns number of positions that have an NA in both positions of two vectors.
+    #
+    # x: A vector the same length as y
+    # y: A vector the same length as x
+    #
+    # returns: The number of positions that have an NA in both x and y
+    both_na <- function(x, y) {
+      stopifnot(length(x) == length(y))
+      return(sum(is.na(x) & is.na(y)))
+    }
+    both_na(c(1, NA, 2), c(NA, NA, 2))
+    both_na(c(NA, NA, 2), c(NA, NA, 2))
+    both_na(c(NA, NA, NA), c(NA, NA, 2))
+    ```
+  
+  
+- **Exercise**: Read the source code for each of the following three functions, 
+  puzzle out what they do, and then brainstorm better names. Then add 
+  documentation to each function.
+
+    ```{r, eval = FALSE}
+    f1 <- function(string, prefix) {
+      substr(string, 1, nchar(prefix)) == prefix
+    }
+    
+    f2 <- function(x) {
+      if (length(x) <= 1) return(NULL)
+      x[-length(x)]
+    }
+    
+    f3 <- function(x, y) {
+      rep(y, length.out = length(x))
+    }
+    ```
+    
+    ```{r, eval = FALSE, echo = FALSE}
+    # Checks if string contains a given prefix
+    #
+    # string: A string.
+    # prefix: Another string.
+    #
+    # returns: TRUE if the first characters in string match prefix and FALSE
+    #          otherwise.
+    matches_prefix <- function(string, prefix) {
+      substr(string, 1, nchar(prefix)) == prefix
+    }
+    
+    # Removes the least element of a vector
+    # 
+    # x: A vector
+    #
+    # returns: A vector. Equal to x but with the last element removed.
+    pop <- function(x) {
+      if (length(x) <= 1) return(NULL)
+      x[-length(x)]
+    }
+    
+    # cycles through the elements of y until it has the same length as x
+    #
+    # y: A vector to be repeated
+    # x: A vector whose length is to be matched.
+    #
+    # returns: A vector with the elements of y repeated until it matches the 
+    #          length of x.
+    stupid_rep <- function(x, y) {
+      rep(y, length.out = length(x))
+    }
+    ```
+
+### Conditional Execution
+
+- Conditional if-then statements are useful to evaluate code only if certain
+  conditions are met. The syntax is:
+
+    ```{r condition, eval=FALSE}
+    if (condition) {
+      # code executed when condition is TRUE
+    } else {
+      # code executed when condition is FALSE
+    }
+    ```
+    
+        
+    ```{r condition2}
+    # note that a function returns the last value computed
+    has_name <- function(x) {
+      nms <- names(x)
+      if (is.null(nms)) {
+        rep(FALSE, length(x))
+      } else {
+        !is.na(nms) & nms != ""
+      }
+    }
+    x1 <- c(1,2,3)
+    x2 <- c(a = 1, 2,3)
+    has_name(x1)
+    has_name(x2)
+    ```
+
+- The condition for an if statement must be a single logical element, 
+not a vector. For this reason, if combining them, use `||` which returns 
+`TRUE` at first occurrence of `TRUE` or `&&` which return `FALSE` at first 
+occurrence of `FALSE`.  Can use `any()` or `all()` to collapse a logical vector.
+Similarly, for equality, use `identical()` or `dplyr::near()`.  You can use
+`==`, but it is vectorized and might give you errors if you use it with a 
+vector.
+
+### Multiple conditions
+
+- You may chain multiple if statements or use switch or cut
+
+    ```{r switch, error=TRUE}
+    do_op <- function(x, y, op) {
+      switch(op,
+         plus = x + y,
+         minus = x - y,
+         times = x * y,
+         divide = x / y,
+         stop("Unknown op!")
+      )
+    }
+    do_op(2,4,"plus")
+    do_op(2,4,"divide")
+    do_op(2,4,1)
+    do_op(2,4,"mod")
+    # note that we had to change the chunk option to error=TRUE in 
+    # order to test our error output
+    ```
+
+- Some code style standards:
+
+    * Put function code and if statement code inside `{}`
+    * opening `{` never on own line and always followed by a new line
+    * closing `}` on own line unless followed by else
+    * use indentation 
+
+- **Exercise**: Write a greeting function that says `"good morning"`, 
+`"good afternoon"`, or `"good evening"`, depending on the time of day. 
+(Hint: use a time argument that defaults to `lubridate::now()`. 
+That will make it easier to test your function.)
+
+    ```{r, eval = FALSE, echo = FALSE}
+    # Greets you based on time of day
+    #
+    # returns: "good morning" if the current time is before noon
+    #          "good afternoon" if the current time is between noon and 6
+    #          "good evening" if the current time is after 6
+    greet <- function() {
+      lubridate::now() %>%
+      lubridate::hour() ->
+      current_hour
+    
+      greeting <- vector(mode = "character", length = 1)
+      if (current_hour < 12) {
+        greeting <- "good morning"
+      } else if (current_hour >= 12 && current_hour < 18) {
+        greeting <- "good afternoon"  
+      } else {
+        greeting <- "good evening"
+      }
+      return(greeting)
+    }
+    
+    greeting()
+    ```
+
+
+- **Exercise**: Implement a `fizzbuzz()` function. It takes a single number as 
+input. If the number is divisible by three, it returns `"fizz"`. If it's 
+divisible by five it returns `"buzz"`. If it's divisible by three and five, 
+it returns `"fizzbuzz"`. Otherwise, it returns the number. Make sure you 
+first write working code before you create the function.
+
+    ```{r, eval = FALSE, echo = FALSE}
+    fizzbuzz <- function(x) {
+      is3 <- x %% 3 == 0
+      is5 <- x %% 5 == 0
+      if (is3 && is5) {
+        return("fizzbuzz")
+      } else if (is3) {
+        return("fizz")
+      } else if (is5) {
+        return("buzz")
+      } else {
+        return(x)
+      }
+    }
+    
+    fizzbuzz(3)
+    fizzbuzz(5)
+    fizzbuzz(15)
+    fizzbuzz(2)
+    ```
+
+
+### Function inputs
+
+- First inputs listed should be the data to compute on.  Later arguments 
+should be parameters that control the details of the computation and should 
+generally have defaults specified. The default should be the most often used 
+value unless there is a safety reason to do differently. Look at some functions
+and see what the defaults are. Try `log()`, `mean()`, `t.test()`, `cor()`.
+
+- When calling a function, omit the names of the data arguments, but specify
+the names of the parameters.  White space:  use space after `,` and around `=` or 
+other operators.
+
+- Use descriptive names for your arguments with the following exceptions:
+
+    * `x`, `y`, `z`: vectors.
+    * `w`: a vector of weights.
+    * `df`: a data frame.
+    * `i`, `j`: numeric indices (typically rows and columns).
+    * `n`: length, or number of rows.
+    * `p`: number of columns.
+
+### Idiot proof your functions
+
+- Check validity of inputs and use `stop()` to output an error message
+
+    ```{r stop, error=TRUE}
+    wt_mean <- function(x, w) {
+      if (length(x) != length(w)) {
+        stop("`x` and `w` must be the same length", call. = FALSE)
+      }
+      sum(w * x) / sum(w)
+    }
+    wt_mean(1:4,1:2)
+    ```
+
+- Another option is to use `stopifnot()` which checks that each argument is 
+true and issues a generic error message if there is a problem
+    ```{r stopifnot, error=TRUE}
+    t_mean <- function(x, w, na.rm = FALSE) {
+      stopifnot(is.logical(na.rm), length(na.rm) == 1)
+      stopifnot(length(x) == length(w))
+      
+      if (na.rm) {
+        miss <- is.na(x) | is.na(w)
+        x <- x[!miss]
+        w <- w[!miss]
+      }
+      sum(w * x) / sum(w)
+    }
+    wt_mean(1:6, 6:1, na.rm = "foo")
+    ```
+    
+### Taking an arbitrary number of inputs
+
+```{r}
+commas <- function(...) {
+  stringr::str_c(..., collapse = ", ")
+}
+commas(letters[1:10])
+
+rule <- function(..., pad = "-") {
+  title <- paste0(...)
+  width <- getOption("width") - nchar(title) - 5
+  cat(title, " ", stringr::str_dup(pad, width), "\n", sep = "")
+}
+rule("Important output")
+```
+    
+### Return values (function output)
+#### Explicit return values
+- R returns the last value calculated unless you specify otherwise. 
+You can use a `return()` command to break out of the program early and 
+return a value.  Perhaps you want to check for a trivial condition and
+return early if that is the case.  Or you have an if statement with one 
+simple and one complex case.
+
+- DCG Opinion: Hadley says to only use `return()` for early command breaks. 
+  But I always use `return()` to indicate what the function is returning. I 
+  prefer to be more explicit.
+
+#### Writing Pipeable Functions
+
+- Two types of functions: 
+
+    * transformation functions - primary object is the first 
+      argument and a modified version is returned by the function
+    * side-effect functions - called to perform an action; should 
+      invisibly return the first argument so they are not printed by default
+
+    ```{r invisible}
+    show_missings <- function(df) {
+      n <- sum(is.na(df))
+      cat("Missing values: ", n, "\n", sep = "")
+      
+      invisible(df)
+    }
+    # calling interactively
+    show_missings(mtcars)
+    #  assigning output
+    x <- show_missings(mtcars) 
+    class(x)
+    dim(x)
+    #  allows for use in a pipe
+    mtcars %>% 
+      show_missings() %>% 
+      mutate(mpg = ifelse(mpg < 20, NA, mpg)) %>% 
+      show_missings() 
+    ```
+
+- What happens if we leave out the `invisible(df)` line?
+    ```{r no_invisible, error=TRUE}
+    show_missings <- function(df) {
+      n <- sum(is.na(df))
+      cat("Missing values: ", n, "\n", sep = "")
+    }
+    # calling interactively
+    show_missings(mtcars)
+    #  assigning output
+    x <- show_missings(mtcars) 
+    class(x)
+    dim(x)
+    # pipe no longer works
+    mtcars %>% 
+      show_missings() %>% 
+      mutate(mpg = ifelse(mpg < 20, NA, mpg)) %>% 
+      show_missings() 
+    ```
+
+### Environment
+- R will look for functions and variables in the current environment before it looks elsewhere.  This allows you to use variables in the environment that are not explicitly in your function or to overwrite things that may be general functions in R with local versions.  However, in general, this is not a good idea.
