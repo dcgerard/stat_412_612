@@ -1,5 +1,5 @@
 ---
-title: "Functions"
+title: "Pipes and Functions"
 author: "David Gerard and Jane Wall"
 date: "`r Sys.Date()`"
 output:
@@ -28,109 +28,77 @@ knitr::opts_chunk$set(echo = TRUE)
     - nest commands
     - use pipe
 
-- Suppose we want to calculate the average kpg (kilometers per gallon) for cars that are automatic and those that are manual. Since the data are given in mpg (miles per gallon) we need to accomplish the following tasks:
+- Suppose we want to calculate the 
+  [geometric mean](https://en.wikipedia.org/wiki/Geometric_mean) of a vector of
+  positive numbers.
+  Then the numerically stable steps are
+  
+    1. Take the log of all of the elements of the vector.
+    2. Average these logged elements.
+    3. Exponentiate this average.
+    
+- We'll create some random data using `rnorm()` to look at these steps:
 
-    - Convert the mpg to kpg
-    - Group the data by transmission type
-    - Calculate average mpg within each type.
-
-- Load data and tidyverse:
     ```{r}
-    suppressMessages(library(tidyverse))
-    data("mtcars")
-    km_in_mile <- 1.60934
+    x <- abs(rnorm(100))
+    head(x)
     ```
-
+    
 - Create intermediate objects
-    ```{r}
-    mtcars1 <- mutate(mtcars, kpg = mpg * km_in_mile)
-    mtcars2 <- group_by(mtcars1, am)
-    summarize(mtcars2, ave_mpg = mean(mpg))
-    ```
 
-- Overwrite the original object
     ```{r}
-    mtcars <- mutate(mtcars, kpg = mpg * km_in_mile)
-    mtcars <- group_by(mtcars, am)
-    summarize(mtcars, ave_mpg = mean(mpg))
+    log_x <- log(x)
+    mean_lx <- mean(log_x)
+    geo_mean <- exp(mean_lx)
+    geo_mean
     ```
+    
+- Nest functions
 
-- Nest commands
     ```{r}
-    summarize(group_by(mutate(mtcars, kpg = mpg * km_in_mile), am), ave_mpg = mean(mpg))
+    geo_mean <- exp(mean(log(x)))
+    geo_mean
     ```
 
 - Use pipe
+
     ```{r}
-    mtcars %>%
-      mutate(kpg = mpg * km_in_mile) %>%
-      group_by(am) %>%
-      summarise(ave_mpg = mean(mpg))
+    suppressPackageStartupMessages(library(tidyverse))
+    x %>%
+      log() %>%
+      mean() %>%
+      exp() ->
+      geo_mean
+    geo_mean
+    ```
+    
+- Note that the output is only placed in the *first* argument of the next
+  function. We can use the pipe while specifying other arguments..
+    ```{r}
+    x %>%
+      log() %>%
+      mean(na.rm = TRUE) %>%
+      exp() ->
+      geo_mean
+    geo_mean
     ```
 
-
-- **Exercise**: In the `mtcars` dataset, use the four different techniques for chaining to calculate the median weight (variable `wt` in lbs) for all cars that have at least 6 cylinders (variable `cyl`) and the median weight for all cars that have less than 6 cylinders.
-
+- **Exercise**: Using the pipe, create a vector of 100 random draws from the 
+  normal distribution with standard deviation 10, sort this vector in 
+  increasing order, calculate the 
+  lagged differences between these elements, average these lagged differences,
+  then round this average to the nearest tenth decimal place.
+  
+    Useful functions: `diff()`, `rnorm()`, `sort()`, `round()`, `mean()`.
+    
     ```{r, echo = FALSE, eval = FALSE}
-    mtcars %>%
-      mutate(min_6 = cyl >= 6) %>%
-      group_by(min_6) %>%
-      summarize(med_wt = median(wt))
+    rnorm(100, sd = 10) %>%
+      sort() %>%
+      diff() %>%
+      mean() %>%
+      round(digits = 1) 
+    ```
     
-    mtcars2 <- mutate(mtcars, min_6 = cyl >= 6)
-    mtcars3 <- group_by(mtcars2, min_6)
-    summarize(mtcars3, med_wt = median(wt))
-    
-    mtcars <- mutate(mtcars, min_6 = cyl >= 6)
-    mtcars <- group_by(mtcars2, min_6)
-    summarize(mtcars, med_wt = median(wt))
-    
-    summarize(group_by(mutate(mtcars, min_6 = cyl >= 6), min_6), med_wt = median(wt))
-    ```
-
-### Other magrittr tools
-
-- T-pipe, %T>% returns left-hand side instead of right-hand side
-
-    ```{r Tpipe}
-    library(magrittr)
-    rnorm(100) %>%
-      matrix(ncol = 2) %>%
-      plot() %>%
-      str()
-    rnorm(100) %>%
-      matrix(ncol = 2) %T>%
-      plot() %>%
-      str()
-    ```
-
-- Explode to refer to variables without having to attach the dataset using `%$%`.
-
-    ```{r explode}
-    cor(mtcars$disp, mtcars$mpg)
-    mtcars %$%
-      cor(disp, mpg)
-    attach(mtcars)
-    cor(disp, mpg)
-    ```
-
-- Assignment with %<>% replaces the object on the left.  
-
-- **Exercise**: Try taking the nycflights13 flights dataset (from the library nycflights13) 
-and replacing it with only those 
-flights from JFK that were over 2000 miles long, keeping only the origin, 
-destination, distance, flight time and carrier.
-
-    ```{r assignpipe, echo = FALSE, eval=  FALSE}
-    library(nycflights13)
-    library(tidyverse)
-    flights %<>% filter(origin == "JFK", distance > 2000)  %>%
-      select(origin, dest, distance, air_time, carrier)
-    flights
-    ```
-
-- DCG Opinion: I've never seen anyone use this before. I would avoid it since
-  it is obfuscating the assignment and makes the code harder to read.
 
 ## Functions
 
@@ -144,6 +112,22 @@ destination, distance, flight time and carrier.
     4. place code for function in a {} block 
     5. test your function with some different inputs
     6. add error-checking of inputs
+    
+- Coding standards
+
+    1. Save as text file
+    2. Indent code
+    3. Limit width of code (80 columns?)
+    4. Limit the length of individual functions
+    5. Frequent comments
+    
+    ```{r}
+    add_two <- function(a, b) {
+      return(a + b)
+    }
+    add_two(2, 4)
+    ```
+    
 
 - Example from our book follows.
     ```{r bookexample_rescale}
@@ -220,30 +204,26 @@ destination, distance, flight time and carrier.
 
 - Use comments to do this.
 
-- Here is an example of me re-writing the `sum()` function.
+- Here is an example of me re-writing the `diff()` function.
 
     ```{r}
-    # Sums up the elements of a numeric vector.
+    # Calculates a vector of lags from a numeric vector
     #
-    # x: a vector of numerics to be summed.
+    # x: a vector of numerics to be lagged
     #
-    # returns: The sum of x
-    sum2 <- function(x) {
+    # returns: The lags of x
+    diff2 <- function(x) {
       stopifnot(is.numeric(x))
-      
-      sum_val <- 0
-      for (index in seq_along(x)) {
-        sum_val <- sum_val + x[index]
-      }
-      
-      return(sum_val)
+      lagvec <- x[2:length(x)] - x[1:(length(x) - 1)]
+      return(lagvec)
     }
     
-    sum2(c(1, 5, 21))
+    diff2(c(1, 5, 21))
+    diff(c(1, 5, 21))
     ```
 
 - **Exercise**: Re-write the the function `range()`, including documentation
-  at the top of the function.
+  at the top of the function. Use functions: `min()`, `max()`
   
     ```{r, eval = FALSE, echo = FALSE}
     # Returns the minimum and maximum elements of a numeric vector.
@@ -259,7 +239,8 @@ destination, distance, flight time and carrier.
     
 - **Exercise**: Write `both_na()`, a function that takes two vectors of the 
   same length and returns the number of positions that have an `NA` in both 
-  vectors. Include documentation.
+  vectors. Include documentation. Useful functions: `is.na()`, `sum()`, 
+  logical operators.
   
   
     ```{r, eval = FALSE, echo = FALSE}
@@ -277,7 +258,6 @@ destination, distance, flight time and carrier.
     both_na(c(NA, NA, 2), c(NA, NA, 2))
     both_na(c(NA, NA, NA), c(NA, NA, 2))
     ```
-  
   
 - **Exercise**: Read the source code for each of the following three functions, 
   puzzle out what they do, and then brainstorm better names. Then add 
@@ -372,7 +352,7 @@ vector.
 
 ### Multiple conditions
 
-- You may chain multiple if statements or use switch or cut
+- You may chain multiple if statements or use switch
 
     ```{r switch, error=TRUE}
     do_op <- function(x, y, op) {
@@ -398,36 +378,6 @@ vector.
     * opening `{` never on own line and always followed by a new line
     * closing `}` on own line unless followed by else
     * use indentation 
-
-- **Exercise**: Write a greeting function that says `"good morning"`, 
-`"good afternoon"`, or `"good evening"`, depending on the time of day. 
-(Hint: use a time argument that defaults to `lubridate::now()`. 
-That will make it easier to test your function.)
-
-    ```{r, eval = FALSE, echo = FALSE}
-    # Greets you based on time of day
-    #
-    # returns: "good morning" if the current time is before noon
-    #          "good afternoon" if the current time is between noon and 6
-    #          "good evening" if the current time is after 6
-    greet <- function() {
-      lubridate::now() %>%
-      lubridate::hour() ->
-      current_hour
-    
-      greeting <- vector(mode = "character", length = 1)
-      if (current_hour < 12) {
-        greeting <- "good morning"
-      } else if (current_hour >= 12 && current_hour < 18) {
-        greeting <- "good afternoon"  
-      } else {
-        greeting <- "good evening"
-      }
-      return(greeting)
-    }
-    
-    greeting()
-    ```
 
 
 - **Exercise**: Implement a `fizzbuzz()` function. It takes a single number as 
@@ -456,7 +406,6 @@ first write working code before you create the function.
     fizzbuzz(15)
     fizzbuzz(2)
     ```
-
 
 ### Function inputs
 
@@ -496,7 +445,7 @@ other operators.
 - Another option is to use `stopifnot()` which checks that each argument is 
 true and issues a generic error message if there is a problem
     ```{r stopifnot, error=TRUE}
-    t_mean <- function(x, w, na.rm = FALSE) {
+    wt_mean <- function(x, w, na.rm = FALSE) {
       stopifnot(is.logical(na.rm), length(na.rm) == 1)
       stopifnot(length(x) == length(w))
       
@@ -509,82 +458,7 @@ true and issues a generic error message if there is a problem
     }
     wt_mean(1:6, 6:1, na.rm = "foo")
     ```
-    
-### Taking an arbitrary number of inputs
 
-```{r}
-commas <- function(...) {
-  stringr::str_c(..., collapse = ", ")
-}
-commas(letters[1:10])
-
-rule <- function(..., pad = "-") {
-  title <- paste0(...)
-  width <- getOption("width") - nchar(title) - 5
-  cat(title, " ", stringr::str_dup(pad, width), "\n", sep = "")
-}
-rule("Important output")
-```
-    
-### Return values (function output)
-#### Explicit return values
-- R returns the last value calculated unless you specify otherwise. 
-You can use a `return()` command to break out of the program early and 
-return a value.  Perhaps you want to check for a trivial condition and
-return early if that is the case.  Or you have an if statement with one 
-simple and one complex case.
-
-- DCG Opinion: Hadley says to only use `return()` for early command breaks. 
-  But I always use `return()` to indicate what the function is returning. I 
-  prefer to be more explicit.
-
-#### Writing Pipeable Functions
-
-- Two types of functions: 
-
-    * transformation functions - primary object is the first 
-      argument and a modified version is returned by the function
-    * side-effect functions - called to perform an action; should 
-      invisibly return the first argument so they are not printed by default
-
-    ```{r invisible}
-    show_missings <- function(df) {
-      n <- sum(is.na(df))
-      cat("Missing values: ", n, "\n", sep = "")
-      
-      invisible(df)
-    }
-    # calling interactively
-    show_missings(mtcars)
-    #  assigning output
-    x <- show_missings(mtcars) 
-    class(x)
-    dim(x)
-    #  allows for use in a pipe
-    mtcars %>% 
-      show_missings() %>% 
-      mutate(mpg = ifelse(mpg < 20, NA, mpg)) %>% 
-      show_missings() 
-    ```
-
-- What happens if we leave out the `invisible(df)` line?
-    ```{r no_invisible, error=TRUE}
-    show_missings <- function(df) {
-      n <- sum(is.na(df))
-      cat("Missing values: ", n, "\n", sep = "")
-    }
-    # calling interactively
-    show_missings(mtcars)
-    #  assigning output
-    x <- show_missings(mtcars) 
-    class(x)
-    dim(x)
-    # pipe no longer works
-    mtcars %>% 
-      show_missings() %>% 
-      mutate(mpg = ifelse(mpg < 20, NA, mpg)) %>% 
-      show_missings() 
-    ```
 
 ### Environment
 - R will look for functions and variables in the current environment before it looks elsewhere.  This allows you to use variables in the environment that are not explicitly in your function or to overwrite things that may be general functions in R with local versions.  However, in general, this is not a good idea.

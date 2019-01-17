@@ -1,0 +1,135 @@
+---
+title: "Data Frames"
+author: "David Gerard"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Based on a bootcamp originally written by Sohail Nizam.
+
+# Learning Objectives
+
+- Understand the fundamental type for storing data in R.
+- Create and manipulate data frames (Tibbles), extract variables.
+- Chapter 10 in R for Data Science
+
+# Data Frames
+
+- Usually we have more than one vector (variable) in our data set. 
+- So how can we store several vectors together? 
+- We'll use something called a data frame. 
+- It's important to think of a data frame as a collection of columns,
+  not a collection of rows because *that's how R thinks of it*. 
+- When you have a data frame, you can easily refer to specific columns.
+- But refering to rows becomes more complicated.
+- Just like vectors are created with the `c()` function taking a collection of
+  elements of the same type as input, data frames are created with the
+  `data.frame()` function taking a collection of vectors as input. 
+- The vectors can be of differing data types. 
+
+- Let's play around with a dataframe from the `mtcars` dataset. To see a 
+  description of these data, type
+  
+    ```{r, eval = FALSE}
+    help(mtcars)
+    ```
+
+- We can load in these data with the `data` function
+
+    ```{r}
+    data("mtcars")
+    ```
+
+
+
+- If you have a relatively small data set, and you just want a cursory look at 
+  the data, printing the data frame in the Console (my just typing `mtcars`)
+  may suffice. However, if you have many columns and many rows, viewing your
+  data in the console will be very difficult. 
+
+- Instead, we can take a look at the data in a nice table in a new RStudio 
+  tab using the `View()` function. 
+
+- `View()` takes the name of a data frame as an argument. 
+- Please note, `view()` is incorrect. The V must be capitalized.
+
+    ```{r eval= FALSE}
+    View(mtcars)
+    ```
+
+- ANOTHER NOTE: running this function requires the installation of another 
+  package called xquartz.
+
+
+
+- More than likely, when you recieve data to work with, it will be in the form 
+  of a data frame. 
+- So once you have a data frame, how can you examine individual columns? 
+- The syntax is very simple. To refer to one column simply type the name of 
+  the data frame and the name of the column seperated by a $. For example:
+
+    ```{r}
+    mtcars$mpg #calls the mpg column of our data frame
+    ```
+
+- One nice thing about Rstudio is that it has a suggestion feature. 
+- If you've saved a data frame, when you type its name and the dollar sign, a
+  dropdown with all of the possible columns should appear for you. 
+- If the dropdown does not appear, try pressing tab.
+
+- Maybe you just want all of the column names displayed for you. 
+- For that you can use the `names()` function. 
+- `names()` takes a data frame as input and outputs a vector comprised of 
+  that data frame's column names.
+
+    ```{r}
+    names(mtcars)
+    ```
+
+- Now let's use what we know about indexing to rename the first column. 
+- We know that `names(mtcars)` represents a vector. 
+- So let's refer to the first element of that vector and set it equal to
+  something new. 
+
+    ```{r}
+    names(mtcars)[1] <- "mpg2" #rename the first column
+    names(mtcars) #display the new names vector
+    ```
+
+- Here are some more useful functions for data frames:
+
+    ```{r}
+    head(mtcars, 15) #see the first 15 rows of the data frame
+    tail(mtcars, 9) #see the last 9 rows of the data frams
+    ```
+    
+# Tibbles
+
+- The tidyverse uses tibbles more often than data frames.
+
+- **Tibbles are mostly the same as data frames** with a few small exceptions:
+
+    1. Better printing to console.
+    2. Better interactions with strings.
+
+- You can convert a data frame to a tibble with
+
+    ```{r}
+    suppressPackageStartupMessages(library(tidyverse))
+    mtcars <- as_tibble(mtcars)
+    mtcars
+    ```
+    
+- **Exercise**: Extract the 8th to 28th elements of the `am` variable from the
+  mtcars data frame.
+  
+    ```{r, echo = FALSE, eval = FALSE}
+    mtcars$am[8:28]
+    ```
+  
+
+

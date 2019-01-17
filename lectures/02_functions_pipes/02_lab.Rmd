@@ -1,0 +1,95 @@
+---
+title: "Week 2 Lab"
+author: "David Gerard"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Instructions
+
+- Create a new R Markdown document. Number each of the following exercises. 
+  Write your code solutions in code chunks. 
+  
+- Don't keep extraneous code. Only what is minimally sufficient to answer the 
+  questions to stay in the file.
+
+# Exercises
+
+1. Take the absolute value of a vector of 100 random draws from
+  the standard normal distribution, then take the square root of these values.
+  Finally, calculate the largest integers smaller than these values.
+  Use pipes. Useful functions: `sqrt()`, `floor()`, `rnorm()`, `abs()`.
+  
+2. Create a function that takes a numeric vector (say `x`) and a numeric scalar
+   (say `y`) as arguments. It should return a numeric vector where the first
+   half of the returned vector is the same as the first half of `x`, 
+   and the second half of the returned vector is the same as the second half of
+   `x + y`. If the length of `x` is odd, then it randomly chooses the middle
+   value of the returned vector to be the same as the middle value `x` or the 
+   same as the middle value of `x + y`. Think up a good name and write 
+   documentation. Check the inputs of the function for correctness.
+   
+    Useful functions: `length()`, `%%` (to check for even vs odd), `floor()`,
+    `sample()`, `c()`.
+    
+    You will also need to use conditionals and logicals to write this function.
+   
+    Here are some example evaluations when
+    ```{r}
+    x <- c(1, 1, 1, 1, 1)
+    y <- 1
+    ```
+   
+   
+    ```{r, echo = FALSE}
+    set.seed(2)
+    add_half <- function(x, y) {
+      stopifnot(length(y) == 1, 
+                is.numeric(x), 
+                is.numeric(y), 
+                is.vector(x), 
+                is.vector(y))
+      len_x  <- length(x)
+      if (len_x %% 2 == 0) {
+        half_len <- len_x / 2
+        new_vec <- c(x[1:half_len], x[(half_len + 1):len_x] + y)
+      } else {
+        half_len <- floor(len_x / 2)
+        mid_val <- sample(x = c(x[half_len + 1], x[half_len + 1] + y), size = 1)
+        new_vec <- c(x[1:half_len],
+                     mid_val,
+                     x[(half_len + 2):len_x] + y)
+      }
+      return(new_vec)
+    }
+    add_half(x, y)
+    add_half(x, y)
+    add_half(x, y)
+    add_half(x, y)
+    ```
+    
+    Here is the evaluation when
+    ```{r}
+    x <- c(1, 1, 1, 1)
+    y <- 1
+    ```
+        
+    ```{r, echo = FALSE}
+    add_half(x, y)
+    ```
+
+    Here is the evaluation when
+    ```{r}
+    x <- c(1, 1, 1, 1)
+    y <- c(1, 2)
+    ```
+    
+    ```{r, echo = FALSE, error=TRUE}
+    add_half(x, y)
+    ```
+   
+   

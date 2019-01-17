@@ -25,9 +25,11 @@ University by [David Gerard](https://dcgerard.github.io/).
     - [Good File Organization](./lectures/01_intro/01_file_system.pdf)
     - [Worksheet: R Basics and R Markdown](./lectures/01_intro/01_worksheet.pdf)
     - [Logicals](./lectures/01_intro/01_logic.pdf)
-    - [Lab Questions](./lectures/01_intro/01_lab.pdf)
+    - [Data Frames](./lectures/01_intro/01_data_frames.html)
+    - [01 Lab Questions](./lectures/01_intro/01_lab.pdf)
 - 02 More on Programming
     - [Pipes and Functions](./lectures/02_functions_pipes/02_functions_pipes.pdf)
+    - [02 Lab Questions](./lectures/02_functions_pipes/02_lab.pdf)
     
 # Homeworks
 
