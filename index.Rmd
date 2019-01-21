@@ -21,15 +21,19 @@ University by [David Gerard](https://dcgerard.github.io/).
 # Lectures
 
 - 01 Introduction:
-    - [Data Science and R](./lectures/01_intro/01_data_science_and_r.pdf)
-    - [Good File Organization](./lectures/01_intro/01_file_system.pdf)
-    - [Worksheet: R Basics and R Markdown](./lectures/01_intro/01_worksheet.pdf)
-    - [Logicals](./lectures/01_intro/01_logic.pdf)
-    - [Data Frames](./lectures/01_intro/01_data_frames.pdf)
+    - [01 Data Science and R](./lectures/01_intro/01_data_science_and_r.pdf)
+    - [01 Good File Organization](./lectures/01_intro/01_file_system.pdf)
+    - [01 Worksheet: R Basics and R Markdown](./lectures/01_intro/01_worksheet.pdf)
+    - [01 Logicals](./lectures/01_intro/01_logic.pdf)
+    - [01 Data Frames](./lectures/01_intro/01_data_frames.pdf)
     - [01 Lab Questions](./lectures/01_intro/01_lab.pdf)
 - 02 More on Programming
-    - [Pipes and Functions](./lectures/02_functions_pipes/02_functions_pipes.pdf)
+    - [02 Worksheet: Pipes and Functions](./lectures/02_functions_pipes/02_functions_pipes.pdf)
     - [02 Lab Questions](./lectures/02_functions_pipes/02_lab.pdf)
+- 03 Visualizations
+    - [03 Worksheet: Visualization with ggplot2](./lectures/03_graphics/03_graphics.pdf)
+    - [03 `qplot()` cheat sheet](./lectures/03_graphics/03_qplot_cheatsheet.pdf)
+    - [03 Base R Graphics cheat sheet](./lectures/03_graphics/03_base_r_cheatsheet.pdf)
     
 # Homeworks
 

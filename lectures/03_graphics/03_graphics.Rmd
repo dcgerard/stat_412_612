@@ -1,0 +1,21 @@
+---
+title: "Graphics with ggplot2"
+author: "David Gerard"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Learning Objectives
+
+- ggplot2
+- Basics of data visualization.
+- Chapter 3 [RDS](https://r4ds.had.co.nz/)
+
+## Background
+
+- The three main plotting paradigms in R are base R, ggplot2 (from the tidyverse), and lattice.

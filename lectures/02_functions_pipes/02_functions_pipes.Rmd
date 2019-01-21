@@ -1,5 +1,5 @@
 ---
-title: "Pipes and Functions"
+title: "Pipes, Functions, Conditionals"
 author: "David Gerard and Jane Wall"
 date: "`r Sys.Date()`"
 output:
