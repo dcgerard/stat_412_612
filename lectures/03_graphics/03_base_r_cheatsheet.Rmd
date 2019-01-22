@@ -3,10 +3,11 @@ title: "Base R Graphics Cheat Sheet"
 author: "David Gerard"
 date: "`r Sys.Date()`"
 output: pdf_document
+urlcolor: "blue"
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, fig.width = 4, fig.height = 3, fig.align = "center")
 ```
 
 # Abstract:
@@ -71,6 +72,7 @@ Histogram
 hist(mpg$hwy, breaks = 10)
 ```
 
+\vspace{20mm}
 
 ## Discrete
 Barplot
@@ -83,6 +85,8 @@ Different type of bar plot
 ```{r}
 plot(tabdat)
 ```
+
+\vspace{30mm}
 
 # Two Variables
 
@@ -100,6 +104,8 @@ y <- jitter(mpg$hwy)
 plot(x, y)
 ```
 
+\vspace{30mm}
+
 Add a rug plot
 ```{r}
 plot(x, y)
@@ -116,8 +122,10 @@ plot(x, y)
 lines(xnew, ynew, col = 2, lty = 2)
 ```
 
+\vspace{20mm}
+
 Loess smoother with upper and lower 95\% confidence bands
-```{r}
+```{r, fig.height=4, fig.width=6}
 loess_fit <- loess(hwy ~ cty, data = mpg)
 xnew <- seq(min(x), max(x), length = 100)
 pfit <- predict(object = loess_fit, newdata = data.frame(cty = xnew), se = TRUE)
@@ -130,8 +138,11 @@ lines(xnew, upper_bound, col = 4, lty = 2)
 lines(xnew, lower_bound, col = 4, lty = 2)
 ```
 
+
+\vspace{70mm}
+
 Loess smoother with upper and lower 95\% confidence bands and that fancy shading from `ggplot2`.
-```{r}
+```{r, fig.height=4, fig.width=6}
 loess_fit <- loess(hwy ~ cty, data = mpg)
 xnew <- seq(min(x), max(x), length = 100)
 pfit <- predict(object = loess_fit, newdata = data.frame(cty = xnew), se = TRUE)
@@ -144,6 +155,9 @@ plot(x, y)
 lines(xnew, ynew, col = 2, lty = 2)
 polygon(xshade, yshade, col = "#0000FF33", border = FALSE)
 ```
+
+
+\vspace{70mm}
 
 Add text to a plot
 ```{r}
@@ -158,6 +172,9 @@ Boxplot
 ```{r}
 boxplot(hwy ~ class, data = mpg)
 ```
+
+
+\vspace{20mm}
 
 ## Discrete X, Discrete Y
 
@@ -190,10 +207,13 @@ plot(x, y, col = z)
 legend("topleft", legend = levels(z), col = 1:nlevels(z), pch = 1, title = "Drive")
 ```
 
+
+\vspace{100mm}
+
 # Faceting
 
 `par` sets the graphics options, where `mfrow` is the parameter controling the facets.
-```{r}
+```{r, fig.width=6, fig.height=4}
 old_options <- par(mfrow = c(2, 3))
 plot(mpg$cty, mpg$hwy)
 hist(mpg$cty)

@@ -1,0 +1,150 @@
+---
+title: "Lattice R Graphics Cheat Sheet"
+author: "David Gerard"
+date: "`r Sys.Date()`"
+output: pdf_document
+urlcolor: "blue"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.width = 4, fig.height = 3, fig.align = "center")
+```
+
+
+# Abstract:
+I reproduce some of the plots from Rstudio's [ggplot2](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf) cheat sheet using just the lattice R package.
+
+```{r, echo=FALSE}
+set.seed(1)
+```
+
+Before we begin, load the lattice package in R:
+```{r}
+library(lattice)
+```
+
+We'll use the `mpg` dataset from ggplot2:
+```{r}
+library(ggplot2)
+data("mpg")
+```
+
+# General Considerations
+
+- Look at the help page of `xyplot()`, which contains a lot of details on many of
+the high-level plotting functions in lattice.
+- Most of the high-level plotting functions use a formula as the first input with the 
+  variable on the y-axis to the left of the variable on the x-axis, separated
+  by a tilde: `y ~ x`.
+- If you want to layer multiple geometric objects (scatterplots, loess smoother, 
+rugplot, etc) onto one plot, you need to use the `panel` argument, where you
+specify the plotting functions such as `panel.xyplot()` or `panel.loess()` or
+`panel.rug()`, etc. Examples of this implementation are below.
+
+# One Variable
+
+Density Plot
+```{r}
+densityplot( ~ hwy, data = mpg)
+```
+
+Histogram
+```{r}
+histogram( ~ hwy, data = mpg)
+```
+
+
+# Discrete
+
+Barplot
+```{r}
+barchart(mpg$drv, horizontal = FALSE)
+```
+
+\vspace{20mm}
+
+## Two Variables
+
+## Continuous $X$, Continuous $Y$
+
+Scatterplot
+```{r}
+xyplot(hwy ~ cty, data = mpg)
+```
+
+Add a rug plot
+
+```{r}
+xyplot(hwy ~ cty, data = mpg,
+       panel = function(x, y) {
+         panel.xyplot(x, y)
+         panel.rug(x, y)
+       })
+```
+
+\vspace{20mm}
+
+Add a loess smoother plot
+
+```{r}
+xyplot(hwy ~ cty, data = mpg,
+       panel = function(x, y) {
+         panel.xyplot(x, y)
+         panel.rug(x, y)
+         panel.loess(x, y)
+       })
+```
+
+
+
+Add some text
+
+```{r}
+xyplot(hwy ~ cty, data = mpg,
+       panel = function(x, y) {
+         panel.xyplot(x, y)
+         panel.rug(x, y)
+         panel.loess(x, y)
+         panel.text(x = 15, y = 40, label = "some text")
+       })
+```
+
+
+## Discrete X, Continuous Y
+
+Boxplot
+
+```{r}
+bwplot(hwy ~ class, data = mpg)
+```
+
+## Continuous Function
+
+Line Plot
+
+```{r}
+x <- seq(-2, 2, length = 100)
+y <- x ^ 2
+xyplot(y ~ x, data.frame(x, y), type = "l")
+```
+
+\vspace{20mm}
+
+## Color Coding and Legend Title
+
+```{r}
+xyplot(cty ~ hwy, data = mpg, groups = drv, auto.key = list(title = "Drive"))
+```
+
+## Faceting
+
+Use the `|` command in the formula of `xyplot()` or `bwplot()` or `histogram()` 
+or `barchart()` to facet.
+
+```{r, fig.width=6, fig.height=4}
+xyplot(cty ~ hwy | drv, data = mpg)
+```
+
+```{r, fig.height=8, fig.width=6}
+xyplot(cty ~ hwy | drv + fl, data = mpg)
+```
