@@ -91,14 +91,14 @@ knitr::opts_chunk$set(echo = TRUE)
     
 - Use logicals to extract elements of vectors
 
-```{r}
-x <- 1:5
-x[c(TRUE, FALSE, TRUE, TRUE, FALSE)]
-logvec <- c(TRUE, FALSE, TRUE, TRUE, FALSE)
-x[logvec]
-logvec <- c(TRUE, FALSE, TRUE, TRUE, TRUE)
-x[logvec]
-```
+    ```{r}
+    x <- 1:5
+    x[c(TRUE, FALSE, TRUE, TRUE, FALSE)]
+    logvec <- c(TRUE, FALSE, TRUE, TRUE, FALSE)
+    x[logvec]
+    logvec <- c(TRUE, FALSE, TRUE, TRUE, TRUE)
+    x[logvec]
+    ```
 
 
 - Use logicals to extract elements of a vector that satisfy some condition

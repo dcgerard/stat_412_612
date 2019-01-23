@@ -61,10 +61,6 @@ Based on a bootcamp originally written by Sohail Nizam.
     View(mtcars)
     ```
 
-- ANOTHER NOTE: running this function requires the installation of another 
-  package called xquartz.
-
-
 
 - More than likely, when you recieve data to work with, it will be in the form 
   of a data frame. 
