@@ -10,7 +10,7 @@ urlcolor: "blue"
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo       = TRUE, 
                       fig.height = 3, 
-                      fig.width  = 4,
+                      fig.width  = 6,
                       fig.align  = "center")
 ```
 
@@ -26,7 +26,7 @@ knitr::opts_chunk$set(echo       = TRUE,
 
 - In base R: start with a blank plot and build on it by adding elements --- the "artist's canvas".
 - In lattice: One function, specify everything at once.
-- ggplot2: A "grammar of graphics". You map from variables to aesthetic attributes (size, color, shape) of geometic objects (lines, bars, points).
+- ggplot2: A "grammar of graphics". You map from variables to aesthetic attributes (size, color, shape) of geometric objects (lines, bars, points).
 
 - Let's look at the three ways to make a scatterplot with a loess smoother and a 
   rug plot.
@@ -110,7 +110,7 @@ knitr::opts_chunk$set(echo       = TRUE,
     
 - You can get most of your plotting done by understanding the basics of data
   frames, aesthetic mappings, geoms, and facets (the other aspects of the 
-  gramar of graphics are less often useful to modify).
+  grammar of graphics are less often useful to modify).
 
 - `ggplot()` creates a blank `gg` objects. It has two main arguments:
 
@@ -127,13 +127,13 @@ knitr::opts_chunk$set(echo       = TRUE,
 
 
 - `ggplot()` is almost always followed by a `+` and then a `geom` argument to 
-  specify which geometic objects receive the aesthetic mapping. We will 
+  specify which geometric objects receive the aesthetic mapping. We will 
   now go through many different types of geoms and the situations where they 
   are useful:
   
 - **Always make sure the `+` is at the end of a line and not at the beginning of a line.**
 
-- To goet a list of the possible aesthetic mappings of a geom, look at the help
+- To get a list of the possible aesthetic mappings of a geom, look at the help
   page.
   
 # Comparing Two Quantitative Variables
@@ -141,7 +141,7 @@ knitr::opts_chunk$set(echo       = TRUE,
 - A scatterplot is used to explore the relationship between two **quantitative**
   variables. 
   
-- "Qauntitative" means that arithmetic operations ($+/-/\times/\div$) make sense
+- "Quantitative" means that arithmetic operations ($+/-/\times/\div$) make sense
   on them.
   
 - E.g. `hwy` and `displ` are two quantitative variables.
@@ -193,9 +193,36 @@ knitr::opts_chunk$set(echo       = TRUE,
   or `alpha` aesthetics?
   
 ```{r, eval = FALSE, echo = FALSE}
+## There is no real ordering of the values of hte categorical variable, so
+## the alpha and size mappings don't make sense (because there is a clear 
+## ordering for these aesthetics).
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, size = drv)) +
+  geom_point()
 
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, alpha = drv)) +
+  geom_point()
 ```
   
+  
+- **Exercise**: Consider the `iris` dataset that comes with R by default:
+    ```{r}
+    data("iris")
+    ```
+    
+    Make a plot of petal length vs petal width, color coding by the species of 
+    iris. What do you notice?
+    
+    ```{r, eval = FALSE, echo = FALSE}
+    ## Good separation of species using two variables.
+    ggplot(data = iris, mapping = aes(x = Petal.Length, 
+                                      y = Petal.Width, 
+                                      color = Species)) +
+      geom_point()
+    ```
+    
+
+
+    
 
 ## Annotating by a quantitative variable
 
@@ -218,6 +245,16 @@ knitr::opts_chunk$set(echo       = TRUE,
     ggplot(data = mpg, mapping = aes(x = displ, y = hwy, size = cty)) +
                   geom_point()
     ```
+
+- **Exercise**: What happens when we map a quantitative variable to the `shape`
+  aesthetic?
+  
+    ```{r, echo = FALSE, eval = FALSE}
+    ## We get an error
+    ggplot(data = mpg, mapping = aes(x = displ, y = hwy, shape = cty)) +
+                  geom_point()
+    ```
+  
     
 - We can map multiple variables to multiple aesthetics at the same time, but 
   the resulting plot might get too complicated.
@@ -229,6 +266,20 @@ knitr::opts_chunk$set(echo       = TRUE,
                                      shape = drv,
                                      color = class)) +
               geom_point()
+    ```
+
+- **Exercise**: Using the `iris` dataset, plot petal length vs petal width,
+  annotating by sepal length and sepal width and species. Do you notice anything?
+  
+    ```{r, echo = FALSE, eval = FALSE}
+    ## Virginica appears to have larger sepal length. But the plot is too cluttered
+    ## for me to make anything else out.
+    ggplot(data = iris, mapping = aes(x = Petal.Length,
+                                      y = Petal.Width,
+                                      color = Species,
+                                      size = Sepal.Length,
+                                      alpha = Sepal.Width)) +
+      geom_point()
     ```
   
   
@@ -265,11 +316,10 @@ knitr::opts_chunk$set(echo       = TRUE,
     ```
   
 - If you have binary response data, you can plot the fitted logistic curves by
-```{r}
-ggplot(data = mtcars, mapping = aes(x = hp, y = vs)) +
-  geom_smooth(method = glm, method.args = list(family = "binomial"), se = FALSE)
-```
-
+    ```{r}
+    ggplot(data = mtcars, mapping = aes(x = hp, y = vs)) +
+      geom_smooth(method = glm, method.args = list(family = "binomial"), se = FALSE)
+    ```
   
 ## Layering Geoms:
 
@@ -283,7 +333,7 @@ ggplot(data = mtcars, mapping = aes(x = hp, y = vs)) +
     ```
   
     
-- You can equivilently define the aesthetics in the particular geom you are 
+- You can equivalently define the aesthetics in the particular geom you are 
   using. However, later geoms will not have access to these maps and you would
   have to redefine them.
 
@@ -310,14 +360,27 @@ ggplot(data = mtcars, mapping = aes(x = hp, y = vs)) +
       geom_smooth(se = FALSE)
     ```
 
+- **Exercise**: Try adding the OLS line to the scatterplot of petal length vs petal 
+  width. Color code by species, but the OLS line should not depend on species.
+  
+```{r, echo = FALSE, eval = FALSE}
+ggplot(data = iris, mapping = aes(x = Petal.Length, y = Petal.Width)) +
+  geom_point(mapping = aes(color = Species)) +
+  geom_smooth(method = lm, se = FALSE)
+```
+  
+  
+
 ## Overplotting
 
 - The variables `cty` and `hwy` are rounded, so result in a lot of overlapping.
 
-- Two ways to counteract this:
+- Three ways to counteract this:
 
     1. If you have small data, use `geom_jitter()`
     2. If you have large data, set the transparency for all points to be low.
+    3. If you have a really large dataset, randomly subsample the observational 
+       units (chapter 5).
     
     ```{r}
     ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) +
@@ -328,6 +391,17 @@ ggplot(data = mtcars, mapping = aes(x = hp, y = vs)) +
     ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) +
       geom_point(alpha = 0.1)
     ```
+
+- **Exercise**: Consider the `diamonds` dataset from ggplot2. Load it and then
+  plot `carat` vs `price`. Account for overplotting if possible.
+  
+    ```{r, echo = FALSE, eval = FALSE}
+    data("diamonds")
+    ggplot(data = diamonds, mapping = aes(x = carat, y = price)) +
+      geom_point(alpha = 0.01) +
+      geom_smooth(se = FALSE)
+    ```
+  
 
 # One Quantitative Variable
 
@@ -390,6 +464,15 @@ ggplot(data = mtcars, mapping = aes(x = hp, y = vs)) +
     ```
 
 
+- **Exercise**: Create a histogram of the price of a diamond, 
+  color coding by cut.
+  
+    ```{r, echo = FALSE, eval = FALSE}
+    ggplot(data = diamonds, mapping = aes(x = price, fill = cut)) +
+      geom_histogram(bins = 30)
+    ```
+  
+
 ## Density Plot
 
 - A density is a "smoothed" histogram. It can be created with `geom_density()`
@@ -401,7 +484,7 @@ ggplot(data = mtcars, mapping = aes(x = hp, y = vs)) +
       geom_density()
     ```
 
-- You can plot the densities for the different lebvels of a categorical variable
+- You can plot the densities for the different levels of a categorical variable
   by mapping the `fill` aesthetic
   
     ```{r}
@@ -441,6 +524,20 @@ ggplot(data = mtcars, mapping = aes(x = hp, y = vs)) +
       geom_beeswarm()
     ```
 
+- **Exercise**: Create a boxplot for cut vs log-price. Does anything surprise 
+  you? Can you think of another plot that could explain your surprise?
+
+    ```{r, echo = FALSE, eval = FALSE}
+    ## Ideal diamonds are lower priced?
+    ggplot(data = diamonds, mapping = aes(x = cut, y = price)) +
+      geom_boxplot() +
+      scale_y_log10()
+    
+    ## But they also tend to be smaller diamonds.
+    ggplot(data = diamonds, mapping = aes(x = cut, y = carat)) +
+      geom_boxplot() +
+      scale_y_log10()
+    ```
 
 # Facets
 
@@ -471,6 +568,16 @@ ggplot(data = mtcars, mapping = aes(x = hp, y = vs)) +
       facet_grid(class ~ drv)
     ```
 
+- **Exerciese**: Create a boxplot of cut vs price for each level of color.
+
+```{r, echo = FALSE, eval = FALSE}
+ggplot(data = diamonds, mapping = aes(x = cut, y = price)) +
+  geom_boxplot() +
+  scale_y_log10() +
+  facet_wrap( ~ color)
+```
+
+
 # Aesthetics for all objects.
 
 - Suppose we like scatterplots with blue points. The correct code to use is:
@@ -497,6 +604,8 @@ ggplot(data = mtcars, mapping = aes(x = hp, y = vs)) +
     ggplot(data = mpg, mapping = aes(x = hwy)) +
       geom_histogram(fill = "white", color = "black")
     ```
+    
+- I also often use the `alpha` argument frequently (see overplotting above).
 
 # Themes
 
@@ -532,9 +641,33 @@ ggplot(data = mtcars, mapping = aes(x = hp, y = vs)) +
     ```
 
 
+# Scales
+
+- "Scales control how a plot maps data values to the visual
+  values of an aesthetic. To change the mapping, add a
+  custom scale."
+  
+- E.g.: The the scale of colors determines what color is the "largest" and 
+  which is the "smallest."
+  
+    ```{r}
+    ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color = cty)) +
+      geom_point() +
+      scale_color_continuous(low = "black", high = "white")
+    ```
+  
+- E.g. The scale of an axis (log vs normal)
+
+    ```{r}
+    ggplot(data = diamonds, mapping = aes(x = price, y = carat)) +
+      scale_y_log10() +
+      scale_x_log10() +
+      geom_point(alpha = 0.01)
+    ```
+
 # Colorblind  safe pallettes
 
-- When you publish, it's polite to use colorblind safe palletes. You can do this
+- When you publish, it's polite to use colorblind safe palettes. You can do this
   easily with the ggthemes package.
   
     ```{r}
@@ -605,7 +738,6 @@ ggplot(data = mtcars, mapping = aes(x = hp, y = vs)) +
     ```{r}
     ggsave(filename = "my_first_plot.pdf",
            plot = pl,
-           device = pdf(),
            width = 6, 
            height = 4,
            family = "Times")
@@ -623,4 +755,6 @@ ggplot(data = mtcars, mapping = aes(x = hp, y = vs)) +
   `gg` object to that pdf file (instead of the R graphics device). 
   `dev.off()` closes the connection.
 
+
+    
 

@@ -1,0 +1,117 @@
+---
+title: "03 Graphics Lab"
+author: "David Gerard"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, eval = FALSE)
+```
+
+# Diamonds
+
+- The goal of the diamonds dataset is to see what characteristics are most
+  influential on price. Perform an exploratory data analysis and come up with
+  some conjectures on what variables impact price. Can some associations be
+  explained by other variables? For example, can the decrease in price as the 
+  cut worsens be explained by the carat of the diamond?
+  
+```{block}
+Make a plot of price vs all other variables.
+```
+
+```{r}
+## Carat marginally increases price
+ggplot(data = diamonds, mapping = aes(x = carat, y = price)) +
+  geom_point(alpha = 0.05) +
+  scale_y_log10() +
+  scale_x_log10()
+
+# Cut marginally decreases price
+ggplot(data = diamonds, mapping = aes(x = cut, y = price)) +
+  geom_boxplot() +
+  scale_y_log10()
+
+# Color marginally decreases price
+ggplot(data = diamonds, mapping = aes(x = color, y = price)) +
+  geom_boxplot() +
+  scale_y_log10()
+
+# Clarity marginally decreases price
+ggplot(data = diamonds, mapping = aes(x = clarity, y = price)) +
+  geom_boxplot() +
+  scale_y_log10()
+```
+
+```{block}
+All of these unexpected associations are almost certainly due to the additional
+association with carat.
+```
+
+```{r}
+# Carat and cut are negatively associated
+ggplot(data = diamonds, mapping = aes(x = cut, y = carat)) +
+  geom_boxplot() +
+  scale_y_log10()
+
+# Carat and color are negatively associated
+ggplot(data = diamonds, mapping = aes(x = color, y = carat)) +
+  geom_boxplot() +
+  scale_y_log10()
+
+# Carat and clarity are negatively associated
+ggplot(data = diamonds, mapping = aes(x = clarity, y = carat)) +
+  geom_boxplot() +
+  scale_y_log10()
+```
+
+```{block}
+I'll bin observations by carat and then plot the associations within each bin 
+using facets.
+```
+
+
+```{r}
+## Bin carats
+carat_breaks <- c(-Inf, quantile(diamonds$carat, seq(0.05, 0.95, by = 0.05)), Inf)
+diamonds$carat_bin <- cut(diamonds$carat, breaks = carat_breaks)
+
+## Within each bin there is mostly an increase
+ggplot(data = diamonds, mapping = aes(x = cut, y = price)) +
+  scale_y_log10() +
+  geom_boxplot() +
+  facet_wrap(~carat_bin)
+
+ggplot(data = diamonds, mapping = aes(x = color, y = price)) +
+  scale_y_log10() +
+  geom_boxplot() +
+  facet_wrap(~carat_bin)
+
+ggplot(data = diamonds, mapping = aes(x = clarity, y = price)) +
+  scale_y_log10() +
+  geom_boxplot() +
+  facet_wrap(~carat_bin)
+```
+
+```{r}
+## Cut and color seem to be mostly independent
+prop.table(table(diamonds$cut, diamonds$color), margin = 1)
+prop.table(table(diamonds$cut, diamonds$color), margin = 2)
+
+## Cut and clarity seem to be more related, but not so much
+prop.table(table(diamonds$cut, diamonds$clarity), margin = 1)
+prop.table(table(diamonds$cut, diamonds$clarity), margin = 2)
+
+
+## Cut and clarity seem to be more somewhat related, but not too much
+prop.table(table(diamonds$color, diamonds$clarity), margin = 1)
+prop.table(table(diamonds$color, diamonds$clarity), margin = 2)
+```
+
+
+
+
+
+  
+  

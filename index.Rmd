@@ -35,6 +35,7 @@ University by [David Gerard](https://dcgerard.github.io/).
     - [03 `qplot()` Cheat Sheet](./lectures/03_graphics/03_qplot_cheatsheet.pdf)
     - [03 Base R Graphics Cheat Sheet](./lectures/03_graphics/03_base_r_cheatsheet.pdf)
     - [03 Lattice R Graphics Cheat Sheet](./lectures/03_graphics/03_lattice_cheatsheet.pdf)
+    - [03 RStudio's ggplot2 Cheat Sheet](https://github.com/rstudio/cheatsheets/blob/master/data-visualization-2.1.pdf)
     
 # Homeworks
 
