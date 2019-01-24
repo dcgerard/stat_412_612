@@ -32,14 +32,12 @@ University by [David Gerard](https://dcgerard.github.io/).
     - [02 Lab Questions](./lectures/02_functions_pipes/02_lab.pdf)
 - 03 Visualizations
     - [03 Worksheet: Visualization with ggplot2](./lectures/03_graphics/03_graphics.pdf)
+    - [03 Lab Questions](./lectures/03_graphics/03_lab.pdf)
     - [03 `qplot()` Cheat Sheet](./lectures/03_graphics/03_qplot_cheatsheet.pdf)
     - [03 Base R Graphics Cheat Sheet](./lectures/03_graphics/03_base_r_cheatsheet.pdf)
     - [03 Lattice R Graphics Cheat Sheet](./lectures/03_graphics/03_lattice_cheatsheet.pdf)
     - [03 RStudio's ggplot2 Cheat Sheet](https://github.com/rstudio/cheatsheets/blob/master/data-visualization-2.1.pdf)
-    
-# Homeworks
-
-- [Homework 1](./hw/hw1/hw1.pdf)
+- 04 Manipulating Data Frames
 
     
     
