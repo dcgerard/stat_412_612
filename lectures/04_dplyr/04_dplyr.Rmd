@@ -1,0 +1,443 @@
+---
+title: "Data Frames and dplyr"
+author: "David Gerard"
+date: "`r Sys.Date()`"
+output: pdf_document
+urlcolor: "blue"
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo       = TRUE, 
+                      fig.height = 3, 
+                      fig.width  = 6,
+                      fig.align  = "center")
+```
+
+# Learning Objectives
+
+- Manipulating data frames.
+- Calculating summary statistics.
+- Using the basic functions of dplyr
+- Chapter 5 of [RDS](https://r4ds.had.co.nz/)
+
+
+# Background
+
+- A data frame consists of variables along the columns and observations along
+  the rows.
+  
+- For example, in the `msleep` data frame, the observations are animals and the
+  the variables are properies of those animals (body weight, total sleep time, 
+  etc).
+  
+- **Data frames are the fundamental data type in most analyses.**
+
+- Common operations on a data frame during an analysis:
+  
+    - Select specific variables (`select()`).
+    - Select observational units by the values of some variables (`filter()`).
+    - Create new variables from old variables (`mutate()`)
+    - Reorder the observional units (`arrange()`)
+    - Create summary statistics from many observational units (`summarize()`)
+    - Group the observational units by the values of some variables (`group_by()`).
+    
+- As a taste, let's look at an example from the `flights` data frame from the
+  nycflights13 package:
+    ```{r}
+    library(nycflights13)
+    data("flights")
+    ```
+    
+- Suppose we want calculate the average departure delay for the flights from 
+  carrier in the second half of the year. The steps would be
+  
+    1. Select only flights from the second half of the year.
+    2. Group the flights by the carrier.
+    3. Calculate the average departure delay time within each carrier.
+    
+- In base R, this operation would look like:
+
+    ```{r, eval = FALSE}
+    flights2 <- flights[flights$month >= 7, ]
+    flights3 <- aggregate(dep_time ~ carrier, FUN = mean, data = flights2)
+    flights3
+    ```
+
+- In tidyverse, this looks like
+    ```{r}
+    suppressPackageStartupMessages(library(tidyverse))
+    ```
+    ```{r, eval = FALSE}
+    flights %>%
+      filter(month >= 7) %>%
+      group_by(carrier) %>%
+      summarize(mean_dep = mean(dep_time, na.rm = TRUE))
+    ```
+
+
+- In the tidyverse:
+
+    - We get to use piping.
+    - It's more expressive/clear.
+    
+# Filter Rows Based on Variable Values
+
+- In the tidyverse, we use the `filter()` function to select rows (observations)
+  based on the values of some variables.
+  
+- You create [logical conditions](https://dcgerard.github.io/stat_412_612/lectures/01_intro/01_logic.pdf) \
+  and the rows that satisfy these logical conditions (return `TRUE`) are selected.
+  
+- Let's extract all flights from new york that occurred in January.
+
+    ```{r, eval = FALSE}
+    flights %>%
+      filter(month == 1)
+    ```
+
+- You can filter based on more than two variables using logical operators.
+
+- Graphical Depiction of Logical Operations:
+    ```{r, echo = FALSE, fig.height=4.5, fig.width=6}
+    suppressPackageStartupMessages(library(gridExtra))
+    plot_venn <- function(col1, col2, col3, col4, title, alpha = 0.5) {
+        x1 <- seq(-1, 1, length = 300)
+        y1 <- sqrt(1 - x1 ^ 2)
+        y2 <- -sqrt(1 - x1 ^ 2)
+        x2 <- x1 + 0.5
+        x1 <- x1 - 0.5
+        
+        circdf1 <- data.frame(y = c(y1, y2[length(y2):1]), x = c(x1, x1[length(x1):1]))
+        circdf2 <- data.frame(y = c(y1[length(y1):1], y2), x = c(x2[length(x2):1], x2))
+        
+        poly1 <- data.frame(x = c(x1[x1 < 0],
+                                  x2[x2 < 0][sum(x2 < 0):1], 
+                                  x2[x2 < 0], 
+                                  x1[x1 < 0][sum(x1 < 0):1]),
+                            y = c(y1[x1 < 0], 
+                                  y1[length(y1):1][x2 < 0][sum(x2 < 0):1],
+                                  y2[length(y2):1][x2 < 0],
+                                  y2[x1 < 0][sum(x1 < 0):1]))
+        poly2 <- poly1
+        poly2$x <- poly1$x * -1
+        
+        poly3 <- data.frame(x = c(x2[x2 < 0][sum(x2 < 0):1], 
+                                  x2[x2 < 0]),
+                            y = c(y1[length(y1):1][x2 < 0][sum(x2 < 0):1],
+                                  y2[length(y2):1][x2 < 0]))
+        tempdf <- poly3[nrow(poly3):1, ]
+        tempdf$x <- tempdf$x * -1
+        poly3 <- rbind(poly3, tempdf)
+        ggplot() +
+          geom_polygon(data = poly1, 
+                       mapping = aes(x = x, y = y),
+                       fill = col1,
+                       color = "black",
+                       alpha = alpha) +
+          geom_polygon(data = poly2, 
+                       mapping = aes(x = x, y = y),
+                       fill = col3,
+                       color = "black",
+                       alpha = alpha) +
+          geom_polygon(data = poly3, 
+                       mapping = aes(x = x, y = y),
+                       fill = col2,
+                       color = "black", 
+                       alpha = alpha) +
+          theme_void() +
+          ggtitle(title) +
+          theme(plot.title = element_text(hjust = 0.5), 
+                plot.background = element_rect(color = col4)) +
+          annotate(geom = "text", x = -0.8, y = 0, label = "x") +
+          annotate(geom = "text", x = 0.8, y = 0, label = "y") ->
+          pl
+      return(pl)
+    }
+    
+    aval <- 1
+    col <- "#b1d9ef"
+    grid.arrange(
+      plot_venn(col, "white", "white", "white", "x & !y", alpha = aval),
+      plot_venn("white", col, "white", "white", "x & y", alpha = aval),
+      plot_venn("white", "white", col, "white", "!x & y", alpha = aval),
+      plot_venn(col, col, "white", "white", "x", alpha = aval),
+      plot_venn(col, "white", col, "white", "xor(x, y)", alpha = aval),
+      plot_venn("white", col, col, "white", "y", alpha = aval),
+      plot_venn(col, col, col, "white", "x | y", alpha = aval)
+    )
+    ```
+    
+- Let's get all flights that were both in January and from JFK.
+
+    ```{r, eval = FALSE}
+    flights %>%
+      filter(month == 1 & origin == "JFK")
+    ```
+    
+- If you don't know what variable values are possible in a categorical variable, 
+  then you can try two things:
+    
+    1. `levels()` if the variable is a factor.
+    2. `unique()` otherwise.
+    
+    ```{r}
+    unique(flights$origin)
+    ```
+
+
+- Because the and operator is the most used, `filter()` will also perform the 
+  and operation if you separate logical conditions by a comma.
+  
+    ```{r, eval = FALSE}
+    flights %>%
+      filter(month == 1, origin == "JFK")
+    ```
+  
+
+- You should still know the logical operators in case the filtering gets super
+  complicated.
+
+- Let's extract the January LGA flights and the December JFK flights.  
+    ```{r, eval = FALSE}
+    flights %>%
+      filter((month == 1 & origin == "LGA") | (month == 12 & origin == "JFK"))
+    ```
+    
+- **Exercise**: Extract all flights that either occur on odd months, or on odd
+  days of even months.
+    ```{r, echo = FALSE, eval = FALSE}
+    flights %>%
+      filter((month %% 2 == 1) | (month %% 2 == 0 & day %% 2 == 1))
+    ```
+    
+- **Exercise** (RDS 5.2.4.1) Find all flights that satisfy the following conditions
+
+    1. Had an arrival delay of two or more hours
+    2. Flew to Houston (IAH or HOU)
+    3. Were operated by United, American, or Delta
+    4. Departed in summer (July, August, and September)
+    5. Arrived more than two hours late, but didn't leave late
+    
+    ```{r, eval = FALSE, echo = FALSE}
+    airlines
+    flights %>%
+      filter(arr_delay >= 2,
+             dest == "IAH" | dest == "HOU",
+             carrier == "AA" | carrier == "DL" | carrier == "UA",
+             month %in% 6:8,
+             dep_delay <= 0,
+             arr_delay > 2
+             )
+    ```
+    
+### Missing Values
+
+- **`filter()` will exclude observations with missing values**.
+
+- If you want to extract those rows as well, you have to ask for them
+  explicitely using `is.na()`.
+
+    ```{r}
+    dfdat <- data.frame(x = c(1, NA, 2),
+                        y = c(2, 4, 1))
+    dfdat %>%
+      filter(x == 1)
+    
+    dfdat %>%
+      filter(x == 1 | is.na(x))
+    ```
+
+- **You cannot use `NA == NA`**. If two observations are missing, then you don't 
+  know if they are equal, so R will return `NA` to this:
+  
+    ```{r}
+    NA == NA
+    ```
+  
+
+### `near()`
+
+- Unless you explicitely tell it, R treats all numerics as floats.
+
+- It's thus dangerous to use `==` for numerics.
+
+- Instead, use the `near()` function.
+
+    ```{r}
+    sqrt(2) ^ 2
+    sqrt(2) ^ 2 == 2
+    near(sqrt(2) ^ 2, 2)
+    ```
+
+- If a variable is an integer `<int>`, then it's OK to use `==`
+
+    ```{r}
+    twoint <- as.integer(sqrt(2) ^ 2)
+    twoint == 2
+    ```
+    
+# Arrange order of rows
+
+- Use `arrange()` to order the rows by the value of a variable.
+
+    ```{r, eval = FALSE}
+    flights %>%
+      arrange(dep_delay)
+    ```
+
+- The default is the arrange in **ascending** order. To arrange in descending
+  order, use the `desc()` function.
+  
+    ```{r, eval = FALSE}
+    flights %>%
+      arrange(desc(dep_delay))
+    ```
+    
+- If there are ties, then you can break the ties by arranging by another variable.
+
+    ```{r}
+    dfdat <- data.frame(x = c(1, 2, 1, 2),
+                        y = c(2, 2, 1, 1))
+    dfdat
+    dfdat %>%
+      arrange(x)
+    
+    dfdat %>%
+      arrange(x, y)
+    ```
+    
+- Observations with missing values are always placed at the end (even when 
+  using the `desc()` function)
+
+    
+# Select Specific Columns
+
+- The `select()` function will extract variables and place them in a smaller
+  data frame.
+  
+- Select specific variables
+
+    ```{r, eval = FALSE}
+    flights %>%
+      select(dep_delay, arr_delay)
+    ```
+
+- Select a range of variables with `:`:
+
+    ```{r, eval = FALSE}
+    flights %>%
+      select(year:day)
+    ```
+
+- Select all variables except certain ones with `-`:
+
+    ```{r, eval=FALSE}
+    flights %>%
+      select(-dep_delay, -arr_delay)
+    ```
+
+- Select all variables except within a range of columns.
+
+    ```{r, eval = FALSE}
+    flights %>%
+      select(-(year:day))
+    ```
+
+- Useful helper functions for `select()`:
+
+    - `starts_with("abc")`: matches names that begin with `"abc"`.
+
+    - `ends_with("xyz")`: matches names that end with `"xyz"`.
+
+    - `contains("ijk")`: matches names that contain `"ijk"`.
+
+    - `matches("(.)\\1")`: selects variables that match a regular expression. 
+      This one matches any variables that contain repeated characters. You'll 
+      learn more about regular expressions in strings.
+
+    - `num_range("x", 1:3)`: matches `x1`, `x2`, and `x3`.
+
+    ```{r, eval = FALSE}
+    flights %>%
+      select(ends_with("delay"))
+    ```
+    
+    ```{r, eval = FALSE}
+    flights %>%
+      select(starts_with("dep"), year, month, day)
+    ```
+
+
+- **Exercise**: Select all variables that have anything to do with the arrival. 
+  Also keep the `year`, `month`, and `day`. Use as few characters as possible
+  in your `select()` call.
+  
+    ```{r, eval = FALSE, echo = FALSE}
+    flights %>%
+      select(year:day, contains("arr"))
+    ```
+    
+# Rename Variables
+
+- Use `rename()` to rename a variable.
+
+    ```{r, eval = FALSE}
+    flights %>%
+      rename(departureTime = dep_time)
+    ```
+
+
+# Create New Variables
+
+- The variables we have are usually not enough for an analysis.
+
+    - Take a log-transformation of positive data to make associations more linear.
+    - Create new features based on existing features.
+    
+- We can use `mutate()` to create new variables from old.
+
+```{r, eval = FALSE}
+flights %>%
+  mutate(gain = dep_delay - arr_delay,
+         speed = distance / air_time * 60)
+```
+
+- If you only want to keep new variables, use `transmute()`
+
+```{r}
+flights %>%
+  transmute(gain = dep_delay - arr_delay,
+            hours = air_time / 60,
+            gain_per_hour = gain / hours)
+```
+
+
+# Group Observations by Variables
+
+# Calculate Summaries
+
+# Select Specific Rows
+
+
+
+
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+
+
+

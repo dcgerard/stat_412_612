@@ -22,7 +22,7 @@ knitr::opts_chunk$set(echo       = TRUE,
 
 # Background
 
-- The three main plotting systems in R are [base R](https://dcgerard.github.io/stat_412_612/lectures/03_graphics/03_base_r_cheatsheet.pdf), [lattice](https://dcgerard.github.io/stat_412_612/lectures/03_graphics/03_lattice_cheatsheet.pdf), [ggplot2](https://www.rstudio.com/resources/cheatsheets/#ggplot2) (from the tidyverse) (with base R-like syntax implemented in the [`qplot()` function](https://dcgerard.github.io/stat_412_612/lectures/03_graphics/03_qplot_cheatsheet.pdf)).
+- The three main plotting systems in R are [base R](https://dcgerard.github.io/stat_412_612/lectures/03_graphics/03_base_r_cheatsheet.pdf), [lattice](https://dcgerard.github.io/stat_412_612/lectures/03_graphics/03_lattice_cheatsheet.pdf), and [ggplot2](https://www.rstudio.com/resources/cheatsheets/#ggplot2) (from the tidyverse) (with base R-like syntax implemented in the [`qplot()` function](https://dcgerard.github.io/stat_412_612/lectures/03_graphics/03_qplot_cheatsheet.pdf)).
 
 - In base R: start with a blank plot and build on it by adding elements --- the "artist's canvas".
 - In lattice: One function, specify everything at once.
@@ -398,8 +398,7 @@ ggplot(data = iris, mapping = aes(x = Petal.Length, y = Petal.Width)) +
     ```{r, echo = FALSE, eval = FALSE}
     data("diamonds")
     ggplot(data = diamonds, mapping = aes(x = carat, y = price)) +
-      geom_point(alpha = 0.01) +
-      geom_smooth(se = FALSE)
+      geom_point(alpha = 0.01)
     ```
   
 
@@ -568,14 +567,14 @@ ggplot(data = iris, mapping = aes(x = Petal.Length, y = Petal.Width)) +
       facet_grid(class ~ drv)
     ```
 
-- **Exerciese**: Create a boxplot of cut vs price for each level of color.
+- **Exercise**: Create a boxplot of cut vs price for each level of color.
 
-```{r, echo = FALSE, eval = FALSE}
-ggplot(data = diamonds, mapping = aes(x = cut, y = price)) +
-  geom_boxplot() +
-  scale_y_log10() +
-  facet_wrap( ~ color)
-```
+    ```{r, echo = FALSE, eval = FALSE}
+    ggplot(data = diamonds, mapping = aes(x = cut, y = price)) +
+      geom_boxplot() +
+      scale_y_log10() +
+      facet_wrap( ~ color)
+    ```
 
 
 # Aesthetics for all objects.
@@ -640,6 +639,18 @@ ggplot(data = diamonds, mapping = aes(x = cut, y = price)) +
       theme_fivethirtyeight()
     ```
 
+- **Exercise**: Create a boxplot of cut vs price for each level of color. Make
+  the boxplots all orange and use the black and white theme.
+  
+    ```{r, echo = FALSE, eval = FALSE}
+    ggplot(data = diamonds, mapping = aes(x = cut, y = price)) +
+      geom_boxplot(fill = "orange") +
+      scale_y_log10() +
+      facet_wrap( ~ color) +
+      theme_bw()
+    ```
+  
+  
 
 # Scales
 
@@ -754,7 +765,20 @@ ggplot(data = diamonds, mapping = aes(x = cut, y = price)) +
 - `pdf()` opens up a connection to a new pdf file. `print(pl)` prints our saved
   `gg` object to that pdf file (instead of the R graphics device). 
   `dev.off()` closes the connection.
-
+  
+- **Exercise**: Create a boxplot of cut vs price for each level of color. Make
+  the boxplots all orange and use the black and white theme. Save this plot to
+  the output folder using `ggsave()`.
+  
+    ```{r, echo = FALSE, eval = FALSE}
+    ggplot(data = diamonds, mapping = aes(x = cut, y = price)) +
+      geom_boxplot(fill = "orange") +
+      scale_y_log10() +
+      facet_wrap( ~ color) +
+      theme_bw() ->
+      pl
+    ggsave(filename = "./box_cut_price_color.pdf", plot = pl)
+    ```
 
     
 

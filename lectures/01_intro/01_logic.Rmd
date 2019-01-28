@@ -89,6 +89,80 @@ knitr::opts_chunk$set(echo = TRUE)
     (x < 3) | (y >= 4)
     ```
     
+\newpage
+
+- Graphical Depiction of Logical Operations:
+
+    ```{r, echo = FALSE, fig.height=4.5, fig.width=6}
+    library(ggplot2)
+    suppressPackageStartupMessages(library(gridExtra))
+    plot_venn <- function(col1, col2, col3, col4, title, alpha = 0.5) {
+        x1 <- seq(-1, 1, length = 300)
+        y1 <- sqrt(1 - x1 ^ 2)
+        y2 <- -sqrt(1 - x1 ^ 2)
+        x2 <- x1 + 0.5
+        x1 <- x1 - 0.5
+        
+        circdf1 <- data.frame(y = c(y1, y2[length(y2):1]), x = c(x1, x1[length(x1):1]))
+        circdf2 <- data.frame(y = c(y1[length(y1):1], y2), x = c(x2[length(x2):1], x2))
+        
+        poly1 <- data.frame(x = c(x1[x1 < 0],
+                                  x2[x2 < 0][sum(x2 < 0):1], 
+                                  x2[x2 < 0], 
+                                  x1[x1 < 0][sum(x1 < 0):1]),
+                            y = c(y1[x1 < 0], 
+                                  y1[length(y1):1][x2 < 0][sum(x2 < 0):1],
+                                  y2[length(y2):1][x2 < 0],
+                                  y2[x1 < 0][sum(x1 < 0):1]))
+        poly2 <- poly1
+        poly2$x <- poly1$x * -1
+        
+        poly3 <- data.frame(x = c(x2[x2 < 0][sum(x2 < 0):1], 
+                                  x2[x2 < 0]),
+                            y = c(y1[length(y1):1][x2 < 0][sum(x2 < 0):1],
+                                  y2[length(y2):1][x2 < 0]))
+        tempdf <- poly3[nrow(poly3):1, ]
+        tempdf$x <- tempdf$x * -1
+        poly3 <- rbind(poly3, tempdf)
+        ggplot() +
+          geom_polygon(data = poly1, 
+                       mapping = aes(x = x, y = y),
+                       fill = col1,
+                       color = "black",
+                       alpha = alpha) +
+          geom_polygon(data = poly2, 
+                       mapping = aes(x = x, y = y),
+                       fill = col3,
+                       color = "black",
+                       alpha = alpha) +
+          geom_polygon(data = poly3, 
+                       mapping = aes(x = x, y = y),
+                       fill = col2,
+                       color = "black", 
+                       alpha = alpha) +
+          theme_void() +
+          ggtitle(title) +
+          theme(plot.title = element_text(hjust = 0.5), 
+                plot.background = element_rect(color = col4)) +
+          annotate(geom = "text", x = -0.8, y = 0, label = "x") +
+          annotate(geom = "text", x = 0.8, y = 0, label = "y") ->
+          pl
+      return(pl)
+    }
+    
+    aval <- 1
+    col <- "#b1d9ef"
+    grid.arrange(
+      plot_venn(col, "white", "white", "white", "x & !y", alpha = aval),
+      plot_venn("white", col, "white", "white", "x & y", alpha = aval),
+      plot_venn("white", "white", col, "white", "!x & y", alpha = aval),
+      plot_venn(col, col, "white", "white", "x", alpha = aval),
+      plot_venn(col, "white", col, "white", "xor(x, y)", alpha = aval),
+      plot_venn("white", col, col, "white", "y", alpha = aval),
+      plot_venn(col, col, col, "white", "x | y", alpha = aval)
+    )
+    ```
+    
 - Use logicals to extract elements of vectors
 
     ```{r}
