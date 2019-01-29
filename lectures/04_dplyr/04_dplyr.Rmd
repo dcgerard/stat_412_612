@@ -38,7 +38,7 @@ knitr::opts_chunk$set(echo       = TRUE,
     - Select specific variables (`select()`).
     - Select observational units by the values of some variables (`filter()`).
     - Create new variables from old variables (`mutate()`)
-    - Reorder the observional units (`arrange()`)
+    - Reorder the observational units (`arrange()`)
     - Create summary statistics from many observational units (`summarize()`)
     - Group the observational units by the values of some variables (`group_by()`).
     
@@ -86,7 +86,7 @@ knitr::opts_chunk$set(echo       = TRUE,
 - In the tidyverse, we use the `filter()` function to select rows (observations)
   based on the values of some variables.
   
-- You create [logical conditions](https://dcgerard.github.io/stat_412_612/lectures/01_intro/01_logic.pdf) \
+- You create [logical conditions](https://dcgerard.github.io/stat_412_612/lectures/01_intro/01_logic.pdf)
   and the rows that satisfy these logical conditions (return `TRUE`) are selected.
   
 - Let's extract all flights from new york that occurred in January.
@@ -186,7 +186,7 @@ knitr::opts_chunk$set(echo       = TRUE,
     ```
 
 
-- Because the and operator is the most used, `filter()` will also perform the 
+- Because the *and* operator is the most used, `filter()` will also perform the 
   and operation if you separate logical conditions by a comma.
   
     ```{r, eval = FALSE}
@@ -397,28 +397,229 @@ knitr::opts_chunk$set(echo       = TRUE,
     
 - We can use `mutate()` to create new variables from old.
 
-```{r, eval = FALSE}
-flights %>%
-  mutate(gain = dep_delay - arr_delay,
-         speed = distance / air_time * 60)
-```
+    ```{r, eval = FALSE}
+    flights %>%
+      mutate(gain = dep_delay - arr_delay,
+             speed = distance / air_time * 60)
+    ```
 
 - If you only want to keep new variables, use `transmute()`
 
+    ```{r}
+    flights %>%
+      transmute(gain = dep_delay - arr_delay,
+                hours = air_time / 60,
+                gain_per_hour = gain / hours)
+    ```
+    
+- **Exercise**: (RDS 3.5.2.1) Currently `dep_time` and `sched_dep_time` are 
+  convenient to look at, but hard to compute with because they're not really 
+  continuous numbers. Convert them to a more convenient representation of
+  number of minutes since midnight. Hint: `%/%` is integer division and `%%` is
+  remainder.
+  
+    ```{r, echo = FALSE, eval = FALSE}
+    flights %>%
+      mutate(dep_h = dep_time %/% 100,
+             dep_m = dep_time %% 100,
+             dep_elapsed_min = dep_h * 60 + dep_m) ->
+      flights
+    head(flights$dep_elapsed_min)
+    head(flights$dep_time)
+    ```
+
+# Summaries
+
+- We can create summary statistics using the `summarize()` function.
+
+
+- The following will calculate the mean departure delay time.
+
+    ```{r}
+    flights %>%
+      summarize(mean_del = mean(dep_delay, na.rm = TRUE))
+    ```
+
+- **Exercise**: What is the standard deviation of the departure delay time?
+
+    ```{r, eval = FALSE, echo = FALSE}
+    flights %>%
+      summarize(sd_del = sd(dep_delay, na.rm = TRUE))
+    ```
+
+# Grouped Summaries
+
+- You can create a grouped data frame using the `group_by()` function.
+
+- You define what variables to group the observational units by.
+
+- Each unique combination of the values of the grouping variables will create a
+  new group.
+  
+- Consider the data set:
 ```{r}
-flights %>%
-  transmute(gain = dep_delay - arr_delay,
-            hours = air_time / 60,
-            gain_per_hour = gain / hours)
+dfdat <- tribble(~x,  ~y,  ~z,
+                 "a", "c", 1,
+                 "a", "d", 2,
+                 "a", "c", 3,
+                 "a", "c", 4,
+                 "b", "c", 5,
+                 "b", "d", 6,
+                 "b", "c", 7)
+dfdat
 ```
 
+- If we group by the variable `x`, then there are two groups: 
+    
+    i. Rows 1, 2, 3, 4 (corresponding to `"a"`)
+    ii. Rows 5, 6, 7 (corresponding to `"b"`)
 
-# Group Observations by Variables
+- If we group by the variable `y` then there are also two groups: 
 
-# Calculate Summaries
+    i. Rows 1, 3, 4, 7, 5 (corresponding to `"c"`)
+    ii. Rows 2, 6 (corresponding to `"d"`)
+    
+- If we group by both `x` and `y` then we have four groups:
+
+    i. Rows 1, 3, 4 (corresponding to `"a"` and `"c"`)
+    ii. Row 1 (corresponding to `"a"` and `"d"`)
+    iii. Rows 5, 7 (corresponding to `"b"` and `"c"`)
+    iv. Row 6 (corresponding to `"b"` and `"d"`)
+    
+```{r}
+dfdat %>%
+  group_by(x) ->
+  grouped_dfdat
+attributes(grouped_dfdat)
+```
+    
+
+- The grouping function is most useful to calculate summaries within each group.
+
+- The `summarize()`, `filter()`, `arrange()`, `mutate()` functions will now all
+  operate in a group-specific manner.
+
+- Suppose we want to calculate the mean and standard deviation of the delays 
+  within each airport?
+  
+    ```{r, eval = FALSE}
+    flights %>%
+      group_by(origin) %>%
+      summarize(sd_del = sd(dep_delay, na.rm = TRUE),
+                mean_del = mean(dep_delay, na.rm = TRUE))
+    ```
+    
+- Or at a particular time of day within each airport:
+
+- Suppose we want to calculate the mean and standard deviation of the delays 
+  within each airport?
+  
+    ```{r, eval = FALSE}
+    flights %>%
+      group_by(origin, hour) %>%
+      summarize(sd_del = sd(dep_delay, na.rm = TRUE),
+                mean_del = mean(dep_delay, na.rm = TRUE))
+    ```
+    
+- We can save this output and feed into ggplot2
+
+    ```{r}
+    flights %>%
+      group_by(origin, hour) %>%
+      summarize(sd_del = sd(dep_delay, na.rm = TRUE),
+                mean_del = mean(dep_delay, na.rm = TRUE)) ->
+      sumdf
+    
+    ggplot(data = sumdf, mapping = aes(x = hour, y = mean_del, col = origin)) +
+      geom_line() +
+      theme_bw() +
+      xlab("Hour") +
+      ylab("Mean Delay Time") +
+      scale_color_discrete(name = "Origin")
+    ```
+
+- The `n()` function will count the number of observational units in a group.
+  **It is a good idea to always include this function in a `summarize()` call.
+  
+    ```{r, eval = FALSE}
+    flights %>%
+      group_by(origin, hour) %>%
+      summarize(sd_del = sd(dep_delay, na.rm = TRUE),
+                mean_del = mean(dep_delay, na.rm = TRUE),
+                n = n()) 
+    ```
+
+- **Exercise**: Look at the number and proportion of cancelled flights per day.
+  Is there a pattern? Is the proportion of cancelled flights related to the 
+  average delay?  We'll define a flight to be canceled by
+  `is.na(dep_delay) | is.na(arr_delay)`.
+  
+    ```{r, eval = FALSE, echo = FALSE}
+    flights %>%
+      mutate(is_cancelled = is.na(dep_delay) | is.na(arr_delay)) %>%
+      group_by(day) %>%
+      summarize(prop_canc = mean(is_cancelled), 
+                tot_canc = sum(is_cancelled), 
+                n = n(),
+                ave_delay = mean(dep_delay, na.rm = TRUE)) ->
+      sumdat
+    
+    ggplot(sumdat, mapping = aes(x = day, y = prop_canc)) +
+      geom_point() +
+      theme_bw() +
+      xlab("Day Number") +
+      ylab("Proportion Cancelled") +
+      geom_smooth(se = FALSE, method = loess, method.args = list(span = 0.3))
+    
+    ## The proportion of delayed flights seems to peak on certain days of the month
+    
+    ggplot(sumdat, mapping = aes(x = day, y = tot_canc)) +
+      geom_point() +
+      theme_bw() +
+      xlab("Day Number") +
+      ylab("Total Cancelled") +
+      geom_smooth(se = FALSE, method = loess, method.args = list(span = 0.3))
+    
+    ## The total also seems to peak on certain days
+    
+    
+    ggplot(data = sumdat, mapping = aes(x = ave_delay, y = prop_canc)) +
+      geom_point() +
+      theme_bw() +
+      xlab("Average Departure Delay") +
+      ylab("Proportion of Flights Cancelled") +
+      geom_smooth(se = FALSE, method = loess, )
+    
+    sumdat %>%
+      mutate(logit_prop_canc = log(prop_canc / (1 - prop_canc))) %>%
+      ggplot(mapping = aes(x = ave_delay, y = logit_prop_canc)) +
+      geom_point() +
+      theme_bw() +
+      xlab("Average Departure Delay") +
+      ylab("Logit Proportion of Flights Cancelled") +
+      geom_smooth(se = FALSE, method = loess)
+    
+    ## It seems that as we increase the the average delay, there are a higher
+    ## proportion of cancelled flights. This relationship appears linear on the
+    ## logit scale.
+    
+    
+    ```
+
 
 # Select Specific Rows
 
+- You can select sertain rows of a data frame using the `slice()` function.
+
+    ```{r, eval = FALSE}
+    flights %>%
+      slice(c(1, 4, 6))
+    ```
+    
+    ```{r, eval = FALSE}
+    flights %>%
+      slice(10:n())
+    ```
 
 
 

@@ -1,0 +1,130 @@
+---
+title: "dplyr Lab"
+date: "`r Sys.Date()`"
+output: pdf_document
+urlcolor: "blue"
+params: 
+  solutions: FALSE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = params$solutions, eval = params$solutions)
+```
+
+- The following exercises are all from Section 5.7.1 of [RDS](https://r4ds.had.co.nz/).
+
+- Use the `flights` data frame from the nycflights13 package.
+
+1. Which plane (`tailnum)` has the worst departure delay record?
+
+    ```{r}
+    library(tidyverse)
+    library(nycflights13)
+    data("flights")
+    ```
+
+    ```{r}
+    flights %>%
+      group_by(tailnum) %>%
+      summarize(mean_dep_delay = mean(dep_delay, na.rm = TRUE)) %>%
+      arrange(mean_dep_delay) %>%
+      slice(1)
+    ```
+
+2. What time of day should you fly if you want to avoid delays as much as 
+  possible?
+  
+    ```{r}
+    flights %>%
+      group_by(hour) %>%
+      summarize(mean_dep_delay = mean(dep_delay, na.rm = TRUE)) %>%
+      ggplot(mapping = aes(x = hour, y = mean_dep_delay)) +
+      geom_line() +
+      xlab("Hour") +
+      ylab("Departure Delay (min)") +
+      theme_bw()
+    ```
+
+    ```{block}
+    You should leave at 5 AM.
+    ```
+
+3. For each destination, compute the total minutes of arrival delay. For each 
+  flight, compute the proportion of the arrival delay for its destination.
+  
+    ```{r}
+    flights %>%
+      group_by(dest) %>%
+      mutate(dest_delay = sum(arr_delay, na.rm = TRUE),
+             prop_delay = arr_delay / dest_delay) %>%
+      ungroup() %>%
+      select(dest, dest_delay, prop_delay)
+    ```
+  
+
+4. Delays are typically temporally correlated: even once the problem that 
+   caused the initial delay has been resolved, later flights are delayed to 
+   allow earlier flights to leave. Using `lag()`, explore how the departure delay 
+   of a flight is related to the delay of the immediately preceding flight.
+   
+    ```{r}
+    flights %>%
+      group_by(origin) %>%
+      arrange(origin, year, month, day, hour, minute) %>%
+      mutate(next_dep_del = lag(dep_delay)) %>%
+      ungroup() ->
+      sumdat
+    
+    ## Moderate/weak correlation
+    sumdat %>%
+      group_by(origin) %>%
+      summarize(cor = cor(dep_delay, next_dep_del, use = "pairwise.complete.obs"))
+    
+    
+    sumdat %>%
+      sample_n(size = 5000) %>%
+      ggplot(mapping = aes(x = dep_delay, y = next_dep_del)) +
+      geom_point(alpha = 0.3) +
+      theme_bw() +
+      xlab("Departure Delay") +
+      ylab("Next Departure Delay") +
+      geom_smooth(se = FALSE)
+    ```
+   
+
+5. Look at each destination. Can you find flights that are suspiciously fast?
+  (i.e. flights that represent a potential data entry error).
+  Compute the air time of a flight relative to the shortest flight to that 
+  destination. Which flights were most delayed in the air?
+  
+    ```{r}
+    flights %>%
+      group_by(dest) %>%
+      mutate(ref_air_time = air_time - min(air_time, na.rm = TRUE),
+             mean_air_time = mean(air_time, na.rm = TRUE),
+             sd_air_time = sd(air_time, na.rm = TRUE), 
+             z_air_time = (air_time - mean_air_time) / sd_air_time) %>%
+      select(dest, air_time, ref_air_time, z_air_time, mean_air_time, sd_air_time) ->
+      df_air
+    
+      ggplot(data = df_air, mapping = aes(x = z_air_time)) +
+        geom_histogram()
+      
+    df_air %>%
+      arrange(z_air_time)
+    
+    df_air %>%
+      mutate(rescale_air_time = air_time / min(air_time, na.rn = TRUE)) %>%
+      ungroup() %>%
+      arrange(desc(rescale_air_time))
+    ```
+  
+
+6. Find all destinations that are flown by at least two carriers. (hint: use `n_distinct()`)
+  
+    ```{r}
+    flights %>%
+      group_by(dest) %>%
+      summarize(ncarr = n_distinct(carrier)) %>%
+      filter(ncarr >= 2)
+    ```

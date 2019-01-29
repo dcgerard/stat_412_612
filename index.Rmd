@@ -39,6 +39,7 @@ University by [David Gerard](https://dcgerard.github.io/).
     - [03 RStudio's ggplot2 Cheat Sheet](https://github.com/rstudio/cheatsheets/blob/master/data-visualization-2.1.pdf)
 - 04 Manipulating Data Frames
     - [04 Worksheet: Manipulating Data Frames with dplyr](./lectures/04_dplyr/04_dplyr.pdf)
+    - [04 Lab Questions](./lectures/04_dplyr/04_dplyr_lab.pdf)
 
     
     
