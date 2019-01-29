@@ -457,17 +457,17 @@ knitr::opts_chunk$set(echo       = TRUE,
   new group.
   
 - Consider the data set:
-```{r}
-dfdat <- tribble(~x,  ~y,  ~z,
-                 "a", "c", 1,
-                 "a", "d", 2,
-                 "a", "c", 3,
-                 "a", "c", 4,
-                 "b", "c", 5,
-                 "b", "d", 6,
-                 "b", "c", 7)
-dfdat
-```
+    ```{r}
+    dfdat <- tribble(~x,  ~y,  ~z,
+                     "a", "c", 1,
+                     "a", "d", 2,
+                     "a", "c", 3,
+                     "a", "c", 4,
+                     "b", "c", 5,
+                     "b", "d", 6,
+                     "b", "c", 7)
+    dfdat
+    ```
 
 - If we group by the variable `x`, then there are two groups: 
     
@@ -486,12 +486,12 @@ dfdat
     iii. Rows 5, 7 (corresponding to `"b"` and `"c"`)
     iv. Row 6 (corresponding to `"b"` and `"d"`)
     
-```{r}
-dfdat %>%
-  group_by(x) ->
-  grouped_dfdat
-attributes(grouped_dfdat)
-```
+    ```{r}
+    dfdat %>%
+      group_by(x) ->
+      grouped_dfdat
+    attributes(grouped_dfdat)
+    ```
     
 
 - The grouping function is most useful to calculate summaries within each group.
