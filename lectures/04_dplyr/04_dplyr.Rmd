@@ -323,14 +323,14 @@ knitr::opts_chunk$set(echo       = TRUE,
       select(dep_delay, arr_delay)
     ```
 
-- Select a range of variables with `:`:
+- Select a range of variables with `:`
 
     ```{r, eval = FALSE}
     flights %>%
       select(year:day)
     ```
 
-- Select all variables except certain ones with `-`:
+- Select all variables except certain ones with `-`
 
     ```{r, eval=FALSE}
     flights %>%
