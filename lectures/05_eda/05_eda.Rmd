@@ -1,0 +1,27 @@
+---
+title: "Exploratory Data Analysis in R"
+author: "David Gerard"
+date: "`r Sys.Date()`"
+output: pdf_document
+urlcolor: "blue"
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo       = TRUE, 
+                      fig.height = 3, 
+                      fig.width  = 6,
+                      fig.align  = "center")
+```
+
+# Learning Objectives
+
+- Strategies for EDA
+- Chapter 7 of [RDS](https://r4ds.had.co.nz/)
+
+# General Strategies
+
+- Plot the distribution of every variable.
+- Plot the bivariate distribution of every pair of variables.
+- Look at missingness.
+- Look at outliers.

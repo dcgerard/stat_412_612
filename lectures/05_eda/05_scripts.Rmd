@@ -1,0 +1,77 @@
+---
+title: "R Scripts"
+author: "David Gerard"
+date: "`r Sys.Date()`"
+output: pdf_document
+urlcolor: "blue"
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo       = TRUE, 
+                      fig.height = 3, 
+                      fig.width  = 6,
+                      fig.align  = "center")
+```
+
+# Learning Objectives
+
+- R scripts
+- sourcing R scripts
+- Chapter 6 of [RDS](https://r4ds.had.co.nz/)
+
+# Background
+
+- We've already learned that using the same code over and over again in the form
+  of functions is efficient and less prone to errors.
+  
+- What if we want to share code between multiple R Markdown files?
+
+# R scripts
+
+- An R Script is a file that contains just R code (no plain text like in an R 
+  Markdown file).
+
+- All R scripts end in ".R" (community standard) or ".r" (less standard).
+
+- Open up an R script with CONTROL + SHIFT + N (or by using the File menu).
+
+- You can then type R code in the R script and send it to the Console like in 
+  an R chunk (using CONTROL/COMMAND + ENTER).
+  
+- Save R scripts in the "code" folder of your project.
+
+# Using R Scripts to Reuse Code 
+
+- Suppose we want to calculate the [geometric mean](https://dcgerard.github.io/stat_412_612/lectures/02_functions_pipes/02_functions_pipes.pdf) over and over again, in many files of our analysis.
+
+- So far, we would copy and paste the function in every new Rmd. But we can 
+  avoid this copying and pasting by coding the geometric mean function in its own R script.
+  
+- In the code folder, my R script "geo_mean.R" looks like this:
+
+    ```{r, comment="", echo=FALSE}
+    cat(readr::read_file("./geo_mean.R"))
+    ```
+
+- You can **source** this code (make R run the R script) by
+    ```{r, eval = FALSE}
+    source("../code/geo_mean.R")
+    ```
+    ```{r, echo = FALSE}
+    source("./geo_mean.R")
+    ```
+
+- You then have access to the `geo_mean()` function in your R Markdown file:
+    ```{r}
+    library(magrittr)
+    geo_mean(c(1, 6, 2, 5))
+    ```
+    
+- **Exercise**: Write a function that takes a vector of numerics and returns 
+  `TRUE` if that vector is between 0.1 and 0.5, and `FALSE` otherwise. Save this
+  function in an R script in your code folder. Source it in an R Markdown file
+  in your analysis folder. Then evaluate that function with `c(0, 0.2, 0.4, 0.7)`.
+
+
+

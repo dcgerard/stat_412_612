@@ -41,6 +41,8 @@ University by [David Gerard](https://dcgerard.github.io/).
 - 04 Manipulating Data Frames
     - [04 Worksheet: Manipulating Data Frames with dplyr](./lectures/04_dplyr/04_dplyr.pdf)
     - [04 Lab Questions](./lectures/04_dplyr/04_dplyr_lab.pdf)
-
-    
+- 05 Data Import, R Scripts, and EDA
+    - [05 R Scripts](./lectures/05_eda/05_scripts.pdf)
+    - [05 EDA Basics](./lectures/05_eda/05_eda.pdf)
+    - [05 EDA Exercise](./lectures/05_eda/05_eda_exercise.pdf)
     

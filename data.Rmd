@@ -9,6 +9,4 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Synopsis
-
-I'll put the datasets we use for the course here.
+- [estate.csv](./data/estate.csv): Home sale prices in a Midwestern city.
