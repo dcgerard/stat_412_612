@@ -47,8 +47,9 @@ data("diamonds")
     - Are certain values more likely than other values?
     - Look for skew. 
     - Does it make sense to think of these data on the log scale? For example, 
-      if you look at two adjacent bins of (i) [1,2) and [2,3) or (ii) [1, 10) 
-      and [10, 100). You should log in case (ii) and not log in case (i).
+      do you expect to see about the same number of units in the two adjacent 
+      bins of (i) [1,2) and [2,3) or (ii) [1, 10) 
+      and [10, 100)? You should log in case (ii) and not log in case (i).
     - `geom_histogram()`
     - [Mean](https://en.wikipedia.org/wiki/Mean), 
       [median](https://en.wikipedia.org/wiki/Median), 
@@ -89,12 +90,15 @@ data("diamonds")
     
     - Is the relationship linear? Quadratic? Exponential?
     - Logging is useful tool to make some associations linear. 
-      If the relationship is (i) monotonic and (ii) curved, then try logging the x-variable.
+      If the relationship is (i) monotonic and (ii) curved, then try logging 
+      the x-variable *if the x-variable is all positive*.
       If it is also (iii) more variable at larger y-values, then try logging
-      the y-variable *instead* of the x-variable. Try logging both if you still
-      see curvature.
+      the y-variable *instead* of the x-variable *if the y-variable is all 
+      positive*. Try logging both if you still
+      see curvature *if both variables are all positive*.
     - Ask if an observed association can be explained by another variable?
-    - Correlation coefficient. Kendall's tau.
+    - Correlation coefficient (only appropriate if association is linear). 
+    - Kendall's tau (always appropriate).
     
     ```{r}
     ggplot(diamonds, aes(x = carat, y = price)) +
@@ -131,7 +135,7 @@ data("diamonds")
 
 - Categorical vs Categorical: Use a mosaic plot or a count plot
 
-    - For which pairs of categorical variables are there the most number of 
+    - For which pairs of values of the categorical variables are there the most number of 
       units?
     - Does the conditional distribution of a categorical variable change
       at different levels of the other categorical variable?
