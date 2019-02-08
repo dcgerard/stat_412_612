@@ -30,7 +30,7 @@ knitr::opts_chunk$set(echo       = TRUE,
   at the top of the console in RStudio.
 
 - You can change the working directory by Session > Set Working Directory > 
-  Choose Directory. Or by CONTROL + SHIFT + HA. Or you can use the `setwd()` 
+  Choose Directory. Or by CONTROL + SHIFT + H. Or you can use the `setwd()` 
   command.
   
 - A shortcut is to set the working directory to your source file location with
@@ -45,7 +45,6 @@ knitr::opts_chunk$set(echo       = TRUE,
     data("mpg")
     pl <- ggplot(mpg, aes(x = hwy, y = cty)) +
       geom_point()
-    pl
     ```
 
 - To save `pl` in the current folder, we would use:
@@ -94,7 +93,7 @@ knitr::opts_chunk$set(echo       = TRUE,
   
 - We will use the readr package to load these datasets into R.
 
-- The readr package is apart of the tidyverse, and so it is automatically
+- The readr package is a part of the tidyverse, and so it is automatically
   loaded when you load the tidyverse.
 
 - To read a CSV (comma-separated values) file into R, use the `read_csv()` 
@@ -167,5 +166,21 @@ knitr::opts_chunk$set(echo       = TRUE,
 - **Exercise**: Successfully load all of the `hate_crimes` CSV files at 
   https://dcgerard.github.io/stat_412_612/data.html.
   
+    ```{r, eval = FALSE, echo = FALSE}
+    hate_crimes <- read_tsv(file = "https://dcgerard.github.io/stat_412_612/data/hate_crimes1.csv")
+    hate_crimes <- read_csv(file = "https://dcgerard.github.io/stat_412_612/data/hate_crimes2.csv")
+    hate_crimes <- read_csv2(file = "https://dcgerard.github.io/stat_412_612/data/hate_crimes3.csv")
+    hate_crimes <- read_csv(file = "https://dcgerard.github.io/stat_412_612/data/hate_crimes4.csv", na = ".")
+    hate_crimes <- read_csv2(file = "https://dcgerard.github.io/stat_412_612/data/hate_crimes5.csv", col_names = FALSE)
+    hate_crimes <- read_csv(file = "https://dcgerard.github.io/stat_412_612/data/hate_crimes6.csv", skip = 3)
+    ```
+
   
+
+# Data Export
+
+- You can write comma-separated and tab-separated files using `write_csv()`,
+  `write_csv2()`, and `write_tsv()`.
+  
+- The defaults are usually fine.
 

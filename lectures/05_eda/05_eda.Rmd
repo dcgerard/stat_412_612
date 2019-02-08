@@ -25,7 +25,7 @@ knitr::opts_chunk$set(echo       = TRUE,
 - Plot the bivariate distribution of every pair of variables (to find which
   variables are associated).
 - Color code by variables to try and see if relationships can be explained.
-- Calculate lot sof summary statistics.
+- Calculate lots of summary statistics.
 - Look at missingness.
 - Look at outliers.
 - EDA is about **curiosity**. Ask *many* questions, use *many* plots, 
