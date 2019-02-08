@@ -33,7 +33,7 @@ knitr::opts_chunk$set(echo       = TRUE,
   Choose Directory. Or by CONTROL + SHIFT + HA. Or you can use the `setwd()` 
   command.
   
-- A shortcut is to set the working directory to your sourcefile location with
+- A shortcut is to set the working directory to your source file location with
   Session > Set Working Directory > To Source File Location.
   
 - When you read and write files/figures, you can then specify the path
@@ -82,7 +82,8 @@ knitr::opts_chunk$set(echo       = TRUE,
 # readr
 
 - A lot of datasets come in comma-separated or tab-separated formats. For
-  example, These are the first few rows of hate_crimes2.csv:
+  example, These are the first few rows of hate_crimes2.csv 
+  (available at https://dcgerard.github.io/stat_412_612/data.html):
   
     ```{r, echo = FALSE, comment=""}
     writeLines(readLines(con = "../../data/hate_crimes2.csv", n = 10))
@@ -90,23 +91,33 @@ knitr::opts_chunk$set(echo       = TRUE,
 
 - In the file, each column is separated by a comma. Each row is separated by a
   new line.
+  
+- We will use the readr package to load these datasets into R.
+
+- The readr package is apart of the tidyverse, and so it is automatically
+  loaded when you load the tidyverse.
 
 - To read a CSV (comma-separated values) file into R, use the `read_csv()` 
   function from the readr package.
-  
-- The readr package is apart of the tidyverse, and so it is automatically
-  loaded when you load the tidyverse.
   
     ```{r}
     library(tidyverse)
     hate_crimes <- read_csv(file = "../../data/hate_crimes1.csv")
     ```
+    
+- If the CSV is online and you know the URL, you can use that URL for 
+  the `file` argument.
+  
+    ```{r}
+    library(tidyverse)
+    hate_crimes <- read_csv(file = "https://dcgerard.github.io/stat_412_612/data/hate_crimes2.csv")
+    ```
 
-- Use `read_tsv()` if columns are separted by tabs.
+- Use `read_tsv()` if columns are separated by tabs.
 
-- Use `read_csv2()` if columns are separated by semi-colans.
+- Use `read_csv2()` if columns are separated by semicolons.
 
-- Other file formats are listed in [RDS](https://r4ds.had.co.nz/)
+- Other file formats are listed in [RDS](https://r4ds.had.co.nz/).
 
 - You want to import data directly from Excel? Don't. 
 
@@ -122,6 +133,19 @@ knitr::opts_chunk$set(echo       = TRUE,
 
     - Check that the types are correct for each of the variables.
     - Check that the missing data were coded correctly.
+    - Later on, when you notice something weird, consider that this might have
+      resulted because of a problem during data import.
+    
+    ```{r}
+    hate_crimes %>%
+      summarize_all(class)
+    
+    hate_crimes %>%
+      summarize_all(funs(sum(is.na(.))))
+    
+    head(hate_crimes)
+    ```
+    
 
 - Sometimes the files code missing data other than `NA`. For example, it's common
   to use periods `.`, or in some genomic settings they use `-9` as missing.
@@ -131,7 +155,7 @@ knitr::opts_chunk$set(echo       = TRUE,
   in `read_csv()`.
   
 - readr will try to guess the type for each column (double, integer, character,
-  logic, etc). Sometimes it guesses wrong. If it seems to be guessing wong,
+  logic, etc). Sometimes it guesses wrong. If it seems to be guessing wrong,
   use the `col_types` to explicitly specify the column types.
   
 - Sometimes there are comments at the start of a data file. You can skip the 
@@ -140,7 +164,8 @@ knitr::opts_chunk$set(echo       = TRUE,
 - If the comments begin with a special character, you can use the `comment` 
   argument.
   
-# 
-
+- **Exercise**: Successfully load all of the `hate_crimes` CSV files at 
+  https://dcgerard.github.io/stat_412_612/data.html.
+  
   
 

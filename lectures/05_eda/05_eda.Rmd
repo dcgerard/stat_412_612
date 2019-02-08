@@ -1,5 +1,5 @@
 ---
-title: "Exploratory Data Analysis in R"
+title: "Exploratory Data Analysis (EDA) in R"
 author: "David Gerard"
 date: "`r Sys.Date()`"
 output: pdf_document
@@ -22,6 +22,154 @@ knitr::opts_chunk$set(echo       = TRUE,
 # General Strategies
 
 - Plot the distribution of every variable.
-- Plot the bivariate distribution of every pair of variables.
+- Plot the bivariate distribution of every pair of variables (to find which
+  variables are associated).
+- Color code by variables to try and see if relationships can be explained.
+- Calculate lot sof summary statistics.
 - Look at missingness.
 - Look at outliers.
+- EDA is about **curiosity**. Ask *many* questions, use *many* plots, 
+  investigate *many* aspects of your data. This will let you hone in on 
+  the few *interesting* questions you want to pursue deeper.
+  
+```{r, message=FALSE}
+library(tidyverse)
+data("diamonds")
+```
+
+  
+# Distribution of Every Variable:
+
+- Quantitative: Use a histogram.
+    
+    - Look for modality. Indicates multiple groups of units. What can explain 
+      the modes? Can any of the other variables explain the modes?
+    - Are certain values more likely than other values?
+    - Look for skew. 
+    - Does it make sense to think of these data on the log scale? For example, 
+      if you look at two adjacent bins of (i) [1,2) and [2,3) or (ii) [1, 10) 
+      and [10, 100). You should log in case (ii) and not log in case (i).
+    - `geom_histogram()`
+    - [Mean](https://en.wikipedia.org/wiki/Mean), 
+      [median](https://en.wikipedia.org/wiki/Median), 
+      [standard deviation](https://en.wikipedia.org/wiki/Standard_deviation),
+      [five number summary](https://en.wikipedia.org/wiki/Five-number_summary).
+
+    ```{r}
+    ggplot(data = diamonds, mapping = aes(x = carat)) +
+      geom_histogram(bins = 500)
+    
+    fivenum(diamonds$carat)
+    mean(diamonds$carat)
+    sd(diamonds$carat)
+    ```
+
+- Categorical: Use a bar chart. Or just a table of *proportions* (`table()` then
+  `prop.table()`).
+
+    - Absolute counts are sometimes interesting, but usually you want to 
+      look at the proportion of observations in each category.
+    - Is there a natural ordering of the categories (bad, medium, good)?
+    - Why are some categories more represented than others?
+    - `geom_bar()`, `geom_col()`
+    - Proportion of observations within each group.
+    
+    ```{r}
+    ggplot(diamonds, aes(x = color, y = ..)) +
+      geom_bar(aes(y = ..count.. / sum(..count..))) +
+      ylab("Proportion")
+    
+    table(diamonds$color)
+    prop.table(table(diamonds$color))
+    ```
+
+# Bivariate Distribution of Every Pair of Variables
+
+- Quantitative vs Quantitative: Use a scatterplot
+    
+    - Is the relationship linear? Quadratic? Exponential?
+    - Logging is useful tool to make some associations linear. 
+      If the relationship is (i) monotonic and (ii) curved, then try logging the x-variable.
+      If it is also (iii) more variable at larger y-values, then try logging
+      the y-variable *instead* of the x-variable. Try logging both if you still
+      see curvature.
+    - Ask if an observed association can be explained by another variable?
+    - Correlation coefficient. Kendall's tau.
+    
+    ```{r}
+    ggplot(diamonds, aes(x = carat, y = price)) +
+      geom_point() +
+      scale_y_log10() +
+      scale_x_log10()
+    
+    cor(diamonds$carat, diamonds$price)
+    ## cor(diamonds$carat, diamonds$price, method = "kendall")
+    ```
+    
+- Categorical vs Quantitative: Use a boxplot
+
+    - For which levels of the categorical variable is the quantitative variable
+      higher or lower?
+    - For which levels is the quantitative variable more spread out?
+    - Aggregated means, medians, standard deviations, quantiles
+    
+    ```{r}
+    ggplot(diamonds, aes(x = color, y = price)) +
+      geom_boxplot() +
+      scale_y_log10()
+    
+    diamonds %>%
+      mutate(logprice = log(price)) %>%
+      group_by(color) %>%
+      summarize(mean   = mean(logprice), 
+                sd     = sd(logprice), 
+                median = median(logprice),
+                Q1     = quantile(logprice, 0.25), 
+                Q3     = quantile(logprice, 0.75))
+    ```
+    
+
+- Categorical vs Categorical: Use a mosaic plot or a count plot
+
+    - For which pairs of categorical variables are there the most number of 
+      units?
+    - Does the conditional distribution of a categorical variable change
+      at different levels of the other categorical variable?
+    - `prop.table()`
+
+    ```{r}
+    ## Only gives you the bivariate distribution
+    ggplot(diamonds, aes(x = cut, y = color)) +
+      geom_count()
+    
+    ## Gives you the conditional distributions of color given cut
+    ggplot(diamonds, aes(x = cut, fill = color)) +
+      geom_bar(position = "fill")
+    
+    ## Gives you the conditional distributions of cut given color
+    ggplot(diamonds, aes(x = color, fill = cut)) +
+      geom_bar(position = "fill")
+    
+    ## Bivariate Distribution
+    prop.table(table(diamonds$color, diamonds$cut))
+    
+    ##  Conditional distributions of column variable conditional on row variable
+    prop.table(table(diamonds$color, diamonds$cut), margin = 1)
+    
+    ## Conditional distributions of row variable conditional on column variable
+    prop.table(table(diamonds$color, diamonds$cut), margin = 2)
+    ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
