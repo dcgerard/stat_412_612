@@ -3,6 +3,7 @@ title: "Housing EDA"
 author: "David Gerard"
 date: "`r Sys.Date()`"
 output: pdf_document
+urlcolor: "blue"
 params:
   solutions: FALSE
 ---
@@ -33,7 +34,7 @@ during the year 2002. The 13 variables are
 - `Lot`: Lot size (in square feet)
 - `Highway`: 1 = highway adjacent, 0 = highway not adjacent.
 
-The data are available in "estate.csv" at
+The data are available in "estate.csv" at https://dcgerard.github.io/stat_412_612/data/estate.csv.
 
 Peform an exploratory data analysis to come up with some hypotheses. Some 
 suggested ways to focus your research:
@@ -51,5 +52,28 @@ suggested ways to focus your research:
 - What transformations should you perform to make associations more linear?
 - What variables should be discretized (or have values aggregated) because
   there are too few values and/or the association seems discrete?
+
+
+```{block}
+Load required packages
+```
+```{r}
+library(tidyverse)
+library(GGally) ## for pairs plot
+```
+
+```{block}
+Load Data into R
+```
+```{r}
+estate <- read_csv("../../data/estate.csv")
+```
+
+
+```{r, message=FALSE}
+estate %>%
+  select(Price, Area, Year, Lot) %>%
+  ggpairs()
+```
 
 

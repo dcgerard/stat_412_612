@@ -1,0 +1,146 @@
+---
+title: "Data Import"
+author: "David Gerard"
+date: "`r Sys.Date()`"
+output: pdf_document
+urlcolor: "blue"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo       = TRUE, 
+                      fig.height = 3, 
+                      fig.width  = 6,
+                      fig.align  = "center")
+```
+
+# Learning Objectives
+
+- Import data from CSV's, 
+- Working Directories
+- Chapter 11 of [RDS](https://r4ds.had.co.nz/)
+
+# Working Directories
+
+- The working directory is where R will look for and save things by default.
+
+- When you specify to save a figure, save a file, or load some data, it will be
+  with respect to the working directory.
+  
+- You can see where the current working directory is by `getwd()`, or by looking
+  at the top of the console in RStudio.
+
+- You can change the working directory by Session > Set Working Directory > 
+  Choose Directory. Or by CONTROL + SHIFT + HA. Or you can use the `setwd()` 
+  command.
+  
+- A shortcut is to set the working directory to your sourcefile location with
+  Session > Set Working Directory > To Source File Location.
+  
+- When you read and write files/figures, you can then specify the path
+  from the position of the working directory.
+
+- Suppose we want to save the following figure:  
+    ```{r}
+    suppressPackageStartupMessages(library(tidyverse))
+    data("mpg")
+    pl <- ggplot(mpg, aes(x = hwy, y = cty)) +
+      geom_point()
+    pl
+    ```
+
+- To save `pl` in the current folder, we would use:
+    ```{r, eval = FALSE}
+    ggsave(filename = "./my_saved_plot.pdf", plot = pl)
+    ```
+    
+- The "`.`" means "the current folder".
+    
+- To save `pl` in the folder one level up we would use:
+    ```{r, eval = FALSE}
+    ggsave(filename = "../my_saved_plot.pdf", plot = pl)
+    ```
+
+- The "`..`" means "go one level up".
+
+- If we are in the analysis folder, and we want to save `pl` in the output 
+  folder, we would use:
+  
+    ```{r, eval = FALSE}
+      ggsave(filename = "../output/my_saved_plot.pdf", plot = pl)
+    ```
+    
+- If we have a subfolder called "fig" within out current folder. We could
+  save `pl` in "fig" with
+    ```{r, eval = FALSE}
+      ggsave(filename = "./fig/my_saved_plot.pdf", plot = pl)
+    ```
+    
+- **NEVER USE ABSOLUTE PATHS**. For example, you should never start the path
+  from "C" if you use Windows. This makes your code non-transferable to other
+  users.
+  
+# readr
+
+- A lot of datasets come in comma-separated or tab-separated formats. For
+  example, These are the first few rows of hate_crimes2.csv:
+  
+    ```{r, echo = FALSE, comment=""}
+    writeLines(readLines(con = "../../data/hate_crimes2.csv", n = 10))
+    ```
+
+- In the file, each column is separated by a comma. Each row is separated by a
+  new line.
+
+- To read a CSV (comma-separated values) file into R, use the `read_csv()` 
+  function from the readr package.
+  
+- The readr package is apart of the tidyverse, and so it is automatically
+  loaded when you load the tidyverse.
+  
+    ```{r}
+    library(tidyverse)
+    hate_crimes <- read_csv(file = "../../data/hate_crimes1.csv")
+    ```
+
+- Use `read_tsv()` if columns are separted by tabs.
+
+- Use `read_csv2()` if columns are separated by semi-colans.
+
+- Other file formats are listed in [RDS](https://r4ds.had.co.nz/)
+
+- You want to import data directly from Excel? Don't. 
+
+    - First export the Excel spreadsheet as a CSV. Then read the CSV file into R.
+
+- You are using colors to represent meaningful information in Excel? Don't.
+
+    - Edit the data so that the information is encoded by a new variable.
+    
+# Special Considerations
+
+- **Always check your data immediately after importing it**.
+
+    - Check that the types are correct for each of the variables.
+    - Check that the missing data were coded correctly.
+
+- Sometimes the files code missing data other than `NA`. For example, it's common
+  to use periods `.`, or in some genomic settings they use `-9` as missing.
+  
+- R won't know how to handle this without you telling it, so you'll have to 
+  know what the missing data encoding is and specify it with the `na` argument
+  in `read_csv()`.
+  
+- readr will try to guess the type for each column (double, integer, character,
+  logic, etc). Sometimes it guesses wrong. If it seems to be guessing wong,
+  use the `col_types` to explicitly specify the column types.
+  
+- Sometimes there are comments at the start of a data file. You can skip the 
+  first few lines before starting to read data with the `skip` argument.
+  
+- If the comments begin with a special character, you can use the `comment` 
+  argument.
+  
+# 
+
+  
+
