@@ -40,6 +40,7 @@ Peform an exploratory data analysis to come up with some hypotheses. Some
 suggested ways to focus your research:
 
 - Wich variables are categorical? Which are quantitative?
+- Change the values of the categorical variables to something more informative.
 - What variables are marginally associated with price? Use plots and summary
   statistics.
 - What variables are marginally associated with each other? Use plots and 
@@ -60,6 +61,7 @@ Load required packages
 ```{r}
 library(tidyverse)
 library(GGally) ## for pairs plot
+theme_set(theme_bw())
 ```
 
 ```{block}
@@ -69,11 +71,52 @@ Load Data into R
 estate <- read_csv("../../data/estate.csv")
 ```
 
+```{r}
+head(estate)
+```
+
+```{block}
+I'm going to change the obvious variables that should be factors to factors.
+```
+
+```{r}
+estate
+```
+
+
+
 
 ```{r, message=FALSE}
 estate %>%
   select(Price, Area, Year, Lot) %>%
   ggpairs()
 ```
+
+```{block}
+It seems that we can log price and area and lot pretty safely.
+```
+
+```{r, message=FALSE}
+estate %>%
+  mutate(logPrice = log(Price), logArea = log(Area), logLot = log(Lot)) ->
+  estate
+
+estate %>%
+  select(logPrice, logArea, Year, logLot) %>%
+  ggpairs()
+```
+
+```{block}
+It seems that area has the strongest relationship to price
+```
+
+```{r}
+ggplot(estate, aes(x = logArea, y = logPrice, color = Year)) +
+  geom_point() +
+  scale_color_continuous(low = "black", high = "white")
+```
+
+
+
 
 
