@@ -1,0 +1,200 @@
+---
+title: "Common Coding Issues and How to Debug"
+author: "David Gerard"
+date: "`r Sys.Date()`"
+output: pdf_document
+urlcolor: "blue"
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo       = TRUE, 
+                      fig.height = 3, 
+                      fig.width  = 6,
+                      fig.align  = "center")
+```
+
+# Learning Objectives
+
+- Practice reading common error messages.
+- Learn good strategies to debugging.
+
+# Strategies to Debug
+
+- Run your code often so that you can spot errors early. Don't try to code everything at once and then run the whole thing. The earlier you spot a mistake, the easier it will be to debug.
+- Read the error message very carefully. I know, there's a lot there and it's hard to weed out the important info from the excess text, but the more you practice the better you'll get at it!
+- Run code one line at a time until you triangulate the location of the bug. Don't run the whole pipeline or ggplot sequence. Run it in parts.
+- Do not run the whole chunk.
+- Try restarting R with Session > Restart R. Sometimes, the error is caused because you changed something important (like redefining an important function by mistake).
+
+
+- If you are having trouble Knitting:
+
+    - Knit often so that you can spot errors early. The earlier you spot a bug the easier it will be to fix.
+    - **Restart R** and *then* run the code one line at a time. When you knit, it will start from a blank R environment, so you want to reproduce that behavior to triangulate the bug.
+    - Comment out sections of the document until it starts knitting. Uncomment sections until you find the issue. 
+
+# Common Bugs
+
+- Missing/extra Parentheses.
+- Missing/extra commas
+- Missing `+` (for ggplot)
+- Missing pipe `%>%`
+- Misspelled a function/variable name (using a lot of tab-completion helps limit the occurrence of this bug.)
+
+- **Exercise**: Spot all of the errors below and fix the code.
+    ```{r, eval = FALSE}
+    library(tidyverse)
+    data("mpg")
+    ```
+
+    ```{r, error=TRUE, eval = FALSE}
+    mpg %>%
+      filter(fl %in% c("p", "r"))
+      group_by(year) %>%
+      summarize(mean_hwy = mean(hwy), 
+                mean_cty = mean(cty))
+      
+    pl <- ggplot(mpg, aes(x = hwy, 
+                          y = cty,
+                          color = drv)) +
+      geom_point() +
+      geom_smooth(method = lm) +
+      xlab("Highway MPG") +
+      ylab(City MPG) +
+      ggtitle("Highway vs City MPG")
+    pl
+    ```
+
+
+    ```{r, error=TRUE, eval = FALSE}
+    mpg %>%
+      filter(fl %in% c("p" "r")) %>%
+      group_by(year) %>%
+      summarize(mean_hwy = mean(hwy), 
+                mean_cty = mean(cty))
+      
+    pl <- ggplot(mpg, aes(x = hwy, 
+                          y = cty,
+                          color = drv)) +
+      geom_point() +
+      geom_smooth(method = lm)
+      xlab("Highway MPG") +
+      ylab("City MPG") +
+      ggtitle("Highway vs City MPG")
+    pl
+    ```
+    
+    ```{r, error=TRUE, eval = FALSE}
+    mpg %>%
+      filter(fl %in% c("p", "r")) %>%
+      group_by(year) %>%
+      summarize(mean_hwy = mean(hwy), 
+                mean_cty = mean(cty)
+      
+    pl <- ggplot(mpg, aes(x = hwy, 
+                          y = cty,
+                          color = drv)) +
+      geom_point() +
+      geom_smooth(method = lm) +
+      xlab("Highway MPG") +
+      ylab("City MPG") +
+      ggtitle("Highway vs City MPG")
+    pl
+    ```
+    
+    ```{r, error=TRUE, eval = FALSE}
+    mpg %>%
+      filter(fl %in% c("p", "r")) %>%
+      group_by("year") %>%
+      summarize(mean_hwy = mean(hwy), 
+                mean_cty = mean(cty))
+      
+    pl <- ggplot(mpg, aes(x = hwy, 
+                          y = cty
+                          color = drv)) +
+      geom_point() +
+      geom_smooth(method = lm) +
+      xlab("Highway MPG") +
+      ylab("City MPG") +
+      ggtitle("Highway vs City MPG")
+    pl
+    ```
+    
+    ```{r, error=TRUE, eval = FALSE}
+    mpg %>%
+      filter(fl %in% c("p", "r")) %>%
+      group_by(year) %>%
+      summarize(mean_hwy = meanhwy), 
+                mean_cty = mean(cty))
+      
+    pl <- ggplot(mpg, aes(x = hwy, 
+                          y = cty,
+                          color = drv)) +
+      geom_point()) +
+      geom_smooth(method = lm) +
+      xlab("Highway MPG") +
+      ylab("City MPG") +
+      ggtitle("Highway vs City MPG")
+    pl
+    ```
+    
+    ```{r, error=TRUE, eval = FALSE}
+    mpg %>%
+      filter(fl %in% c("p", "r")) %>%
+      group_by(year) %>%
+      summarize(mean_hwy  mean(hwy), 
+                mean_cty = mean(cty))
+      
+    pl <- ggplot(mpg, aes(x = hwy, 
+                          y = cty,
+                          color = drv)) +
+      geom_point() +
+      geom_smooth(method = lm) ++
+      xlab("Highway MPG") +
+      ylab("City MPG") +
+      ggtitle("Highway vs City MPG")
+    pl
+    ```
+    
+    ```{r, error=TRUE, eval = FALSE}
+    mpg %>%
+      filter(fl %in% c("p", "r")) %>%
+      group_by(year) %>%
+      summarize(mean_hwy = mean(hwy), 
+                mean_cty = mean(cty))
+      
+    pl <- ggplot(aes(x = hwy 
+                     y = cty,
+                     color = drv)) +
+      geom_point() +
+      geom_smooth(method = lm) +
+      xlab("Highway MPG") +
+      ylab("City MPG") +
+      ggtitle("Highway vs City MPG")
+    pl
+    ```
+    
+    ```{r, error=TRUE, eval = FALSE}
+    mpg %>%
+      filter(fl %in% c("p", "r"))) %>%
+      group_by(year) %>%
+      summarize(mean_hwy = mean(hwy), 
+                mean_cty = mean(cty))
+      
+    pl <- ggplot(mpg, aes(x = hwy, 
+                          y = cty,
+                          color = drv)) +
+      geom_point() +
+      geom_smooth(method = lm) +
+      xlab("Highway MPG") +
+      ylab("City MPG") +
+      ggtitle("Highway vs City MPG""")
+    pl
+    ```
+    
+    
+
+
+
+
