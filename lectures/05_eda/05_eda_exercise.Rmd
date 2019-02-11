@@ -36,10 +36,10 @@ during the year 2002. The 13 variables are
 
 The data are available in "estate.csv" at https://dcgerard.github.io/stat_412_612/data/estate.csv.
 
-Peform an exploratory data analysis to come up with some hypotheses. Some 
+Perform an exploratory data analysis to come up with some hypotheses. Some 
 suggested ways to focus your research:
 
-- Wich variables are categorical? Which are quantitative?
+- Which variables are categorical? Which are quantitative?
 - Change the values of the categorical variables to something more informative.
 - What variables are marginally associated with price? Use plots and summary
   statistics.
@@ -51,8 +51,11 @@ suggested ways to focus your research:
 - Does there appear to be any discrete groupings of houses?
 - Are there any unusual observations?
 - What transformations should you perform to make associations more linear?
+- Try making new variables based on existing variables.
 - What variables should be discretized (or have values aggregated) because
   there are too few values and/or the association seems discrete?
+- If you know linear regression, try out the `lm()` and `step()` functions to 
+  choose a tentative model.
 
 
 ```{block}
@@ -80,11 +83,79 @@ I'm going to change the obvious variables that should be factors to factors.
 ```
 
 ```{r}
-estate
+estate %>%
+  mutate(AC = recode(AC, "1" = "AC", "0" = "noAC"),
+         Pool = recode(Pool, "1" = "Pool", "0" = "noPool"),
+         Style = as.factor(Style),
+         Highway = recode(Highway, "1" = "Highway", "0" = "noHighway")) ->
+  estate
 ```
 
 
+```{block}
+## Univariate Distributions
+```
 
+```{r}
+ggplot(estate, aes(x = Price)) +
+  geom_histogram(bins = 30)
+
+## Two bumps in Area followed by a long tail
+ggplot(estate, aes(x = Area)) +
+  geom_histogram(bins = 40) 
+
+ggplot(estate, aes(x = Year)) +
+  geom_histogram(bins = 20)
+
+ggplot(estate, aes(x = Lot)) +
+  geom_histogram(bins = 30)
+```
+
+```{r}
+## mostly 3 and 4 bedroom houses, but there is a 0 bedroom house
+## Is that a studio?
+table(estate$Bed) 
+
+## A 0 bathroom house??? Is that the same house?
+table(estate$Bath)
+
+## Let's look at that unit
+estate %>%
+  filter(Bath == 0)
+
+## It's price is on the high end for having no bathroom!
+## (92nd percentile)
+estate %>%
+  filter(Bath == 0) %>%
+  select(Price) %>%
+  c() ->
+  weird_house_price
+mean(estate$Price < weird_house_price)
+
+## I woul dkeep in mind removing that house if I was to go on and do a 
+## Linear regression
+```
+
+```{r}
+table(estate$AC)
+
+## One garage holds 7 cars?
+table(estate$Garage)
+
+table(estate$Pool)
+
+table(estate$Quality)
+
+table(estate$Style)
+
+## Very few houses on a highway. I would be 
+## Careful about inferences there
+table(estate$Highway)
+```
+
+```{block}
+## Look at bivariate associations
+```
 
 ```{r, message=FALSE}
 estate %>%
@@ -98,7 +169,7 @@ It seems that we can log price and area and lot pretty safely.
 
 ```{r, message=FALSE}
 estate %>%
-  mutate(logPrice = log(Price), logArea = log(Area), logLot = log(Lot)) ->
+  mutate(logPrice = log2(Price), logArea = log2(Area), logLot = log2(Lot)) ->
   estate
 
 estate %>%
@@ -111,10 +182,220 @@ It seems that area has the strongest relationship to price
 ```
 
 ```{r}
-ggplot(estate, aes(x = logArea, y = logPrice, color = Year)) +
-  geom_point() +
-  scale_color_continuous(low = "black", high = "white")
+estate %>%
+  group_by(Year) %>%
+  summarize(meanPrice = mean(Price)) %>%
+  ggplot(aes(x = Year, y = meanPrice)) +
+  geom_line()
 ```
+
+```{r}
+summary(estate$Year)
+## Define Age of hours at sale
+estate %>%
+  mutate(Age = 2002 - Year) ->
+  estate
+```
+
+```{block}
+# Q: Does anything variable get more important with the age of the house?
+```
+
+```{r}
+## Most no-ac houses are older. And once you adjust for age.
+## But it still seems that there is an AC effect, which is particularly
+## strong for older houses.
+ggplot(estate, aes(x = Age, y = Price, color = AC)) +
+  geom_point() +
+  geom_smooth(se = FALSE) +
+  scale_x_log10() +
+  scale_y_log10()
+
+
+## There seems to be an additive pool effect
+ggplot(estate, aes(x = Age, y = Price, color = Pool)) +
+  geom_point() +
+  geom_smooth(se = FALSE) +
+  scale_x_log10() +
+  scale_y_log10()
+
+## The houses near the highway almost always have a lower price
+ggplot(estate, aes(x = Age, y = Price, color = Highway)) +
+  geom_point() +
+  scale_x_log10() +
+  scale_y_log10()
+
+estate %>%
+  mutate(logAge = log2(Age)) ->
+  estate
+```
+
+```{block}
+## Redo coloring with Area
+```
+
+```{r}
+## Most no-ac houses are older. And once you adjust for age.
+## But it still seems that there is an AC effect, which is particularly
+## strong for older houses.
+ggplot(estate, aes(x = Area, y = Price, color = AC)) +
+  geom_point() +
+  geom_smooth(se = FALSE) +
+  scale_x_log10() +
+  scale_y_log10()
+
+
+## There seems to be an additive pool effect
+ggplot(estate, aes(x = Area, y = Price, color = Pool)) +
+  geom_point() +
+  geom_smooth(se = FALSE) +
+  scale_x_log10() +
+  scale_y_log10()
+
+## The houses near the highway almost always have a lower price
+ggplot(estate, aes(x = Area, y = Price, color = Highway)) +
+  geom_point() +
+  scale_x_log10() +
+  scale_y_log10()
+```
+
+```{block}
+## Look at the price by those other categories
+```
+
+```{r}
+estate %>% 
+  ggplot(aes(x = Quality, y = Price)) +
+  geom_boxplot()
+
+## Seems that we could treat bed as a 
+## Quantitative variable if we got
+## rid of that 0 house
+estate %>% 
+  ggplot(aes(x = as.factor(Bed), y = Price)) +
+  geom_boxplot() +
+  scale_y_log10()
+
+## I'm going to marge 5 bath into 5 and above,
+## But still treat it as a quantitative variable
+estate %>% 
+  ggplot(aes(x = as.factor(Bath), y = Price)) +
+  geom_boxplot() +
+  scale_y_log10()
+
+estate %>%
+  mutate(Bath = recode(Bath, `6` = 5, `7` = 5)) ->
+  estate
+
+table(estate$Bath)
+
+estate %>% 
+  ggplot(aes(x = as.factor(Bath), y = Price)) +
+  geom_boxplot() +
+  scale_y_log10()
+
+
+## Garage also looks pretty linear
+estate %>%
+  ggplot(aes(x = as.factor(Garage), y = Price)) +
+  geom_boxplot() +
+  scale_y_log10()
+  
+```
+
+```{block}
+## Summary of interesting Observations
+
+- There seems to be a bathroom saturation effect. Having more than 5 doesn't 
+  help you that much.
+- Most quantitative relationships with price are exponential in nature. In other
+  words, a multiplicative difference in area corresponds to a multiplicative
+  difference in price. A multiplicative difference in age corresponds to a 
+  multiplicative difference in price.
+- A lot of the discrete quantities (number of garages, number of baths, 
+  number of beds) can be treated as a linear relationship with log Price. So
+  if you add one more bedroom, it results in some multiplicative change in 
+  price.
+- There is one observation with no bed, no bath, but is super pricey. My guess
+  is that this is an empty lot on some prime real estate. I would exclude this
+  from any model and state clearly that our analysis is for homes with at least
+  one bedroom.
+```
+
+
+
+
+```{block}
+## Some exploratory forward/backward linear model stuff
+```
+
+```{r}
+estate %>%
+  filter(Bath != 0) ->
+  estate_sub
+lmfull <- lm(logPrice ~ Bed + Bath + AC + Garage + Pool + 
+               Quality + Style + Highway + logArea + logLot + logAge,
+             data = estate_sub)
+
+sout <- step(lmfull)
+```
+
+```{r}
+resvec <- resid(sout)
+fitvec <- fitted(sout)
+
+## Residuals look pretty awesome
+qplot(fitvec, resvec) +
+  geom_hline(yintercept = 0, linetype = "dashed")
+
+qplot(sample = resvec, geom = "qq") +
+  geom_qq_line()
+```
+
+```{r}
+coefvec <- coef(sout)
+confintmat <- confint(sout)
+sumlm <- summary(sout)
+sumlm
+```
+
+
+```{block}
+Here is some example statements:
+
+- Multiplicative increase in price when you add one bathroom: 
+  `r 2^coefvec["Bath"]` (because I used base 2 when logging), which is
+  1.054 (95% CI `r 2^confintmat["Bath", ]`, which is 1.029 to 1.081).
+- Doubling the area corresponds to a multiplicative increase of 
+  `r 2^coefvec["logArea"]` (which is 1.693) in price (95% CI of 
+  `r 2^confintmat["logArea", ]`, which is 1.58 to 1.82).
+  
+I used causal language here, this is a little loose and relaxed. In formal 
+write ups you should use non-causal language like:
+
+- Houses with one more bathroom tend to cost 5% more 
+  (95% confidence of 3% to 8%)
+- Homes with twice the area tend to cost 69% more (95% confidence of 58% to 82%).
+```
+
+```{block}
+Interestingly, bed was not informative given the other variables. Why? Probably
+because it is so highly correlated with the other variables that it doesn't 
+add any additional information on price (at least given this dataset).
+```
+
+```{r}
+ggplot(estate, aes(x = Bed, y = Bath)) +
+  geom_count()
+ggplot(estate, aes(x = logArea, y = logPrice, color = as.factor(Bed))) +
+  geom_point()
+```
+
+
+
+
+
+
 
 
 

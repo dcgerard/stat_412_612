@@ -46,10 +46,6 @@ data("diamonds")
       the modes? Can any of the other variables explain the modes?
     - Are certain values more likely than other values?
     - Look for skew. 
-    - Does it make sense to think of these data on the log scale? For example, 
-      do you expect to see about the same number of units in the two adjacent 
-      bins of (i) [1,2) and [2,3) or (ii) [1, 10) 
-      and [10, 100)? You should log in case (ii) and not log in case (i).
     - `geom_histogram()`
     - [Mean](https://en.wikipedia.org/wiki/Mean), 
       [median](https://en.wikipedia.org/wiki/Median), 
