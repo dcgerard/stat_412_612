@@ -51,3 +51,5 @@ University by [David Gerard](https://dcgerard.github.io/).
     - [05 EDA Basics](./lectures/05_eda/05_eda.pdf)
     - [05 EDA Exercise](./lectures/05_eda/05_eda_exercise.pdf)
 - [Mid-semester Debugging Advice](./lectures/common_coding_issues.pdf)
+- 06 Tidy Data
+    - [06 Worksheet: tidyr](./lectures/06_tidyr/06_tidyr.pdf)
