@@ -15,7 +15,7 @@ Based on a bootcamp originally written by Sohail Nizam.
 
 - Understand the fundamental type for storing data in R.
 - Create and manipulate data frames (Tibbles), extract variables.
-- Chapter 10 in R for Data Science
+- Chapter 10 in [RDS](https://r4ds.had.co.nz/)
 
 # Data Frames
 

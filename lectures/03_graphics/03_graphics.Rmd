@@ -19,6 +19,7 @@ knitr::opts_chunk$set(echo       = TRUE,
 - ggplot2
 - Basics of data visualization.
 - Chapter 3 [RDS](https://r4ds.had.co.nz/)
+- [Data Visualization Cheat Sheet](https://www.rstudio.com/resources/cheatsheets/#ggplot2)
 
 # Background
 

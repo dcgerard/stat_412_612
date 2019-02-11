@@ -19,4 +19,5 @@ knitr::opts_chunk$set(echo       = TRUE,
 - What is tidy data?
 - Learn to make your data tidy
 - Chapter 12 of [RDS](https://r4ds.had.co.nz/)
+- [Data Import Cheat Sheet](https://www.rstudio.com/resources/cheatsheets/#import)
 

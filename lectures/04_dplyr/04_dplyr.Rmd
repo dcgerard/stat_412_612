@@ -20,6 +20,7 @@ knitr::opts_chunk$set(echo       = TRUE,
 - Calculating summary statistics.
 - Using the basic functions of dplyr
 - Chapter 5 of [RDS](https://r4ds.had.co.nz/)
+- [Data Transformation Cheat Sheet](https://www.rstudio.com/resources/cheatsheets/#dplyr)
 
 
 # Background
