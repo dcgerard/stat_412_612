@@ -1,0 +1,75 @@
+---
+title: "Tentative Course Plan for STAT 412/612"
+author: "David Gerard"
+date: "`r Sys.Date()`"
+output: pdf_document
+urlcolor: "blue"
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo       = TRUE, 
+                      fig.height = 3, 
+                      fig.width  = 6,
+                      fig.align  = "center")
+```
+
+- Week 1:
+    - Chapters 1, 2, 4, 10, and 27 of [RDS](https://r4ds.had.co.nz/)
+    - Install all tools for the semester.
+    - R in the context of Data Science.
+    - Proper file system organization.
+    - Basics of R
+    - Basics of R Markdown
+    - Data Frames
+    - Logicals
+- Week 2: 
+    - Chapters 6, 17, 18, and 19 of [RDS](https://r4ds.had.co.nz/)
+    - Using pipes (magrittr)
+    - Creating functions
+    - R Scripts
+- Week 3: 
+    - Chapter 3 of [RDS](https://r4ds.had.co.nz/)
+    - Data visualization and ggplot2.
+- Week 4:
+    - Chapter 5 of [RDS](https://r4ds.had.co.nz/)
+    - Manipulating data frames.
+    - Calculating summary statistics.
+    - dplyr
+- Week 5:
+    - Chapters 7 and 11 of [RDS](https://r4ds.had.co.nz/)
+    - Data import/export.
+    - Exploratory Data Analysis (EDA).
+    - EDA exercise.
+- Week 6:
+    - Midterm exam covering weeks 1 through 4.
+- Week 7:
+    - Chapter 12 of [RDS](https://r4ds.had.co.nz/)
+    - Tidying data
+    - tidyr
+- Week 8:
+    - Chapter 13 of [RDS](https://r4ds.had.co.nz/)
+    - Relational Data
+    - SQL?
+- Week 9:
+    - Chapter 14 of [RDS](https://r4ds.had.co.nz/)
+    - Strings and regular expressions
+- Week 10:
+    - Data munging lab.
+- Week 11:
+    - Midterm exam covering weeks 5, 7, 8, and 9.
+- Week 12:
+    - Chapters 15 and 16 of [RDS](https://r4ds.had.co.nz/)
+    - Factors (forcats)
+    - Dates/Times (lubridate)
+- Week 13:
+    - [Git Appendix in r-pkgs](http://r-pkgs.had.co.nz/git.html)
+    - [Happy git with R](https://happygitwithr.com/)
+    - Git and GitHub.
+- Week 14
+    - TBD
+    - Possible Topics: More Git and Github. Make your own website (personal/project) in R. Making presentations using R Markdown.
+- Week 15
+    - Project Presentations
+    
+    

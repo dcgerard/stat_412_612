@@ -16,7 +16,11 @@ University by [David Gerard](https://dcgerard.github.io/).
 # Administrative
 
 - [Syllabus](./admin/syllabus_412_612.pdf)
-- [Tentative Schedule](./admin/teaching_plan_412_612.pdf)
+- [Tentative Schedule](./admin/schedule.pdf)
+
+# Final Project
+
+- [Description](./admin/final_project.pdf)
 
 # Lectures
 
