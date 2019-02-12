@@ -17,7 +17,225 @@ knitr::opts_chunk$set(echo       = TRUE,
 # Learning Objectives
 
 - What is tidy data?
-- Learn to make your data tidy
+- Learn to make your data tidy with `gather()`, `spread()`, `separate()`, and
+  `unite()`.
 - Chapter 12 of [RDS](https://r4ds.had.co.nz/)
 - [Data Import Cheat Sheet](https://www.rstudio.com/resources/cheatsheets/#import)
 
+# Tidy Data
+
+- Recall:
+
+    - Observations/units/subjects/individuals/cases:
+      objects described by a set of data (e.g. cars, people, countries).
+    - Variable: describes some characteristic of the units (e.g. mpg, age, GDP).
+    - Each unit has a single value of each variable (e.g. 20 mpg, 31 years old, 
+      $20,513,000 US$million).
+
+- Tidy Data:
+
+    - One unit per row. 
+    - One variable per column.
+    - One value per cell.
+    
+- Hadley's visualization:
+
+    ![](tidy-1.png)\ 
+
+    
+- We will use the tidyr package (a member of the tidyverse) to make data
+  tidy.
+
+    ```{r, message = FALSE}
+    library(tidyverse)
+    ```
+
+- Example of tidy data:
+
+    ```{r}
+    tidyr::table1
+    ```
+    
+    - Variables: Country, Year, Cases, Population
+    - Units: location$\times$time
+
+- Untidy data: Each unit is spread across multiple rows
+
+    ```{r}
+    print(tidyr::table2, n = 12)
+    ```
+    
+- Untidy data: Two variables are in one column
+
+    ```{r}
+    tidyr::table3
+    ```
+    
+- Untidy data: Data are spread across two data frames. Within each data frame,
+  multiple units are in one row.
+
+    ```{r}
+    tidyr::table4a
+    tidyr::table4b
+    ```
+    
+- Sometimes it is easy to determine the units and the variables.
+
+- Sometimes it is very hard and you need to talk to the data collectors to 
+  find out.
+  
+- We want tidy data because R easily manipulates vectors. So in the long run 
+  it will make your life easier to first make data tidy.
+    
+# Gather
+
+- Problem: One variable spread across multiple columns.
+
+- Column names are actually *values* of a variable
+
+- `table4a` and `table4b`
+
+- Solution: `gather()`
+
+- Hadley's visualization:
+
+    ![](./tidy-9.png)\ 
+
+- Specify
+
+    i. The columns that are values, not variables,
+    ii. The name of the variable that will take the values of the column names 
+        (`key`), and
+    iii. The name of the variable that will take the values spread in the cells 
+         (`value`).
+  
+    ```{r}
+    tidyr::table4a %>%
+      gather(`1999`, `2000`, key = "Year", value = "cases") ->
+      tidy4a
+    tidy4a
+    ```
+    
+    ```{r}
+    tidyr::table4b %>%
+      gather(`1999`, `2000`, key = "Year", value = "population") ->
+      tidy4b
+    tidy4b
+    ```
+    
+- We will learn next class how to join these two data frames next week. But
+  the code is
+  
+    ```{r}
+    full_join(tidy4a, tidy4b)
+    ```
+  
+  
+- **Exercise** (RDS 12.3.3.1): Why does this code fail?
+
+    ```{r, error = TRUE}
+    table4a %>% 
+      gather(1999, 2000, key = "year", value = "cases")
+    ```
+
+    ```{block, echo = FALSE}
+    1999 and 2000 are prohibited variable names. You can get around this by
+    surrounding them with backticks.
+    ```
+
+# Spread
+
+- Problem: One observation is spread across multiple rows.
+
+- One column contains variable names. One column contains values for the 
+  different variables.
+
+- `table2`
+
+- Solution: `spread()`
+
+- Hadley's visualization:
+
+    ![](./tidy-8.png)\
+
+- Specify:
+    
+    i. The column that contains the column names (`key`), and 
+    ii. The column that contains the values (`value`).
+
+    ```{r}
+    table2 %>%
+      spread(key = type, value = count)
+    ```
+
+- **Exercise** (RDS 13.3.3.3): Why does spreading this data frame fail?
+
+    ```{r}
+    people <- tribble(
+      ~name,             ~key,    ~value,
+      #-----------------|--------|------
+      "Phillip Woods",   "age",       45,
+      "Phillip Woods",   "height",   186,
+      "Phillip Woods",   "age",       50,
+      "Jessica Cordero", "age",       37,
+      "Jessica Cordero", "height",   156
+    )
+    ```
+    
+    ```{block, echo = FALSE}
+    There is a duplicate row for "Phillip Woods" and "Age". So in the 
+    "Phillip Woods" row and "age" column, should we put in 45 or 50? `spread()`
+    doesn't know what to do so it throws an error.
+    ```
+
+
+# Separate
+
+- Problem: One column contains two (or more) variables.
+
+- `table3`
+
+- Solution: `separate()`
+
+- Hadley's visualization:
+
+    ![](./tidy-17.png)\
+    
+- Specify:
+
+    i. The column that contains two (or more) variables,
+    ii. A character vector of the new names of the variables, and
+    iii. The character that separates variables (or the position that
+         separates variables).
+         
+    ```{r}
+    table3 %>%
+      separate(rate, into = c("cases", "population"), sep = "/")
+    ```
+
+# Unite
+
+- Problem: One variable spread across multiple columns.
+
+- Solution: `unite()`
+
+- Hadley's visualization:
+
+    ![](./tidy-18.png)\
+    
+- Much less common problem.
+
+    ```{r}
+    table5
+    ```
+
+- Specify:
+
+    i. The name of the new column (`col`),
+    ii. The columns to unite, and
+    iii. The separator of the variables in the new column (`sep`).
+
+    ```{r}
+    table5 %>%
+      unite(century, year, col = "Year", sep = "")
+    ```
