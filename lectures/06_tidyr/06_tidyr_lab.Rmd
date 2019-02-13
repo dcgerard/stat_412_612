@@ -1,0 +1,13 @@
+---
+title: "tidyr Lab"
+date: "`r Sys.Date()`"
+output: pdf_document
+urlcolor: "blue"
+params: 
+  solutions: FALSE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = params$solutions, eval = params$solutions)
+```
+

@@ -130,6 +130,18 @@ knitr::opts_chunk$set(echo       = TRUE,
     full_join(tidy4a, tidy4b)
     ```
   
+
+- **Exercise**: gather the `monkeymem` data frame (available at
+  https://dcgerard.github.io/stat_412_612/data/monkeymem.csv). The cell 
+  values represent identification accuracy of some objects (in percent of 20 
+  trials).
+
+    ```{r, eval=FALSE, echo=FALSE}
+    monkeymem <- read_csv("../../data/monkeymem.csv")
+    monkeymem %>%
+      gather(Week2:Week16, key = "Week", value = "Percent")
+    ```
+
   
 - **Exercise** (RDS 12.3.3.1): Why does this code fail?
 
@@ -142,6 +154,7 @@ knitr::opts_chunk$set(echo       = TRUE,
     1999 and 2000 are prohibited variable names. You can get around this by
     surrounding them with backticks.
     ```
+
 
 # Spread
 
@@ -168,6 +181,17 @@ knitr::opts_chunk$set(echo       = TRUE,
       spread(key = type, value = count)
     ```
 
+
+- **Exercise**: Spread the `flowers1` data frame (available at
+  https://dcgerard.github.io/stat_412_612/data/flowers1.csv).
+
+    ```{r, eval = FALSE, echo = FALSE}
+    flowers1 <- read_csv2("../../data/flowers1.csv")
+    flowers1 %>%
+      spread(key = Variable, value = Value)
+    ```
+    
+
 - **Exercise** (RDS 13.3.3.3): Why does spreading this data frame fail?
 
     ```{r}
@@ -187,7 +211,6 @@ knitr::opts_chunk$set(echo       = TRUE,
     "Phillip Woods" row and "age" column, should we put in 45 or 50? `spread()`
     doesn't know what to do so it throws an error.
     ```
-
 
 # Separate
 
@@ -212,6 +235,19 @@ knitr::opts_chunk$set(echo       = TRUE,
     table3 %>%
       separate(rate, into = c("cases", "population"), sep = "/")
     ```
+
+
+- **Exercise**: Separate the `flowers2` data frame (available at 
+  https://dcgerard.github.io/stat_412_612/data/flowers2.csv).
+    ```{r, eval = FALSE, echo = FALSE}
+    flowers2 <- read_csv2("../../data/flowers2.csv")
+    flowers2 %>%
+      separate(col = `Flowers/Intensity`, into = c("Flowers", "Intensity"), sep = "/") ->
+      flowers2_sep
+    flowers2_sep
+    ```
+
+
 
 # Unite
 
@@ -239,3 +275,12 @@ knitr::opts_chunk$set(echo       = TRUE,
     table5 %>%
       unite(century, year, col = "Year", sep = "")
     ```
+    
+- **Exercise**: Re-unite the data frame you separated from the `flowers2` 
+  exercise. Use a comma for the separator.
+  
+    ```{r, eval = FALSE, echo = FALSE}
+    flowers2_sep %>%
+      unite(Flowers, Intensity, col = "Flowers,Intensity", sep = ",")
+    ```
+  

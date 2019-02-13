@@ -127,6 +127,14 @@ knitr::opts_chunk$set(echo       = TRUE,
 
     - Edit the data so that the information is encoded by a new variable.
     
+- If you don't know the format ahead of time, use `read_lines()` to print
+  the first few lines.
+  
+    ```{r}
+    read_lines(file = "../../data/hate_crimes2.csv", n_max = 10)
+    ```
+  
+    
 # Special Considerations
 
 - **Always check your data immediately after importing it**.
@@ -176,12 +184,15 @@ knitr::opts_chunk$set(echo       = TRUE,
     hate_crimes <- read_csv(file = "https://dcgerard.github.io/stat_412_612/data/hate_crimes6.csv", skip = 3)
     ```
 
-  
-
 # Data Export
 
 - You can write comma-separated and tab-separated files using `write_csv()`,
   `write_csv2()`, and `write_tsv()`.
   
 - The defaults are usually fine.
+
+# Reading/Writing R Objects
+
+- You can save and reload arbitrary R objects (data frames, matrices, lists, 
+  vectors) using `readRDS()` and `saveRDS()`.
 

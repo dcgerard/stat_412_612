@@ -10,10 +10,18 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 - [estate.csv](./data/estate.csv): Home sale prices in a Midwestern city.
-- Same data in different formats for practice:
+- Same data in different formats for readr practice:
     - [hate_crimes1.csv](./data/hate_crimes1.csv)
     - [hate_crimes2.csv](./data/hate_crimes2.csv)
     - [hate_crimes3.csv](./data/hate_crimes3.csv)
     - [hate_crimes4.csv](./data/hate_crimes4.csv)
     - [hate_crimes5.csv](./data/hate_crimes5.csv)
     - [hate_crimes6.csv](./data/hate_crimes6.csv)
+- Data for tidyr lab:
+    - [pew.csv](./data/pew.csv)
+    - [preg.csv](./data/preg.csv)
+    - [tb.csv](./data/tb.csv)
+    - [weather.csv](./data/weather.csv)
+    - [flowers1.csv](./data/flowers1.csv)
+    - [flowers2.csv](./data/flowers2.csv)
+    - [monkeymem](./data/monkeymem.csv)
