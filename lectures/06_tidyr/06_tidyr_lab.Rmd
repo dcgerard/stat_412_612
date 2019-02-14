@@ -62,7 +62,7 @@ pew2
 
 Load in and tidy the `tb` data frame: https://dcgerard.github.io/stat_412_612/data/tb.csv
 
-The column names specify both the sex (`m` = male, `f` = femail) and age range (`04` = 0 to 4, `514` = 5 to 14, `014` = 0 to 14, `1524` = 15 to 24, `2534` = 25 to 34, `3544` = 35 to 44, `4554` = 45 to 54, `4464` = 55 to 64, `65` = >=65, `u` = unknown). The values in the cells are counts.
+The column names specify both the sex (`m` = male, `f` = female) and age range (`04` = 0 to 4, `514` = 5 to 14, `014` = 0 to 14, `1524` = 15 to 24, `2534` = 25 to 34, `3544` = 35 to 44, `4554` = 45 to 54, `4464` = 55 to 64, `65` = >=65, `u` = unknown). The values in the cells are counts.
 
 Save the tidied data in the output folder.
 
@@ -99,12 +99,20 @@ weather2
 
 # Exercise 6
 
-
 Load in and tidy the `wine` data frame: https://dcgerard.github.io/stat_412_612/data/wine.csv
+
+Save the tidied data in the output folder.
 
 ```{r}
 wine <- read_csv2("https://dcgerard.github.io/stat_412_612/data/wine.csv")
+wine %>%
+  gather(-measure, key = "country", value = "value") %>%
+  spread(key = measure, value = value) ->
+  wine2
+wine2
 ```
+
+
 
 
 

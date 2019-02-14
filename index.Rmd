@@ -53,3 +53,4 @@ University by [David Gerard](https://dcgerard.github.io/).
 - [Mid-semester Debugging Advice](./lectures/common_coding_issues.pdf)
 - 06 Tidy Data
     - [06 Worksheet: tidyr](./lectures/06_tidyr/06_tidyr.pdf)
+    - [06 tidyr Lab](./lectures/06_tidyr/06_tidyr_lab.pdf)
