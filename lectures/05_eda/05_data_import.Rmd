@@ -113,7 +113,7 @@ knitr::opts_chunk$set(echo       = TRUE,
     hate_crimes <- read_csv(file = "https://dcgerard.github.io/stat_412_612/data/hate_crimes2.csv")
     ```
 
-- Use `read_tsv()` if columns are separated by tabs.
+- Use `read_tsv()` if columns are separated by tabs. (if you use `read_lines()` on a tsv, the tabs will show up as "\\t").
 
 - Use `read_csv2()` if columns are separated by semicolons.
 
