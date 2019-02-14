@@ -11,3 +11,100 @@ params:
 knitr::opts_chunk$set(echo = params$solutions, eval = params$solutions)
 ```
 
+# Exercise 1
+
+Tidy the data frame `ex0724` from the `Sleuth3` package. You can read about this data frame by typing `help(ex0724)` after loading Sleuth3.
+
+```{r}
+library(Sleuth3)
+data("ex0724")
+ex0724 %>%
+  gather(Denmark:USA, key = "country", value = "proportion", na.rm = TRUE)
+```
+
+# Exercise 2
+
+Load in and tidy the `pred` data frame: https://dcgerard.github.io/stat_412_612/data/preg.csv
+
+Make the coding for any new variables nice.
+
+Save the tidied data frame in the output folder.
+
+```{r}
+suppressPackageStartupMessages(library(tidyverse))
+preg <- read_csv("https://dcgerard.github.io/stat_412_612/data/preg.csv")
+
+preg %>%
+  gather(treatmenta, treatmentb, key = "Treatment", value = "Value") %>%
+  mutate(Treatment = recode(Treatment, "treatmenta" = "A", "treatmentb" = "B")) ->
+  preg2
+preg2
+```
+
+# Exercise 3
+
+Load in and tidy the `pew` data frame: https://dcgerard.github.io/stat_412_612/data/pew.csv
+
+Values in the cells are counts of people who adhere to a particular religion and contain a particular salary range.
+
+Save the tidied data in the output folder.
+
+```{r}
+pew <- read_csv("https://dcgerard.github.io/stat_412_612/data/pew.csv")
+pew %>%
+  gather(-religion, key = "Salary", value = "Count") ->
+  pew2
+pew2
+```
+
+
+# Exercise 4
+
+Load in and tidy the `tb` data frame: https://dcgerard.github.io/stat_412_612/data/tb.csv
+
+The column names specify both the sex (`m` = male, `f` = femail) and age range (`04` = 0 to 4, `514` = 5 to 14, `014` = 0 to 14, `1524` = 15 to 24, `2534` = 25 to 34, `3544` = 35 to 44, `4554` = 45 to 54, `4464` = 55 to 64, `65` = >=65, `u` = unknown). The values in the cells are counts.
+
+Save the tidied data in the output folder.
+
+```{r}
+tb <- read_csv("https://dcgerard.github.io/stat_412_612/data/tb.csv")
+
+tb %>%
+  gather(-iso2, -year, key = "sex_age", value = "counts", na.rm = TRUE) %>%
+  separate(col = sex_age, into = c("sex", "age"), sep = 1) ->
+  tb2
+tb2
+```
+
+# Exercise 5 
+
+Load in and tidy the `weather` data frame: https://dcgerard.github.io/stat_412_612/data/weather.csv
+
+- A column header that begins with a "d" is a day. 
+- For `element`, `tmax` = maximum temperature, `tmin` = minimum temperature. 
+- The values in the cells are the maximum or minimum temperatures for given days of the year.
+
+Save the tidied data in the output folder.
+
+```{r}
+weather <- read_csv("https://dcgerard.github.io/stat_412_612/data/weather.csv")
+weather %>%
+  gather(-id, -year, -month, -element, key = "day", value = "temperature", na.rm = TRUE) %>%
+  spread(key = element, value = "temperature") %>%
+  mutate(day = parse_number(str_replace(day, "d", ""))) %>%
+  arrange(year, month, day) ->
+  weather2
+weather2
+```
+
+# Exercise 6
+
+
+Load in and tidy the `wine` data frame: https://dcgerard.github.io/stat_412_612/data/wine.csv
+
+```{r}
+wine <- read_csv2("https://dcgerard.github.io/stat_412_612/data/wine.csv")
+```
+
+
+
