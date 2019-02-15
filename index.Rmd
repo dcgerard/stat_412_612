@@ -52,5 +52,8 @@ University by [David Gerard](https://dcgerard.github.io/).
     - [05 EDA Exercise](./lectures/05_eda/05_eda_exercise.pdf)
 - [Mid-semester Debugging Advice](./lectures/common_coding_issues.pdf)
 - 06 Tidy Data
+    - [06 Parsers](./lectures/06_tidyr/06_parsers.pdf)
     - [06 Worksheet: tidyr](./lectures/06_tidyr/06_tidyr.pdf)
     - [06 tidyr Lab](./lectures/06_tidyr/06_tidyr_lab.pdf)
+- 07 Relational Data
+    - Jane's Notes on Relational data. Chapter 13 of [RDS](https://r4ds.had.co.nz/).

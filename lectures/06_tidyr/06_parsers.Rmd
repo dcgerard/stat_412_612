@@ -1,0 +1,211 @@
+---
+title: "Parsers"
+author: "David Gerard"
+date: "`r Sys.Date()`"
+output: pdf_document
+urlcolor: "blue"
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo       = TRUE, 
+                      fig.height = 3, 
+                      fig.width  = 6,
+                      fig.align  = "center")
+```
+
+# Learning Objectives
+
+- Change character vectors into other types using parsers.
+- Parsers and reader.
+- Chapter 11 of [RDS](https://r4ds.had.co.nz/)
+
+# Motivation
+
+- Suppose you have the following data frame
+    ```{r}
+    suppressPackageStartupMessages(library(tidyverse))
+    dfdat <- tribble(
+      ~date,        ~time,      ~number, ~factor, ~logical,
+      ##----------  ----------  -------  -------  --------
+      "12-01-1988", "10:10:02", "2",     "A",     "TRUE",
+      "11-12-1987", "11:10:57", "4",     "A",     "TRUE",
+      "02-03-1989", "10:10:25", "6",     "B",     "FALSE",
+      "06-03-1982", "22:10:55", "2",     "B",     "TRUE",
+      "09-21-1981", "10:10:02", "1",     "A",     "FALSE"
+      )
+    dfdat
+    ```
+
+- How do we convert the characters to the types we want? Parse!
+
+# Parsing dates and times
+
+## Parsing dates with `parse_date()` and `parse_date_time()`.
+
+- `parse_date()` and `parse_datetime()` are very similar, but internally count
+  the time from 1970-01-01 in terms of either days or seconds.
+    ```{r}
+    parse_date("2018-01-02")
+    parse_datetime("2018-01-02")
+    ```
+    
+- They expect the format `"YYYY-MM-DD"`. If your date is in a different format,
+  you need to use the `format` argument.
+  
+    ```{r}
+    ## Parsing Failure
+    parse_date("02/01/2018")
+    ```
+    
+    ```{r}
+    ## Parsing Success!
+    parse_date("02/01/2018", format = "%m/%d/%Y")
+    ```
+
+- We added slashes so that R can know how the date is formatted.
+
+- Format options:
+    - `%d`: 2-digit representation of day (but can recognize single digits sometimes)
+    - `%m`: 2-digit representation of month
+    - `%b`: Abbreviation of month ("Jan")
+    - `%B`: Full month name ("January")
+    - `%y`: 2-digit representation of year
+    - `%Y`: 4-digit representation of year
+
+- Another example:  
+    ```{r}
+    parse_date("January 1, 2018", format = "%B %d, %Y")
+    ```
+
+- Our example:
+    ```{r}
+    dfdat %>%
+      mutate(date = parse_date(date, format = "%m-%d-%Y"))
+    ```
+
+
+- **Exercise**: Parse the following strings to be dates:
+
+    ```{r, eval = FALSE}
+    "01, January 2018"
+    "01-January/2000"
+    "1 Jan 19"
+    ```
+    
+    ```{r, echo = FALSE, eval = FALSE}
+    parse_date("01, January 2018", format = "%d, %B %Y")
+    parse_date("01-January/2000", format = "%d-%B/%Y")
+    parse_date("1 Jan 19", format = "%d %b %y")
+    ```
+
+## Parsing times with `parse_time()`
+
+- `parse_time()` is very similar to `parse_date()` except the format argument.
+    - `%H`: Hour in 0-23 format
+    - `%I`: Hour in 0-12 format
+    - `%p`: am/pm
+    - `%M`: minutes
+    - `%S`: integer seconds
+    - `%OS`: double seconds
+    - `%Z`: Time zone (need nuance here)
+  
+- Example:
+    ```{r}
+    dfdat %>%
+      mutate(time = parse_time(time, format = "%H:%M:%S"))
+    ```
+    
+- **Exercise**: Parse the following times:
+
+    ```{r, eval = FALSE}
+    "10:40 pm"
+    "23:40-22"
+    ```
+    
+    ```{r, eval = FALSE, echo = FALSE}
+    parse_time("10:40 pm", format = "%H:%M %p")
+    parse_time("23:40-22", format = "%H:%M-%S")
+    ```
+    
+# Parsing Numbers
+
+- `parse_double()` and `parse_integer()` expect strict numbers and will fail
+   if there is anything non-number-like.
+  
+    ```{r}
+    parse_double("2.11")
+    parse_double("$2.11")
+    
+    parse_integer("2")
+    parse_integer("2%")
+    ```
+    
+- `parse_number()` removes non-numeric characters.
+
+    ```{r}
+    parse_number("$2.11")
+    parse_number("2%")
+    ```
+    
+- You can change the grouping variable from "," to "." with
+
+    ```{r}
+    parse_number("2.555,11", 
+                 locale = locale(grouping_mark = ".", 
+                                 decimal_mark = ","))
+    ```
+    
+- Example:
+
+    ```{r}
+    dfdat %>%
+      mutate(number = parse_number(number))
+    ```
+
+
+# Parsing other types
+
+- `parse_logical()` and `parse_factor()` and `parse_string()` are pretty 
+  self-explanatory.
+  
+  
+    ```{r}
+    dfdat %>%
+      mutate(factor = parse_factor(factor))
+    ```
+    
+    ```{r}
+    dfdat %>%
+      mutate(logical = parse_logical(logical))
+    ```
+
+# Parsing and readr
+
+- When you specify `col_types` in `read_csv()`, those are wrappers for parsers.
+
+    ```{r}
+    read_csv("../../data/estate.csv",
+             col_types = cols(
+               Price   = col_double(),
+               Area    = col_double(),
+               Bed     = col_double(),
+               Bath    = col_double(),
+               AC      = col_logical(),
+               Garage  = col_double(),
+               Pool    = col_logical(),
+               Year    = col_double(),
+               Quality = col_factor(),
+               Style   = col_factor(),
+               Lot     = col_double(),
+               Highway = col_logical()
+               )) ->
+      estate
+    estate
+    ```
+
+
+    
+
+
+
