@@ -1,0 +1,365 @@
+---
+title: "Relational Data"
+author: "David Gerard"
+date: "`r Sys.Date()`"
+output: pdf_document
+urlcolor: "blue"
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo       = TRUE, 
+                      fig.height = 3, 
+                      fig.width  = 6,
+                      fig.align  = "center")
+```
+
+# Learning Objectives
+
+- What is relational data.
+- `inner_join()`, `left_join()`, `right_join()`, `full_join()`, `semi_join()`, `anti_join()`.
+- SQL.
+- Chapter 13 of [RDS](https://r4ds.had.co.nz/).
+- [Data Transformation Cheatsheet](https://www.rstudio.com/resources/cheatsheets/#dplyr).
+
+# Relational Data
+
+- Load the tidyverse
+
+    ```{r, message = FALSE}
+    library(tidyverse)
+    ```
+
+
+- Many datasets have more than two data frames.
+
+- These data frames are often connected (rows in one correspond to rows in another)
+
+- Consider the data in the nycflights13 package.
+    ```{r}
+    library(nycflights13)
+    ```
+
+
+    - `airlines`: Airline names.
+        ```{r}
+        data("airlines")
+        head(airlines)
+        ```
+    
+    - `airports`: Airport metadata
+        ```{r}
+        data("airports")
+        head(airports)
+        ```
+        
+    - `flights`: Flights data
+        ```{r}
+        data("flights")
+        head(flights)
+        ```
+        
+    - `planes`: Plane metadata.
+        ```{r}
+        data("planes")
+        head(planes)
+        ```
+        
+    - `weather`: Hourly weather data
+        ```{r}
+        data("airlines")
+        head(airlines)
+        ```
+        
+    ![](./relational-nycflights.png)\ 
+
+- For nycflights13:
+
+    - `flights` connects to `planes` via a single variable, `tailnum`.
+
+    - `flights` connects to `airlines` through the `carrier` variable.
+
+    - `flights` connects to `airports` in two ways: via the `origin` and `dest` variables.
+
+    - `flights` connects to `weather` via `origin` (the location), and `year`, `month`, `day` and `hour` (the time).
+    
+- Variables used to connect a pair of data frames are called **keys**.
+
+- **Primary key**: Identifies rows in its own table.
+
+- **Foreign key**: Identifies rows in another table.
+
+- *Example*: `planes$tailnum` is a primary key because it uniquely identifies rows in `planes`.
+
+    ```{r}
+    planes %>%
+      group_by(tailnum) %>%
+      count() %>%
+      filter(n > 1)
+    ```
+
+- *Example*: `flights$tailnum` is a foreign key because it uniquely identifies rows in `planes`. There are multiple rows with the same `tailnum` in `flights`, so `flights$tailnum` is *not* a primary key.
+
+    ```{r}
+    flights %>% 
+      group_by(tailnum) %>%
+      count() %>%
+      filter(n > 1)
+    ```
+
+- *Example*: `weather$origin` is *part* of the primary key for `weather` (along with `year`, `month`, `day`, and `hour`) and a foreign key for `airports` (`weather$origin` is connected to `airports$faa`).
+
+
+- If a table lacks a primary key (like `flights`) then you can add one with `mutate()` and `row_number()`.
+
+    ```{r}
+    flights %>%
+      mutate(row = row_number()) %>%
+      select(row, everything())
+    ```
+
+
+- **Exercise** ([RDS](https://r4ds.had.co.nz/) 13.3.1.2): Identify the keys in the following datasets
+
+    - `Lahman::Batting`,
+    - `babynames::babynames`,
+    - `nasaweather::atmos`,
+    - `fueleconomy::vehicles`,
+    - `ggplot2::diamonds`.
+    
+    (You might need to install some packages and read some documentation.)
+
+# Join Set-Up
+
+- Suppose we have the following two data frames
+
+    ![](./join-setup.png)
+
+    ```{r}
+    x <- tribble(~key, ~val_x,
+                 #---  ------
+                 1,    "x1",
+                 2,    "x2",
+                 3,    "x3")
+    y <- tribble(~key, ~val_y,
+                 #---  ------
+                 1,    "y1",
+                 2,    "y2",
+                 4,    "y3")
+    ```
+
+
+- A join connects one row of `x` to one row of `y`
+
+    ![](./join-setup2.png)
+
+- E.g. match row `1` of `x` with row `1` of `y`, and row `2` of `x` with row `2` of `y`.
+
+    ![](./join-inner.png)\ 
+
+# Inner Join
+
+- `inner_join(x, y)` matches the rows of `x` with rows of `y` only when their keys are equal.
+
+    ![](./join-inner.png)\
+
+    ```{r}
+    inner_join(x, y, by = "key")
+    ```
+
+- Keeps all rows that appear in *both* data frames.
+
+
+- **Exercise**: Select all flights that use a plane where you have some 
+  annotation.
+
+    ```{r, echo = FALSE, eval = FALSE}
+    inner_join(flights, planes, by = "tailnum")
+    ```
+
+
+
+# Outer Join
+
+- Keeps all rows that appear in *at least one* data frame.
+
+    ![](./join-outer.png)\
+
+- `left_join(x, y)` keeps all rows of `x`.
+    ```{r}
+    left_join(x, y, by = "key")
+    ```
+    
+- `left_join()` is by far the most common joiner, and you should always use this
+  unless you have a good reason not to.
+    
+- `right_join(x, y)` keeps all rows of `y`.
+
+    ```{r}
+    right_join(x, y, by = "key")
+    ```
+
+- `full_join(x, y)` keeps all rows of both.
+
+    ```{r}
+    full_join(x, y, by = "key")
+    ```
+    
+
+- **Exercise**: Add the full airline names to the `flights` data frame.
+    ```{r, eval = FALSE, echo = FALSE}
+    left_join(flights, airlines, by = "carrier") %>%
+      select(name, everything())
+    ```
+    
+
+# Duplicate Keys
+
+- If you have duplicate keys in one table, then the rows from the data frame
+  where there is no duplication are copied multiple times in the new data frame.
+
+    ![](./join-one-to-many.png)\ 
+    
+    (useful for adding summary data to a table)
+    
+    ```{r}
+    x_mult <- tribble(~key, ~val_x,
+                      ##--  ------
+                      1,    "x1",
+                      2,    "x2",
+                      2,    "x3",
+                      1,    "x4")
+    
+    left_join(x_mult, y, by = "key")
+    ```
+    
+
+- If you have duplicate keys in both (usually a mistake), then you get every 
+  possible combination of the values in x and y at the key values where there
+  are duplications.
+
+    ![](./join-many-to-many.png)\
+    
+    ```{r}
+    y_mult <- tribble(~key, ~val_y,
+                      ##--  ------
+                      1,    "y1",
+                      2,    "y2",
+                      2,    "y3",
+                      1,    "y4")
+    
+    left_join(x_mult, y_mult, by = "key")
+    ```
+
+- **Exercise**: In the previous two exercises, we had some duplicate keys. For
+  each exercise, which data frame had the duplicate keys?
+  
+    ```{block, echo = FALSE, eval = FALSE}
+    `flights` had the duplicate keys both times. We added the plane annotation to
+    each flight (where multiple flights used the same plane) in the first exercise
+    and we added the carrier name (where multiple flights used the same carrier)
+    in the second exercise.
+    ```
+  
+  
+- **Exercise**: Is there a relationship between the age of a plane and its delays?
+
+    ```{r, echo = FALSE, eval = FALSE}
+    library(hexbin)
+    flights %>%
+      select(tailnum, contains("delay")) %>%
+      left_join(planes, by = "tailnum") %>%
+      select(year, contains("delay")) %>%
+      mutate(age = 2013 - year) ->
+      subflight
+    
+    ggplot(subflight, aes(x = age, y = dep_delay)) +
+      xlab("Age of Plane") +
+      ylab("Depatrue Delay (min)") +
+      geom_hex() +
+      theme_bw() +
+      geom_smooth(method = "lm", se = FALSE) +
+      scale_fill_continuous(low = "grey90", high = "black")
+    
+    lm(dep_delay ~ age, data = subflight) %>%
+      summary()
+    
+    ## Not adjusting for anything, it seems that each additional year older a plane
+    ## is, is associated with a 6 second decrease in depature delay.
+    
+    ggplot(subflight, aes(x = age, y = arr_delay)) +
+      xlab("Age of Plane") +
+      ylab("Depatrue Delay (min)") +
+      geom_hex() +
+      theme_bw() +
+      geom_smooth(method = "lm", se = FALSE) +
+      scale_fill_continuous(low = "grey90", high = "black")
+    
+    lm(arr_delay ~ age, data = subflight) %>%
+      summary()
+    
+    ## We got a similar finding with the arrival delay
+    ```
+
+
+# Filtering Joins
+
+- `semi_join()` *keeps* all of the rows in `x` that have a match in `y` (but
+  don't add the variables of `y` to `x`).
+  
+    ![](join-semi.png)\
+  
+    ```{r}
+    semi_join(x, y, by = "key")
+    ```
+    
+- `anti_join()` *drops* all of the rows in `x` that have a match in `y` (but
+  don't add the variables of `y` to `x`).
+  
+    ![](join-anti.png)\
+  
+    ```{r}
+    anti_join(x, y, by = "key")
+    ```
+  
+- **Exercise**: Find the 10 days of the year that have the highest median 
+  departure delay, then select all flights from those 10 days.
+  
+    ```{r, eval = FALSE, echo = FALSE}
+    flights %>%
+      group_by(year, month, day) %>%
+      summarize(med_dep = median(dep_delay, na.rm = TRUE)) %>%
+      arrange(desc(med_dep)) %>%
+      ungroup() %>%
+      slice(1:10) ->
+      ten_worst
+    
+    semi_join(flights, ten_worst)
+    ```
+  
+# Other Key Names
+
+- If the primary and foreign keys do not match, you need to specify that using 
+  a named vector as `left_join(x, y, by = c("a" = "b"))`, where `a` is the key
+  in `x` and `b` is the key in `y`.
+
+    ```{r}
+    left_join(flights, airports, by = c("origin" = "faa"))
+    ```
+    
+- If you have multiple variables acting as the key, you need the `by` argument 
+  to be a vector.
+
+    ```{r}
+    left_join(flights, weather, by = c("origin", "year", "month", "day", "hour"))
+    ```
+  
+
+  
+
+
+
+
+
+
+

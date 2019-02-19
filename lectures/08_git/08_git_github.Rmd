@@ -1,0 +1,24 @@
+---
+title: "Collaboration and Bookkeeping with Git/GitHub"
+author: "David Gerard"
+date: "`r Sys.Date()`"
+output: pdf_document
+urlcolor: "blue"
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo       = TRUE, 
+                      fig.height = 3, 
+                      fig.width  = 6,
+                      fig.align  = "center")
+```
+
+# Learning Objectives
+
+- Learn basics of version control.
+- Install Git.
+- Set up GitHub account.
+- Learn basics of Git.
+- Start repo for final project.
+

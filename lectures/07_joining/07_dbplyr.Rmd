@@ -1,0 +1,161 @@
+---
+title: "Databases and dbplyr"
+author: "David Gerard"
+date: "`r Sys.Date()`"
+output: pdf_document
+urlcolor: "blue"
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo       = TRUE, 
+                      fig.height = 3, 
+                      fig.width  = 6,
+                      fig.align  = "center")
+```
+
+# Learning Objectives
+
+- Using dplyr-like syntax for databases.
+- [Introduction to dbplyr](https://cran.r-project.org/web/packages/dbplyr/vignettes/dbplyr.html)
+
+# dbplyr
+
+- [SQL](https://en.wikipedia.org/wiki/SQL) is a language used to query from
+  relational datasets.
+
+- dplyr basically implements the most common actions in SQL (but SQL can do more).
+
+- We'll use a soccer dataset to demonstrate how to use dplyr syntax when 
+  interacting with a database. Download and unzip the soccer database from
+  <https://dcgerard.github.io/stat_412_612/data.html>.
+  
+- We'll use the dbplyr package to interact with databases.
+
+    ```{r, eval = FALSE}
+    install.packages("dbplyr")
+    ```
+    ```{r, message = FALSE}
+    library(tidyverse)
+    library(dbplyr)
+    ```
+- dbplyr allows you to work with databases as if you are using dplyr.
+
+- You'll also need to install the RSQLite package. There are different ways to
+  create/access/update/delete data from relational databases, and RSQLite 
+  provides an R interface for one of these ways.
+  
+    ```{r, eval = FALSE}
+    install.packages("RSQLite")
+    ```
+    ```{r}
+    library(RSQLite)
+    ```
+    
+- If your database uses a different engine, you'll need to download other
+  packages to interact with it (see [Introduction to dbplyr](https://cran.r-project.org/web/packages/dbplyr/vignettes/dbplyr.html))
+    
+- First, we'll tell R where the database is using `dbConnect()`,
+  (you might need to change the path).
+
+    ```{r}
+    con <- dbConnect(drv = SQLite(), dbname = "../../data/soccer/soccer.sqlite")
+    ```
+
+- Now we'll list the data frames available in the connection we just created.
+    ```{r}
+    dbListTables(con)
+    ```
+    
+- Use `tbl()` to make a reference to the tables in `con`.
+
+    ```{r}
+    Team_db    <- tbl(con, "Team")
+    Team_at_db <- tbl(con, "Team_Attributes")
+    Country_db <- tbl(con, "Country")
+    League_db  <- tbl(con, "League")
+    Match_db   <- tbl(con, "Match")
+    ```
+    
+- We can now interact with all of these data frames mostly like if they
+  were in memory (with some limitations).
+
+    ```{r}
+    head(Country_db)
+    head(Match_db)
+    Match_db %>%
+      select(id:away_team_goal)
+    
+    names(Match_db) ## won't work
+    ```
+    
+- Once you select the variables you want and the observations you want, you 
+  should use `collect()` to get the data frame into memory so that you can have
+  all of the functionality of R (e.g., `gather()` and `spread()` will only
+  work on in-memory data frames).
+  
+    ```{r}
+    Match_db %>%
+      select(id:away_team_goal) %>%
+      collect() ->
+      Match
+    Team_db %>%
+      collect() ->
+      Team
+    Country_db %>%
+      collect() ->
+      Country
+    ```
+    
+- The following will return a data frame telling you where each country is from.
+    
+    ```{r}
+    Match %>%
+      select(country_id, home_team_api_id, away_team_api_id) %>%
+      gather(-country_id, key = "home_away", value = "team_api_id") %>%
+      select(-home_away) %>%
+      distinct() %>%
+      left_join(Team, by = "team_api_id") %>%
+      left_join(Country, by = c("country_id" = "id")) %>%
+      select(team_long_name, team_short_name, name) %>%
+      rename(country_name = name)
+    ```
+    
+- **Exercise**: Extract all matches from the `England Premier League` and 
+  calculate the mean team difference (average of home team goals minus away
+  team goals) each day in the `"2010/2011"` season. Plot this proportion 
+  against time. (hint: you'll need separate date and time. You'll also need to 
+  use before you plot `parse_date()`).
+  
+    Your plot should look like this:
+  
+    ```{r, echo = FALSE}
+    Match_db %>%
+      select(league_id, season, date, home_team_goal, away_team_goal) %>%
+      filter(league_id == 1729, season == "2010/2011") %>%
+      collect() ->
+      subMatch
+    
+    subMatch %>%
+      separate(col = "date", into = c("date", "time"), sep = " ") %>%
+      select(-time) %>%
+      group_by(date) %>%
+      summarize(mean_diff = mean(home_team_goal - away_team_goal)) %>%
+      mutate(date = parse_date(x = date, format = "%Y-%m-%d")) ->
+      ave_diff
+    
+    ggplot(data = ave_diff, mapping = aes(x = date, y = mean_diff)) +
+      geom_line() +
+      xlab("Date") +
+      ylab("Mean Difference") +
+      theme_bw()
+    ```
+  
+    
+  
+
+
+
+
+
+

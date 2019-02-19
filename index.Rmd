@@ -56,4 +56,5 @@ University by [David Gerard](https://dcgerard.github.io/).
     - [06 Worksheet: tidyr](./lectures/06_tidyr/06_tidyr.pdf)
     - [06 tidyr Lab](./lectures/06_tidyr/06_tidyr_lab.pdf)
 - 07 Relational Data
-    - Jane's Notes on Relational data. Chapter 13 of [RDS](https://r4ds.had.co.nz/).
+    - [07 Joining](./lectures/07_joining/07_joining.pdf)
+    - [07 Databases and dbplyr](./lectures/07_joining/07_dbplyr.pdf)
