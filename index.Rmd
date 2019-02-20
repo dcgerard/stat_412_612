@@ -58,3 +58,4 @@ University by [David Gerard](https://dcgerard.github.io/).
 - 07 Relational Data
     - [07 Joining](./lectures/07_joining/07_joining.pdf)
     - [07 Databases and dbplyr](./lectures/07_joining/07_dbplyr.pdf)
+    - [07 Relational Data Lab](./lectures/07_joining/07_joining_lab.pdf)

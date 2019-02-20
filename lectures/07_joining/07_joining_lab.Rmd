@@ -1,0 +1,151 @@
+---
+title: "Relational Data Lab"
+date: "`r Sys.Date()`"
+output: pdf_document
+urlcolor: "blue"
+params: 
+  solutions: FALSE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = params$solutions, eval = params$solutions)
+```
+
+
+```{r, echo = FALSE, eval = FALSE}
+# Load in the following toy datasets
+library(tidyverse)
+starship <- tribble(~ID,         ~class,         ~name,       ~length,  ~launched,
+                    "NCC-1701",  "constitution", "Enterprise", 288.646, 2245,
+                    "NCC-1701D", "galaxy",       "Enterprise", 642.5,   2361,
+                    "NX-74205",  "defiant",      "Defiant",    170,     2370,
+                    "NCC-74656", "intrepid",     "Voyager",    343,     2371)
+
+captain <- tribble(~firstname,  ~lastname, ~ship,       ~drink,
+                   "James",     "Kirk",    "NCC-1701",  "brandy",
+                   "Jean-luc",  "Picard",  "NCC-1701D", "tea",
+                   "Benjamin",  "Sisko",   "NX-74205",  "coffee",
+                   "Katherine", "Janeway", "NCC-74656", "coffee")
+```
+
+We'll work more with the nycflights13 dataset here.
+
+1. Load the nycflights13 data frames into R.
+
+    ```{r}
+    library(tidyverse)
+    library(nycflights13)
+    data("airlines")
+    data("airports")
+    data("flights")
+    data("planes")
+    data("weather")
+    ```
+    
+2. Explore if the average arrival delay is associated with the time zone of the 
+   destination.
+
+    ```{r}
+    ## Yes, points in time zones further from NYC time zone have on average
+    ## longer arrival delays. This is probably just a result of distance from NYC.
+    flights %>%
+      group_by(dest) %>%
+      summarize(arr_delay = mean(arr_delay, na.rm = TRUE)) %>%
+      left_join(airports, by = c("dest" = "faa")) %>%
+      select(arr_delay, tz) %>%
+      mutate(tz_fac = factor(tz)) %>%
+      ggplot(aes(x = tz_fac, y = arr_delay)) +
+      geom_boxplot() +
+      theme_bw() +
+      xlab("Time Zone") +
+      ylab("Mean Arrival Delay")
+    ```
+    
+3. Calculate the average longitude and latitude of the three NCY airports. 
+   We will use this as the location of NYC.
+   
+    ```{r}
+    flights %>%
+      select(origin) %>%
+      distinct() %>%
+      left_join(airports, by = c("origin" = "faa")) %>%
+      summarize(lon = mean(lon), lat = mean(lat)) ->
+      nyc_location
+    nyc_location
+    ```
+    
+4. Create a function that takes two vectors (`lon` and `lat`) and two scalars
+   (`nyclon` and `nyclat`) as input. It then uses the `distm()` function in the
+   geosphere R package to calculate the geodesic distance between each each 
+   element in `lon` and `lat` and the location defined by `nyclon` and `nyclat`.
+   For example, in my implementation:
+   
+    ```{r, eval = TRUE}
+    library(geosphere)
+    dist_nyc <- function(lon, lat, nyclon, nyclat) {
+      c(distm(cbind(lon, lat), cbind(nyclon, nyclat)))
+    }
+    ```
+
+    ```{r, eval = TRUE, echo = TRUE}
+    lat    <- c(41.1, 32.5, 42.0)
+    lon    <- c(-80.6, -85.7, -88.1)
+    nyclon <- -73.9
+    nyclat <- 40.8
+    dist_nyc(lon = lon, lat = lat, nyclon = nyclon, nyclat = nyclat)
+    ```
+
+   
+5. Use the function you created in part 4 and the NYC location you calculated
+   in part 3 to find the geodesic distance from NYC of every airport.
+   Explore if average arrival delay is associated with distance of the
+   destination from NYC.
+   
+    ```{r}
+    airports %>%
+      mutate(distNYC = dist_nyc(lon = lon, 
+                                lat = lat, 
+                                nyclon = nyc_location$lon,
+                                nyclat = nyc_location$lat)) ->
+      airports
+    
+    ## Seems that delay increases then decreases with distance
+    flights %>%
+      group_by(dest) %>%
+      summarize(arr_delay = mean(arr_delay, na.rm = TRUE)) %>%
+      left_join(airports, by = c("dest" = "faa")) %>%
+      ggplot(aes(x = distNYC, y = arr_delay)) +
+      geom_point() +
+      geom_smooth(se = FALSE) +
+      theme_bw() +
+      xlab("Distance from NYC") +
+      ylab("Average Arrival Delay")
+    ```
+   
+6. For each plane calculate the proportion of times that it takes off in fair 
+   weather and see if that proportion is associated with the age of the plane.
+   We'll define "fair weather" to mean no precipitation, wind-speeds of
+   under 20 mph, and a visibility of at least 10 miles.
+   
+    ```{r}
+    ## looks like there is no association
+    flights %>%
+      select(tailnum, origin, year, month, day, dep_time) %>%
+      mutate(hour = dep_time %/% 100) %>%
+      left_join(weather, by = c("origin", "year", "month", "day", "hour")) %>%
+      mutate(is_fair = precip == 0 & wind_speed < 20 & visib >= 10) %>%
+      group_by(tailnum) %>%
+      summarize(prop_fair = mean(is_fair, na.rm = TRUE)) %>%
+      left_join(planes, by = "tailnum") %>%
+      mutate(age = 2013 - year) %>%
+      ggplot(aes(x = age, y = prop_fair)) +
+      geom_point() +
+      theme_bw() +
+      xlab("Age") +
+      ylab("Proportion Fair") +
+      geom_smooth(method = "lm", se = FALSE)
+    ```
+   
+
+
+
