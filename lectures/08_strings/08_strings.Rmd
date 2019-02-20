@@ -1,0 +1,102 @@
+---
+title: "Strings and Regular Expressions"
+author: "David Gerard"
+date: "`r Sys.Date()`"
+output: pdf_document
+urlcolor: "blue"
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo       = TRUE, 
+                      fig.height = 3, 
+                      fig.width  = 6,
+                      fig.align  = "center")
+```
+
+# Learning Objectives
+
+- Manipulating strings with the stringr package.
+- Regular expressions
+- Chapter 14 of [RDS](https://r4ds.had.co.nz/).
+- [Work with Strings Cheatsheet](https://www.rstudio.com/resources/cheatsheets/#stringr).
+
+# Strings
+
+- In R, strings (also called "characters") are created and displayed within quotes:
+
+    ```{r}
+    x <- "I am a string!"
+    x
+    ```
+
+- Anything within quotes is a string, even numbers!
+    ```{r, error=TRUE}
+    y <- "3"
+    class(y)
+    ```
+
+- You can have a vector of strings.
+
+    ```{r}
+    x <- c("I", "am", "a", "string", "vector")
+    x[2:3]
+    ```
+    
+- The backslash `"\"` means that what is after the backslash is special is some 
+  way. For example, if you want to put a quotation mark in a string, you can "escape" the
+  quotation mark with a backslash.
+  
+    ```{r}
+    x <- "As Tolkein said, \"Not all those who wonder are lost\""
+    writeLines(x)
+    ```
+    
+- Above, `writeLines()` will print out the string itself. `print()` will print 
+  out the printed representation of the string (with backslashes and all).
+  
+    ```{r}
+    print(x)
+    ```
+  
+  
+- `"\n"` represents a new line.
+
+    ```{r}
+    x <- "Not all those\nwho wonder are lost."
+    writeLines(x)
+    ```
+    
+- `"\t"` represents a tab.
+
+    ```{r}
+    x <- "Not all those\twho wonder are lost."
+    writeLines(x)
+    ```
+    
+- You can add any unicode character with a `\u` followed by the hexidecimal 
+  [unicode representation](https://en.wikipedia.org/wiki/List_of_Unicode_characters) 
+  of that character.
+  
+    ```{r}
+    mu <- "\u00b5"
+    writeLines(mu)
+    ```
+  
+# stringr
+
+- The stringr package contains a lot of convenience functions for manipulating
+  strings (and they are a lot more user friendly than base R's string 
+  manipulation functions like `grep()` and `gsub()`).
+
+- stingr is not part of the tidyverse so you have to load it separately.
+
+    ```{r, message = FALSE}
+    library(tidyverse)
+    library(stringr)
+    ```
+    
+
+  
+  
+

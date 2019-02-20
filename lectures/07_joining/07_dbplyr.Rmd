@@ -26,9 +26,9 @@ knitr::opts_chunk$set(echo       = TRUE,
 
 - dplyr basically implements the most common actions in SQL (but SQL can do more).
 
-- We'll use a soccer dataset to demonstrate how to use dplyr syntax when 
-  interacting with a database. Download and unzip the soccer database from
-  <https://dcgerard.github.io/stat_412_612/data.html>.
+- We'll use a soccer dataset to demonstrate how to use dplyr (instead of SQL) 
+  syntax when interacting with a database. Download and unzip the soccer 
+  database from <https://dcgerard.github.io/stat_412_612/data.html>.
   
 - We'll use the dbplyr package to interact with databases.
 
@@ -107,7 +107,7 @@ knitr::opts_chunk$set(echo       = TRUE,
       Country
     ```
     
-- The following will return a data frame telling you where each country is from.
+- The following will return a data frame telling you where each team is from.
     
     ```{r}
     Match %>%
