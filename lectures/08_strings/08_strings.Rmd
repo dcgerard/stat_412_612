@@ -43,7 +43,7 @@ knitr::opts_chunk$set(echo       = TRUE,
     x[2:3]
     ```
     
-- The backslash `"\"` means that what is after the backslash is special is some 
+- The backslash `"\"` means that what is after the backslash is special in some 
   way. For example, if you want to put a quotation mark in a string, you can "escape" the
   quotation mark with a backslash.
   
@@ -74,7 +74,7 @@ knitr::opts_chunk$set(echo       = TRUE,
     writeLines(x)
     ```
     
-- You can add any unicode character with a `\u` followed by the hexidecimal 
+- You can add any Unicode character with a `\u` followed by the hexadecimal 
   [unicode representation](https://en.wikipedia.org/wiki/List_of_Unicode_characters) 
   of that character.
   
@@ -83,7 +83,7 @@ knitr::opts_chunk$set(echo       = TRUE,
     writeLines(mu)
     ```
   
-# stringr
+# stringr Intro
 
 - The stringr package contains a lot of convenience functions for manipulating
   strings (and they are a lot more user friendly than base R's string 
@@ -96,7 +96,418 @@ knitr::opts_chunk$set(echo       = TRUE,
     library(stringr)
     ```
     
-
+- All of stringr's functions begin with "`str_`", so you can press tab after
+  typing "`str_`" and a list of possible string manipulation functions will
+  pop up (in RStudio).
   
+- For example, to get the number of characters in a string, use `str_length()`.
+
+    ```{r}
+    str_length("Upon the hearth the fire is red,")
+    ```
+
+    
+## Combining Strings
+
+- Combine strings with `str_c()`.
+    ```{r}
+    x <- "Faithless is he that says"
+    y <- "farewell when the road darkens."
+    str_c(x, y)
+    ```
+
+- The default is to separate strings by nothing, but you can use `sep` to change
+  the separator.
+    ```{r}
+    str_c(x, y, sep = " ")
+    ```
+    
+- Just like `c()`, `str_c()` can take multiple arguments.
+
+    ```{r}
+    str_c("Short", "cuts", "make", "long", "delays.", sep = " ")
+    ```
+    
+- If you provide `str_c()` a vector of arguments, it will vectorize the 
+  combining unless you provide a `collapse` argument.
+  
+    ```{r}
+    x <- c("Short", "cuts", "make", "long", "delays.")
+    str_c(x, "LOTR", sep = " ")
+    str_c(x, collapse = " ")
+    ```
+
+- Combining with `NA` results in `NA`:
+    ```{r}
+    str_c("Faithless is he that says", NA)
+    ```
+    
+
+## Extracting substrings
+
+- `str_sub()` extracts a substring between the location of two characters.
+    ```{r}
+    x <- "The Road goes ever on and on"
+    str_sub(x, start = 2, end = 6)
+    ```
+    
+- Replace substrings with assignment
+    ```{r}
+    str_sub(x, start = 2, end = 6) <- " Tolkein "
+    x
+    ```
+    
+- **Exercise**: Reproduce this quote
+
+    > But under a tall tree I will lie,
+      And let the clouds go sailing by.
+
+    with these strings
+    ```{r}
+    w <- "But under a tall tree"
+    x <- "FRELL I will lie"
+    y <- "and let clouds go"
+    z <- "sailing by."
+    ```
+    
+    ```{r, echo = FALSE, eval = FALSE}
+    str_c(w, str_sub(x, 7, str_length(x)), y, z, sep = " ")
+    ```
+    
+
+# Regular Expressions
+
+- Regular expressions (regex or regexp) is a syntax for pattern matching in strings.
+
+- We'll use `str_replace()` and `str_replace_all()` to demonstrate using regex 
+  in stringr. These functions search for a pattern and then replace it with
+  another string.
+  
+- But wherever there is a `pattern` argument in a stringr function, you can 
+  use regex (to extract strings, get a logical if there is a match, etc...).
+  
+- Basic usage: finds exact match of string.
+
+    ```{r}
+    x <- "Ho! Ho! Ho! to the bottle I go to heal my heart and drown my woe."
+    str_replace_all(x, "hea", "XX")
+    ```
+
+- A period "`.`" matches any character.
+
+    ```{r}
+    str_replace_all(x, "hea.", "XX")
+    ```
+    
+- You can "escape" a period with two backslashes "`\\`" to match periods.
+
+    ```{r}
+    str_replace_all(x, ".", "X") ## Matches everything
+    str_replace_all(x, "\\.", "X") ## Matches the only period
+    ```
+
+- To match a backslash, you need four backslashes (to escape the escape).
+
+    ```{r}
+    y <- "Rain\\may\\fall\\and\\wind\\may\\blow"
+    writeLines(y)
+    str_replace_all(y, "\\\\", "XX")
+    ```
+
+
+- *Important note*: The actual regular expressions above are strings themselves,
+  and so you view them with `writeLines()`. So using "`\\.`" as the pattern
+  argument in R results in the regular expression "`\.`".
+
+- **Exercise**: Construct a regular expression to match this string:
+    ```{r, echo = FALSE}
+    writeLines("\\.\\.\\.")
+    ```
+
+- **Exercise**: Use one function call to replace `"back"` and `"lack"` with `"foo"`.
+
+    ```{r}
+    x <- "but better is Beer if drink we lack, and Water Hot poured down the back."
+    ```
+
+    ```{r, echo = FALSE, eval = FALSE}
+    str_replace_all(x, ".ack", "foo")
+    ```
+    
+## Anchoring
+
+- You can anchor the pattern to only match the start or end of a string.
+
+    - `^` matches only the start of a string.
+    - `$` matches only the end of a string.
+
+    ```{r}
+    x <- c("But", "under", "a", "tall", "tree", "I", "will", "lie")
+    str_replace(x, "^t", "XX")
+    str_replace(x, "t$", "XX")
+    ```
+    
+- Use both to match only a complete string.
+
+    ```{r}
+    x <- c("apple pie", "apple", "apple cake")
+    str_replace_all(x, "apple", "XX")
+    str_replace_all(x, "^apple$", "XX")
+    ```
+    
+- **Exercise**: Use `str_replace()` to replace all four letter words beginning
+  with an `"a"` with `"foo"` in the following list
+    ```{r}
+    x <- c("apple", "barn", "ape", "cart", "alas", "pain", "ally")
+    ```
+    
+    ```{r, echo = FALSE, eval = FALSE}
+    str_replace(x, "^a...$", "foo")
+    ```
+    
+## Special Characters
+
+- We'll use this character vector for practice:
+    ```{r}
+    x <- c("Abba: 555-1234", "Anna: 555-0987", "Andy: 555-7654")
+    ```
+
+- `\\d`: matches any digit.
+    ```{r}
+    str_replace(x, "\\d\\d\\d-\\d\\d\\d\\d", "XXX-XXXX")
+    ```
+- `\\s`: matches any white space (e.g. space, tab, newline).
+    ```{r}
+    str_replace(x, "\\s", "X")
+    ```
+- `[abc]`: matches `a`, `b`, or `c`.
+    ```{r}
+    str_replace(x, "A[bn][bn]a", "XXXX")
+    ```
+- `[^abc]`: matches anything except `a`, `b`, or `c`.
+    ```{r}
+    str_replace(x, "A[^b]", "XXXX")
+    ```
+- `abc|xyz`: matches either `abc` or `xyz`. This is called *alternation*
+- You can use parentheses to control where the alternation occurs.
+    - `a(bc|xy)z` matches either `abcz` or `axyz`.
+    ```{r}
+    str_replace(x, "An(na|dy)", "XXXX")
+    ```
+
+- To ignore case, place a `(?i)` before the regex.
+    ```{r}
+    str_replace("AB", "ab", "X")
+    str_replace("AB", "(?i)ab", "X")
+    ```
+
+- **Exercise**: Create separate regular expressions to find all words that:
+
+    1. Start with a vowel. Test on 
+    ```{r}
+    x1 <- c("abba", "cat", "eal", "ion", "oops", "Uganda", "Anna", "dog")
+    ```
+
+    2. That end in consonants. (Hint: thinking about matching "not"-vowels.) 
+       test on
+    ```{r}
+    x2 <- c("bob", "Anna", "dog")
+    ```
+
+    3. End with `ed`, but not with `eed`. Test on
+    ```{r}
+    x3 <- c("tired", "need", "bad", "rod")
+    ```
+    
+
+    4. End with `ing` or `ise`. Test on
+    ```{r}
+    x4 <- c("paradise", "firing", "jaded", "kin")
+    ```
+    
+    
+    ```{r, echo = FALSE, eval = FALSE}
+    #1
+    str_replace_all(x1, "^[aeiouAEIOU]", "XX")
+    #2
+    str_replace_all(x2, "[^aeiouAEIOU]$", "XX")
+    #3
+    str_replace(x3, "[^e]ed$", "XX")
+    #4
+    str_replace(x4, "(ing|ise)$", "XX")
+    ```
+    
+## Repetition
+
+- Can match a pattern multiple times in a row:
+
+    - `?`: 0 or 1
+    - `+`: 1 or more
+    - `*`: 0 or more
+    
+    ```{r}
+    x <- c("A", "AA", "AAA", "AAAA", "B", "BB")
+    str_replace_all(x, "^A?", "X")
+    str_replace_all(x, "^A+", "X")
+    str_replace_all(x, "^A*", "X")
+    ```
+    
+- A more realistic example:
+    ```{r}
+    str_replace_all("color and colour", "colou?r", "X")
+    ```
+
+- Control exactly how many repetitions allowed in a match:
+
+    - `{n}`: exactly `n`.
+    - `{n,}`: `n` or more.
+    - `{0,m}`: at most `m`.
+    - `{n,m}`: between `n` and `m`.
+  
+    ```{r}
+    str_replace_all(x, "A{2}", "X")
+    str_replace_all(x, "A{2,}", "X")
+    str_replace_all(x, "A{0,2}", "X")
+    str_replace_all(x, "A{3,4}", "X")
+    ```
+    
+- Regex will automatically match the longest string possible.
+
+    ```{r}
+    str_replace("AAAA", "A*", "X")
+    ```
+    
+- **Exercise**: Create regular expressions to find all words that:
+
+    1. Start with three consonants. Test on
+    ```{r}
+    x1 <- c("string", "priority", "value", "distinction")
+    ```
+    
+    2. Have three or more vowels in a row. Test on
+    ```{r}
+    x2 <- c("honorific", "delicious", "priority", "queueing")
+    ```
+    
+    3. Have two or more vowel-consonant pairs in a row. Test on
+    ```{r}
+    x3 <- c("honorific", "sam", "prior")
+    ```
+    
+    ```{r, eval = FALSE, echo = FALSE}
+    str_replace_all(x1, "^[^aeiouAEIOU]{3}", "X")
+    str_replace_all(x2, "[aeiouAEIOU]{3,}", "X")
+    str_replace_all(x3, "([aeiouAEIOU][^aeiouAEIOU]){2,}", "X")
+    ```
+    
+## Grouping and Backreferences
+  
+- Parentheses create a numbered group that you can then back reference with
+  `\\1` for the match in the first parentheses, `\\2` in the second 
+  parentheses, etc...
+
+    ```{r}
+    str_replace("cococola", "(..)\\1", "pepsi")
+    str_replace("banana", "([aeiou][^aeiou])\\1", "XX")
+    ```
+
+# stringr tools
+
+- There are a lot of tools, so we'll go over them briefly and do an exercise
+  where you can use them in more detail.
+  
+- `str_to_lower()` and `str_to_upper()` convert all letters to lower or capital
+  case.
+    ```{r}
+    x <- "Deeds will not be less valiant because they are unpraised."
+    str_to_lower(x)
+    str_to_upper(x)
+    ```
+
+- `str_detect()`: Returns `TRUE` if a regex pattern matches a string and `FALSE`
+  if it does not. Very useful for filters.
+  
+    ```{r}
+    ## Get all John's and Joe's from the Lahman dataset
+    library(Lahman)
+    data("Master")
+    Master %>%
+      filter(str_detect(nameFirst, "^Jo(e|hn)$")) %>%
+      select(nameFirst) %>%
+      head()
+    ```
+  
+- `str_subset()`: Returns the words where there is a match. Not often as useful
+  as `str_detect()` because you don't use it in data frames that often.
+  
+    ```{r}
+    str_subset(Master$nameFirst, "^Jo(e|hn)$") %>%
+      head()
+    ```
+  
+- `str_count()`: Counts the occurrence of a match within a string.
+
+    ```{r}
+    str_count(c("banana", "coco"), "[^aeiou][aeiou]")
+    ```
+    
+    They count *non-overlapping* matches
+    
+    ```{r}
+    str_count("abababa", "aba")
+    ```
+  
+
+- `str_extract()`: Returns the pattern that it finds. `str_extract()` will only
+  return the first match but `str_extract_all()` will return all matches.
+    ```{r}
+    colorstr <- str_c("red", "blue", "yellow", "orange", "brown", sep = "|")
+    colorstr
+    str_extract("I like blue and brown and that's it", colorstr)
+    str_extract_all("I like blue and brown and that's it", colorstr)
+    ```
+  
+- `str_match()`: returns a matrix where each column is a grouped component.
+
+    ```{r}
+    x <- "I like blue and brown and that's it, or black"
+    str_extract_all(x, "(and|or)\\s([^\\s]+)")
+    str_match_all(x, "(and|or)\\s([^\\s]+)")
+    ```
+  
+- Let's look at the poem "Farewell We Call to Hearth and Hall!"
+    ```{r}
+    farewell <- c("Farewell we call to hearth and hall!
+                  Though wind may blow and rain may fall,
+                  We must away ere break of day
+                  Far over wood and mountain tall.")
+    writeLines(farewell)
+    ```
+
+- `str_split()` will split up a string based on a character we choose.
+
+    ```{r}
+    ## Split based on spaces
+    str_split(farewell, pattern = "\\s+", simplify = TRUE) ## use one or more space to split
+    ```
+    
+- `str_replace()` and `str_replace_all()` will replace patterns with provided
+  strings. So say we want to get rid of all punctuation.
+  
+    ```{r}
+    str_split(farewell, pattern = "\\s+", simplify = TRUE) %>%
+      str_replace_all("\\.|\\!|,", "")
+    ```
+    
+- You can use back references to populate the replacement.
+
+    ```{r}
+    str_replace_all("It is 1am", "(\\d+)(am|pm)", "\\2")
+    ```
+
+
+- More stringr options can be found in [RDS](https://r4ds.had.co.nz/).
+
+
   
 
