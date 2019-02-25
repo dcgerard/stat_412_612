@@ -28,3 +28,4 @@ knitr::opts_chunk$set(echo = TRUE)
     - [wine](./data/wine.csv)
 - Relational Soccer Data from https://www.kaggle.com/hugomathien/soccer
     - [soccer.zip](./data/soccer/soccer.zip)
+- List of words: [words.txt](./data/words.txt)
