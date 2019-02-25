@@ -1,0 +1,168 @@
+---
+title: "Strings Lab"
+date: "`r Sys.Date()`"
+author: "David Gerard"
+output: pdf_document
+urlcolor: "blue"
+params: 
+  solutions: FALSE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = params$solutions, eval = params$solutions)
+```
+
+# Learning Objectives
+
+- Practice `stringr`, `dplyr`, and `ggplot2`.
+
+# Exercises
+
+For this exercise, we will consider the works of 
+[Jane Austen](https://en.wikipedia.org/wiki/Jane_Austen) as stored in the
+janeaustenr package.
+
+```{r, echo = TRUE}
+library(janeaustenr)
+bookdf <- austen_books()
+```
+
+`bookdf` (which we created above) is a data frame that contains a line of 
+text and the book from which that line belongs.
+
+1. Populate `bookdf` with line numbers (so at the start of each book, the line
+   number begins at 1).
+
+
+    ```{r, eval = TRUE, message=FALSE}
+    library(tidyverse)
+    ```
+
+    ```{r}
+    bookdf %>%
+      group_by(book) %>%
+      mutate(line_number = row_number()) %>%
+      ungroup() ->
+      bookdf
+    ```
+
+2. Add a column to `bookdf` called `new_chapter` that is `TRUE` if the line 
+   begins a new chapter and `FALSE` otherwise.
+
+    ```{r}
+    bookdf %>%
+      mutate(new_chapter = str_detect(text, "^CHAPTER")) ->
+      bookdf
+    ```
+
+3. Read about the `cumsum()` function. Try it out on the following vector:
+    ```{r, echo = TRUE}
+    c(FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, TRUE, TRUE, FALSE)
+    ```
+    
+    What do you think `cumsum()` does when evaluated with a logical vector?
+
+4. Use the `cumsum()` function (as well as other functions)
+   to find the chapter number of each line of text. Add this as a new column 
+   to `bookdf` called `chapter`.
+   
+    ```{r}
+    bookdf %>%
+      group_by() %>%
+      mutate(chapter = cumsum(new_chapter)) %>%
+      ungroup() ->
+      bookdf
+    ```
+    
+5. Apply this code to get one word per row in the data frame `janedf`:
+
+    ```{r, echo = TRUE}
+    library(tidytext)
+    bookdf %>%
+      unnest_tokens(word, text) ->
+      janedf
+    ```
+    
+6. Use stringr and regular expressions to create shortened titles for the books
+   that contain just the first characters of each word. For example, 
+   `"Sense & Sensibility"` should change to `"S&S"` while `"Emma"` should 
+   change to just `"E"`. Add these shortened titles to the `janedf` data frame.
+   
+    Hints: I used `str_replace_all()` for this question.
+    Try making the regex changes on this data frame then use joining.
+
+    ```{r, echo = TRUE}
+    book_title <- tibble(book = levels(janedf$book))
+    ```
+    
+    ```{r}
+    book_title %>%
+      mutate(short_title = str_replace_all(book, pattern = "[a-z ]", "")) ->
+      book_title
+    
+    janedf %>%
+      left_join(book_title, by = "book") ->
+      janedf
+    ```
+   
+7. Is there an association between word length and book? First, calculate the
+   proportion of words of each length for each book.
+   
+    ```{r}
+    janedf %>%
+      mutate(length = str_length(word)) %>%
+      group_by(book, length) %>%
+      count() %>%
+      ungroup() %>%
+      group_by(book) %>%
+      mutate(prop = n / sum(n)) ->
+      word_count_df
+    ```
+    
+     Now use `geom_line()` to plot the word length against proportion of words,
+     color coding by book.
+   
+    ```{r}
+    ## The distribution is almost identical.
+    ggplot(word_count_df, aes(x = length, y = prop, color = book)) +
+      geom_line() +
+      theme_bw() +
+      xlab("Book") +
+      ylab("Length")
+    ```
+
+8. From the `bookdf` data frame, create a data frame with two columns, `book`
+   and `text`. There should be only six rows, and each element in `text` should
+   contain the entire text from the book in `book`.
+   
+    ```{r}
+    bookdf %>%
+      group_by(book) %>%
+      summarize(text = str_c(text, collapse = " ")) ->
+      alldf
+    ```
+   
+9. Create a function that will take as input a string and return another string
+   where the name of any Bennet sister mentioned is preceded with "mecha". The
+   Bennet sisters are Elizabeth (Eliza or Lizzy), Mary, Kitty (Catherine), 
+   Lydia, and Jane.
+   
+    For example, in my implementation, `mechabennet()`, I have the following 
+    outputs:
+   
+    ```{r, eval = TRUE}
+    mechabennet <- function(x) {
+      str_replace_all(x, "(Elizabeth|Eliza|Lizzy|Mary|Kitty|Catherine|Lydia|Jane)", 
+                      "mecha-\\1")
+    }
+    ```
+
+    ```{r, eval = TRUE, echo = TRUE}
+    text <- "Elizabeth passed quietly out of the room, Jane and Kitty followed"
+    mechabennet(text)
+    ```
+   
+
+
+
+

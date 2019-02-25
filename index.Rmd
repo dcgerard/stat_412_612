@@ -61,3 +61,4 @@ University by [David Gerard](https://dcgerard.github.io/).
     - [07 Relational Data Lab](./lectures/07_joining/07_joining_lab.pdf)
 - 08 Strings and Regular Expressions
     - [08 Strings and Regular Expressions](./lectures/08_strings/08_strings.pdf)
+    - [08 Strings Lab](./lectures/08_strings/08_strings_lab.pdf)
