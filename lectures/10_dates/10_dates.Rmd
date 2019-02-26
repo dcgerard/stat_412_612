@@ -1,0 +1,23 @@
+---
+title: "Dates"
+author: "David Gerard"
+date: "`r Sys.Date()`"
+output: pdf_document
+urlcolor: "blue"
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo       = TRUE, 
+                      fig.height = 3, 
+                      fig.width  = 6,
+                      fig.align  = "center")
+ggplot2::theme_set(ggplot2::theme_bw())
+```
+
+# Learning Objectives
+
+- Manipulating dates and times.
+- Chapter 16 of [RDS](https://r4ds.had.co.nz/).
+- [Dates and Times Cheat Sheet](https://www.rstudio.com/resources/cheatsheets/#lubridate).
+
