@@ -34,7 +34,7 @@ ggplot2::theme_set(ggplot2::theme_bw())
        factor, but not of a character.
     2. There is an ordering for the levels of a factor 
         - Useful when determining the order to plot something.
-        - Useful when doing orderd logistic regression.
+        - Useful when doing ordered logistic regression.
         
 - Consider the following data frame for average highs in DC for each month.
 
@@ -107,7 +107,7 @@ ggplot2::theme_set(ggplot2::theme_bw())
     ```
     
 - If you do not specefy the `levels` argument, R will assume that the levels
-  are the unique values of the vector
+  are the unique values of the vector.
     - `factor()` takes the order of the levels to be the same order returned 
       by `sort()`.
     - `parse_factor()` takes the order of the levels to be the same order
@@ -126,10 +126,16 @@ ggplot2::theme_set(ggplot2::theme_bw())
     ```{r}
     levels(dcclimate$monthfc)
     ```
-- More elegant is the `count()` function:
+- Other options are the `fct_unique()` and `fct_count()` functions from the 
+  forcats package.
     ```{r}
-    dcclimate %>%
-      count(monthfc)
+    fct_unique(dcclimate$monthfc)
+    fct_count(dcclimate$monthfc)
+    ```
+    
+- You can count the number of levels with `nlevels()`.
+    ```{r}
+    nlevels(dcclimate$monthfc)
     ```
 
 - Once we have a factor variable, the order of the aesthetic map is set in ggplot.
@@ -153,6 +159,11 @@ ggplot2::theme_set(ggplot2::theme_bw())
 - forcats is an R package which makes two things much easier in R:
     - Changing the order of the levels of the factor variable.
     - Changing the levels of the factor variable.
+
+- It also a few other helper functions for factors.
+
+- All forcat functions begin with `fct_`. So you can type "fct_" then use 
+  tab-completion to scroll through the possible functions.
   
 - forcats is a part of the tidyverse, so you don't need to load it separately
   when you load the tidyverse.
@@ -183,6 +194,127 @@ ggplot2::theme_set(ggplot2::theme_bw())
       ylab("Religion")
     ```
   
+- `fct_reorder()` reorders the levels of a factor according to some values
+  of another variable. The arguments are:
+    - `f`: The factor vector.
+    - `x`: A numeric vector used to reorder the levels.
+    - `fun`: A function applied to `x`, the result of which will be used to
+      order the levels of `f`.
+    
+    ```{r}
+    levels(tvdat$relig)
+    tvdat %>%
+      mutate(relig = fct_reorder(relig, tvhours_mean)) ->
+      tvdat
+    levels(tvdat$relig)
+    ```
+
+- The plot now reorders the y-axis according to the new level order.
+
+    ```{r}
+    ggplot(tvdat, aes(x = tvhours_mean, y = relig)) +
+      geom_point() +
+      xlab("Average TV Hours") +
+      ylab("Religion")
+    ```
+
+- `fct_rev()` reverses the order of the factors.
+
+    ```{r}
+    tvdat %>%
+      mutate(relig = fct_rev(relig)) %>%
+      ggplot(aes(x = tvhours_mean, y = relig)) +
+        geom_point() +
+        xlab("Average TV Hours") +
+        ylab("Religion")
+    ```
+    
+- `fct_relevel()` allows you to move existing levels to any location.
+
+    ```{r}
+    ## Moves "None" to first level
+    fct_relevel(tvdat$relig, "None") %>%
+      levels()
+    
+    ## Moves "None" to the third level
+    fct_relevel(tvdat$relig, "None", after = 2L) %>%
+      levels()
+    
+    ## Moves "None" to the last level
+    fct_relevel(tvdat$relig, "None", after = nlevels(tvdat$relig)) %>%
+      levels()
+    
+    ## Returns a warning because "Cthulhuism" is not a level
+    fct_relevel(tvdat$relig, "Cthulhuism")
+    ```
+
+- **Exercise**: Reorder the levels of the `partyid` variable so that the 
+  levels are in alphabetical order.
+  
+    ```{r, eval = FALSE, echo = FALSE}
+    gss_cat %>%
+      mutate(partyid = fct_relevel(partyid, sort(levels(partyid)))) %>%
+      count(partyid)
+    ```
+  
+  
+- **Exercise**: Move the `"Not applicable"` level to the front in the `rincome`
+  variable.
+  
+    ```{r, eval = FALSE, echo = FALSE}
+    gss_cat %>%
+      mutate(rincome = fct_relevel(rincome, "Not applicable")) %>%
+      count(rincome)
+    ```
+  
+
+
+## Modify Factor Levels
+
+
+- Let's look at the levels of `partyid` in `gss_cat`.
+
+    ```{r}
+    levels(gss_cat$partyid)
+    ```
+    
+- Use `fct_recode()` to change the levels.
+
+    ```{r}
+    gss_cat %>%
+      mutate(partyid = fct_recode(partyid,
+                                  "Republican, strong"    = "Strong republican",
+                                  "Republican, weak"      = "Not str republican",
+                                  "Independent, near rep" = "Ind,near rep",
+                                  "Independent, near dem" = "Ind,near dem",
+                                  "Democrat, weak"        = "Not str democrat",
+                                  "Democrat, strong"      = "Strong democrat"
+                                  )) ->
+      gss_cat
+    levels(gss_cat$partyid)
+    ```
+  
+- New level goes on the left of the equals sign. Old level goes on the right.
+
+- **Exercise**: Modify the factor levels of `marital` to be abbreviations of 
+  their long-names. For example, "Divorced" can just be "D"
+
+    ```{r, eval = FALSE, echo = FALSE}
+    fct_recode(gss_cat$marital,
+               "NA" = "No answer",
+               "NM" = "Never married",
+               "S"  = "Separated",
+               "D"  = "Divorced",
+               "W"  = "Widowed",
+               "M"  = "Married")
+    ```
+
+  
+## Other Useful Functions.
+
+- `fct_c()`: is the safe way to combine factor vectors.
+- `fct_collapse()`: combine multiple levels into one level.
+- `fct_drop()`: removes any levels that are unused.
 
 
 
