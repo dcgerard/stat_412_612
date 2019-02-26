@@ -16,7 +16,90 @@ knitr::opts_chunk$set(echo = params$solutions, eval = params$solutions)
 
 - Practice `stringr`, `dplyr`, and `ggplot2`.
 
-# Exercises
+# Exercise 1: Scrabble Words
+
+For this exercise, we are using the 
+[Collins Scrabble Words](https://en.wikipedia.org/wiki/Collins_Scrabble_Words),
+which is most commonly used outside of the United States. The dictionary most 
+often used in the United States is the
+[Tournament Word List](https://en.wikipedia.org/wiki/Official_Tournament_and_Club_Word_List).
+
+1. Load the 2015 list of Collins Scrabble Words into R from
+   <https://dcgerard.github.io/stat_412_612/data/words.txt> (note: "NA" is an
+   official Scrabble word).
+
+    ```{r, eval = TRUE, message=FALSE}
+    library(tidyverse)
+    ```
+    
+    ```{r}
+    worddf <- read_csv("../../data/words.txt", na = character())
+    wordvec <- worddf$word
+    ```
+
+2. There is a mnemonic rule in English: "i before e except after c". This states
+   that if you are unsure of the sequence of "ei" or "ie", then you should 
+   choose "ie" unless this sequence follows "c". Use regex and stringr to 
+   determine how many scrabble words violate this rule and how many scrabble
+   words satisfy this rule. Hint: check for "EITHER" in your word list.
+   
+    ```{r}
+    is_cie <- str_detect(wordvec, "CIE")
+    is_ei  <- str_detect(wordvec, "[^C]EI") | str_detect(wordvec, "^EI")
+    sum(is_cie | is_ei) ## number of violations
+    
+    is_cei <- str_detect(wordvec, "CEI")
+    is_ie  <- str_detect(wordvec, "[^C]IE") | str_detect(wordvec, "^IE")
+    sum(is_cei | is_ie) ## number of satisfications
+    
+    ## So about 19% of candidate words violate this rule
+    sum(is_cie | is_ei) / sum(is_cei | is_ie | is_cie | is_ei)
+    ```
+    
+3. Suppose you switch the "E" and the "I" in any word that contains an "EI" or 
+   "IE" pair. How many of these resulting strings still valid scrabble words?
+   What are the shortest and longest strings that are still words?
+   
+    ```{r}
+    is_eiwords  <- str_detect(wordvec, "EI")
+    switchwords <- str_replace(wordvec[is_eiwords], "EI", "IE")
+    stillword <- switchwords %in% wordvec
+    
+    subswitch <- switchwords[stillword]
+    
+    pairdf <- tibble(ie = subswitch, 
+                     ei = str_replace(subswitch, "IE", "EI"),
+                     length = str_length(subswitch))
+    
+    pairdf %>%
+      arrange(length) %>%
+      head()
+    
+    pairdf %>%
+      arrange(desc(length)) %>%
+      head()
+    ```
+
+4. Challenge (you can skip this one if you want).
+   A *palindrome* is a word that is the same read backword as forward. 
+   For example *racecar* and *madam*. How many palindromes are there? What is
+   the longest palindrome? You might need a `for` loop here.
+   
+    ```{r}
+    strmat <- str_split(wordvec, pattern = "", simplify = TRUE)
+    palvec <- apply(strmat[, ncol(strmat):1], 1, str_c, collapse = "")
+    whichpal <- palvec == wordvec
+    sum(whichpal)
+    
+    tibble(word = wordvec[whichpal]) %>%
+      mutate(length = str_length(word)) %>%
+      arrange(desc(length))
+    ```
+   
+   
+   
+
+# Exercise 2: Jane Austen
 
 For this exercise, we will consider the works of 
 [Jane Austen](https://en.wikipedia.org/wiki/Jane_Austen) as stored in the
@@ -32,11 +115,6 @@ text and the book from which that line belongs.
 
 1. Populate `bookdf` with line numbers (so at the start of each book, the line
    number begins at 1).
-
-
-    ```{r, eval = TRUE, message=FALSE}
-    library(tidyverse)
-    ```
 
     ```{r}
     bookdf %>%

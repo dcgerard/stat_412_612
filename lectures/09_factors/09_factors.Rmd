@@ -1,0 +1,191 @@
+---
+title: "Factors"
+author: "David Gerard"
+date: "`r Sys.Date()`"
+output: pdf_document
+urlcolor: "blue"
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo       = TRUE, 
+                      fig.height = 3, 
+                      fig.width  = 6,
+                      fig.align  = "center")
+ggplot2::theme_set(ggplot2::theme_bw())
+```
+
+# Learning Objectives
+
+- Manipulating factors.
+- Chapter 15 of [RDS](https://r4ds.had.co.nz/).
+- [Wrangling Categorical Data in R](https://doi.org/10.7287/peerj.preprints.3163v2).
+- [8.2: Chimeras of the R Inferno](https://www.burns-stat.com/pages/Tutor/R_inferno.pdf)
+- [Factors with forcats Cheat Sheet](https://www.rstudio.com/resources/cheatsheets/#forcats).
+
+# Factors
+
+- A "factor" is R's way to say that a variable is categorical 
+  (places observational/experimental units into different groups or categories 
+  based on its values.).
+  
+- A factor is different from a character in that:
+    1. There is a small predefined set of "levels" (possible values) of a 
+       factor, but not of a character.
+    2. There is an ordering for the levels of a factor 
+        - Useful when determining the order to plot something.
+        - Useful when doing orderd logistic regression.
+        
+- Consider the following data frame for average highs in DC for each month.
+
+    ```{r, message = FALSE}
+    library(tidyverse)
+    dcclimate <- tribble(~month, ~avehigh,
+                         ##----/---------
+                         "Jan",  43.4,
+                         "Feb",  47.1,
+                         "Mar",  55.9,
+                         "Apr",  66.6,
+                         "May",  75.4,
+                         "Jul",  88.4,
+                         "Aux",  86.5,
+                         "Sep",  79.5,
+                         "Oct",  68.4,
+                         "Nov",  57.9,
+                         "Dec",  46.8)
+    ```
+    
+- The weather for June is missing and the 3-letter abbreviation for August is 
+  incorrect. We would like to notice both of these.
+  
+- Also, when we plot the data, we would prefer the order to be the same as that
+  for the order of the months of the year.
+  
+    ```{r}
+    ggplot(dcclimate, aes(x = month, y = avehigh)) +
+      geom_col()
+    ```
+    
+- Factors help us with all of these issues.
+
+- You have to be **very** careful about factors.
+
+    ```{r}
+    x  <- c("51", "32", "15", "2", "32")
+    xf <- factor(x)
+    as.numeric(x)
+    as.numeric(xf)
+    
+    as.numeric("Hello")
+    as.numeric(factor("Hello"))
+    
+    fac1 <- factor(c("x1", "x2", "x3"))
+    fac2 <- factor(c("y1", "y2", "y3"))
+    c(fac1, fac2)
+    ```
+
+
+# Creating Factors
+
+- Use `factor()` or `parse_factor()` to create a factor variable 
+
+- `parse_factor()` returns better warnings, so I would recommend always using
+  that.
+
+    ```{r}
+    monthvec <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+                  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+    dcclimate %>%
+      mutate(monthfc = factor(month, levels = monthvec)) ->
+      dcclimate
+    
+    dcclimate %>%
+      mutate(monthfc2 = parse_factor(month, levels = monthvec)) ->
+      dcclimate
+    
+    dcclimate$monthfc
+    ```
+    
+- If you do not specefy the `levels` argument, R will assume that the levels
+  are the unique values of the vector
+    - `factor()` takes the order of the levels to be the same order returned 
+      by `sort()`.
+    - `parse_factor()` takes the order of the levels to be the same order
+      as the order of the value introduced.
+  
+  
+    ```{r}
+    x <- c("A", "string", "vector", "is", "a", "string", "vector")
+    factor(x)
+    sort(unique(x))
+    parse_factor(x)
+    ```
+
+- You can always see the levels of a factor (and their order) using 
+  the `levels()` function
+    ```{r}
+    levels(dcclimate$monthfc)
+    ```
+- More elegant is the `count()` function:
+    ```{r}
+    dcclimate %>%
+      count(monthfc)
+    ```
+
+- Once we have a factor variable, the order of the aesthetic map is set in ggplot.
+
+    ```{r}
+    ggplot(dcclimate, aes(x = monthfc, y = avehigh)) +
+      geom_col()
+    ```
+    
+- We can include missing levels by using the `drop = FALSE` argument in the 
+  appropriate scale call:
+  
+    ```{r}
+    ggplot(dcclimate, aes(x = monthfc, y = avehigh)) +
+      geom_col() +
+      scale_x_discrete(drop = FALSE)
+    ```
+
+# forcats
+
+- forcats is an R package which makes two things much easier in R:
+    - Changing the order of the levels of the factor variable.
+    - Changing the levels of the factor variable.
+  
+- forcats is a part of the tidyverse, so you don't need to load it separately
+  when you load the tidyverse.
+    
+
+## Changing the Order of the Levels
+
+- Consider the subset of the 
+  [General Social Survey](https://en.wikipedia.org/wiki/General_Social_Survey)
+  stored in the `gss_cat` data in forcats.
+    ```{r}
+    data(gss_cat)
+    glimpse(gss_cat)
+    ```
+
+- You often want to change the order of the levels of a factor to make 
+  plots more insightful.
+  
+    ```{r}
+    gss_cat %>%
+      group_by(relig) %>%
+      summarize(tvhours_mean = mean(tvhours, na.rm = TRUE)) ->
+      tvdat
+    
+    ggplot(tvdat, aes(x = tvhours_mean, y = relig)) +
+      geom_point() +
+      xlab("Average TV Hours") +
+      ylab("Religion")
+    ```
+  
+
+
+
+
+
+
