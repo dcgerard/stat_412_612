@@ -106,7 +106,7 @@ ggplot2::theme_set(ggplot2::theme_bw())
     dcclimate$monthfc
     ```
     
-- If you do not specefy the `levels` argument, R will assume that the levels
+- If you do not specify the `levels` argument, R will assume that the levels
   are the unique values of the vector.
     - `factor()` takes the order of the levels to be the same order returned 
       by `sort()`.
@@ -313,9 +313,47 @@ ggplot2::theme_set(ggplot2::theme_bw())
 ## Other Useful Functions.
 
 - `fct_c()`: is the safe way to combine factor vectors.
-- `fct_collapse()`: combine multiple levels into one level.
-- `fct_drop()`: removes any levels that are unused.
 
+    ```{r}
+    fc1 <- parse_factor(c("A", "B"))
+    fc1
+    fc2 <- parse_factor(c("C", "D"))
+    fc2
+    fct_c(fc1, fc2)
+    ```
+
+- `fct_collapse()`: combine multiple levels into one level.
+
+    ```{r}
+    fc <- parse_factor(c("A", "B", "C", "A", "B", "C"))
+    fc
+    fct_collapse(fc, "blah" = c("A", "B"))
+    ```
+
+- `fct_drop()`: removes any levels that are unused.
+  
+    ```{r}
+    fc <- parse_factor(c("A", "B"), levels = c("A", "B", "C"))
+    fc
+    fct_drop(fc)
+    ```
+
+- `fct_expand()`: adds a new level.
+
+    ```{r}
+    fc <- parse_factor(c("A", "B"))
+    fc
+    fct_expand(fc, "C")
+    ```
+
+- `fct_infreq()`: Order by frequency of a level.
+
+    ```{r}
+    fc <- parse_factor(c("A", "B", "C", "B", "C", "C"))
+    fct_count(fc)
+    fct_infreq(fc) %>%
+      fct_count()
+    ```
 
 
 

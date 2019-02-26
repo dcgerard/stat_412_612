@@ -1,0 +1,151 @@
+---
+title: "Factors Lab"
+date: "`r Sys.Date()`"
+author: "David Gerard"
+output: pdf_document
+urlcolor: "blue"
+bibliography: "fac_bib.bib"
+params: 
+  solutions: FALSE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = params$solutions, eval = params$solutions)
+```
+
+# Learning Objectives
+
+- Practice `forcats`
+
+# Exercise 1: Factor Coding Exercises
+
+Consider the factor vector
+
+```{r, echo = TRUE}
+fc <- factor(c("D", "C", "C", "A", "A", 
+               "C", "D", "A", "C", "C", 
+               "A", "A", "C", "A", "C", 
+               "B", "C", "A", "C", "B"))
+```
+
+1. `fc` should also have a level called `E`. Add this level to `fc`.
+
+```{r}
+fct_expand(fc, "E")
+```
+
+2. Plot the distribution of `fc`, ordering levels from left to right by 
+   frequency (so most frequent is on the right).
+
+    ```{r}
+    tibble(fc = fc) %>%
+      mutate(fc = fct_rev(fct_infreq(fc))) %>%
+      ggplot(aes(x = fc)) +
+      geom_bar()
+    ```
+    
+3. Put the levels in *reverse* alphabetical order.
+    ```{r}
+    fct_relevel(fc, sort(levels(fc), decreasing = TRUE))
+    ```
+    
+4. Remove all `"C"`'s from `fc` then drop this level.
+
+    ```{r}
+    tibble(fc = fc) %>%
+      filter(fc != "C") %>%
+      mutate(fc = fct_drop(fc)) %>%
+      count(fc)
+    ```
+
+5. Combine the `"A"` and `"B"` levels into the new level `"AB"`.
+
+    ```{r}
+    fct_collapse(fc, "AB" = c("A", "B"))
+    ```
+
+
+
+# Exercise 2: Sex, Lies, and Religion
+
+The data frame in <https://dcgerard.github.io/stat_412_612/data/sexlierel.txt>,
+taken from @clayton1971religiosity, contain the following variables:
+
+- `gender`: The gender of the individual. `1` = Female, `2` = Male.
+- `scale`: Different scales of sexual permissiveness. `1` = Ritualistic, `2` = Experiential, `3` = Ideological, `4` = Composite.
+- `perm`: The level of sexual permissiveness. `1` = Low, `2` = High.
+- `lie`: The propensity to lie. `1` = Lower, `2` = Higher.
+- `relig`: How religious a person is. `1` = Low, `2` = High
+- `count`: The number of individuals satisfying the conditions of the other variables.
+
+
+1. Read the data into R.
+
+    ```{r}
+    library(tidyverse)
+    sexlierel <- read_table(file = "../../data/sexlierel.txt", 
+                            col_types = cols(
+                              gender = col_factor(),
+                              scale  = col_factor(),
+                              perm   = col_factor(),
+                              lie    = col_factor(),
+                              relig  = col_factor(),
+                              count  = col_double()
+                              ))
+    ```
+
+2. Change the level names to something more informative.
+
+    ```{r}
+    sexlierel %>%
+      mutate(gender = fct_recode(gender, 
+                                 "Female" = "1", 
+                                 "Male"   = "2"),
+             scale  = fct_recode(scale,
+                                 "ritualistic"  = "1", 
+                                 "experiential" = "2",
+                                 "idiological"  = "3",
+                                 "composite"    = "4"),
+             perm   = fct_recode(perm,
+                                 "low"  = "1",
+                                 "high" = "2"),
+             lie    = fct_recode(lie,
+                                 "lower"  = "1",
+                                 "higher" = "2"),
+             relig  = fct_recode(relig,
+                                 "low"  = "1",
+                                 "high" = "2")) ->
+      sexlierel
+    sexlierel
+    ```
+    
+3. Flip the order of the levels in `perm`.
+    ```{r}
+    sexlierel %>%
+      mutate(perm = fct_rev(perm)) ->
+      sexlierel
+    ```
+
+    
+4. For males, for what scales does there appear to be an association between 
+   religiosity and permissiveness? Use one plot to explore.
+  
+    ```{r}
+    ## All of them
+    sexlierel %>%
+      filter(gender == "Male") %>%
+      ggplot(aes(x = relig, y = count, fill = perm)) +
+      geom_col(pos = "fill") +
+      facet_grid(. ~ scale) +
+      ylab("Proportion") +
+      xlab("Religiosity") +
+      scale_fill_discrete(name = "Permissiveness") +
+      theme(strip.background = element_rect(fill = "white"))
+    ```
+
+
+
+
+
+
+# References
