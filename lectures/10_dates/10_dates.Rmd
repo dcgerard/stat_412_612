@@ -64,16 +64,16 @@ ggplot2::theme_set(ggplot2::theme_bw())
 
 # Parsing Dates
 
-- You can use `parse_date()`, `parse_date_time()`, and `parse_time()` to 
+- You can use `parse_date()`, `parse_datetime()`, and `parse_time()` to 
   [parse](https://dcgerard.github.io/stat_412_612/lectures/06_tidyr/06_parsers.pdf) 
   a date/date-time/time from a string.
 
     ```{r}
-    x <- parse_date("10/11/2020", "%m/%d/%Y")
+    x <- parse_date("10/11/2020", format = "%m/%d/%Y")
     x
     class(x)
     
-    y <- parse_date_time("10/11/2020 11:59:20", "%m/%d/%Y %H:%M:%S")
+    y <- parse_datetime("10/11/2020 11:59:20", format = "%m/%d/%Y %H:%M:%S")
     y
     class(y)
     
@@ -129,8 +129,8 @@ ggplot2::theme_set(ggplot2::theme_bw())
     ```{r, eval = FALSE, echo = FALSE}
     mdy_hms("05/26/2004 UTC 11:11:11.444")
     
-    ## No dym_hms() function is defined, so need to use parse_date_time()
-    parse_date_time("26 2004 05 UTC 11/11/11.444", "%d %Y %m %H/%M/%S")
+    ## No dym_hms() function is defined, so need to use parse_datetime()
+    parse_datetime("26 2004 05 UTC 11/11/11.444", "%d %Y %m UTC %H/%M/%S")
     ```
     
 - **Exercise** (RDS 16.2.4.3): Use the appropriate lubridate function to parse 
@@ -268,7 +268,7 @@ ggplot2::theme_set(ggplot2::theme_bw())
 - To count the number of seconds between two dates, use a `duration`. You can
   read about durations using
     ```{r, eval = FALSE}
-    help(duration)
+    help("Duration-class")
     ```
 
 - We can find out how old 
@@ -281,8 +281,21 @@ ggplot2::theme_set(ggplot2::theme_bw())
     agesec
     ```
 
+- You can create durations from years with `dyears()`, from days with 
+  `ddays()`, etc...
+  
+    ```{r}
+    dyears(1)
+    ddays(1)
+    dhours(1)
+    dminutes(1)
+    dseconds(1)
+    ```
+  
+
+
 - You can add durations to date-times, but you always add *seconds*, so if there
-  is a leap day you get weird results (add a day but the time is not the same
+  is daylight savings you get weird results (add a day but the time is not the same
   as the time the previous day).
   
     ```{r}
@@ -291,7 +304,7 @@ ggplot2::theme_set(ggplot2::theme_bw())
     one_pm + ddays(1)
     ```
     
-- Adding a `period` takes into account leap days.
+- Adding a `period` takes into account daylight savings.
     ```{r}
     one_pm
     one_pm + days(1)
@@ -299,7 +312,13 @@ ggplot2::theme_set(ggplot2::theme_bw())
 
 - You can read more about periods with
     ```{r, eval = FALSE}
-    help(period)
+    help("Period-class")
+    ```
+
+- Intervals are like durations, but they also have an associated start time. You
+  can read more about intervals with
+    ```{r, eval = FALSE}
+    help("Interval-class")
     ```
     
 - **Exercise**: How long of a time-span is covered in the WMATA ridership 
@@ -311,4 +330,34 @@ ggplot2::theme_set(ggplot2::theme_bw())
     as.duration(rng[2] - rng[1])
     as.interval(rng[2] - rng[1], start = rng[1]) / years(1)
     ```
+    
+# Time Zones
+
+- Time zones are specified using the `tz` or `tzone` arguments (for example, in the call
+  to `ymd_hms()` above).
   
+- Time zones are specified by "content/city." For example, `"America/New_York"`
+  and `"Europe_Paris"`
+  
+- You can see a complete list of time zones with `OlsonNames()`.
+
+- The default time zone is `UTC` (which has no daylight savings).
+
+- You usually don't have to worry about timezones unless you loaded them in
+  incorrectly. For example, R might think it's `UTC` even though it should be 
+  `America/New_York` and then forget daylight savings.
+  
+- If a date-time is labelled with the incorrect time zone, use `force_tz()`.
+
+    ```{r}
+    d1 <- ymd_hms("20140101 10:01:11")
+    d1
+    force_tz(d1, tzone = "America/New_York")
+    ```
+
+- If the timezone is correct, but you want to change it, use `with_tz()`.
+  
+    ```{r}
+    with_tz(d1, tzone = "America/New_York")
+    ```
+

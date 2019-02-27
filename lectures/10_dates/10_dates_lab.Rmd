@@ -1,0 +1,148 @@
+---
+title: "Dates Lab"
+date: "`r Sys.Date()`"
+author: "David Gerard"
+output: pdf_document
+urlcolor: "blue"
+params: 
+  solutions: FALSE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = params$solutions, 
+                      eval = params$solutions,
+                      fig.height = 3, 
+                      fig.width  = 6,
+                      fig.align  = "center")
+ggplot2::theme_set(ggplot2::theme_bw())
+```
+
+# Learning Objectives
+
+- Practice `lubridate`.
+- More practice with `dplyr` and `tidyr`.
+
+# Capital Bikeshare
+
+For this exercise, we will use the data from `capital_trips_2016.csv` found
+at 
+
+<https://dcgerard.github.io/stat_412_612/data/capital_trips_2016.csv>.
+
+1. Read these data into R.
+
+    ```{r, message=FALSE, warning=FALSE}
+    library(tidyverse)
+    library(lubridate)
+    ```
+
+    ```{r, message = FALSE}
+    cap <- read_csv("../../data/capital_trips_2016.csv")
+    ```
+    
+2. Rename variables to conform to our guidelines on variable names.
+
+    ```{r}
+    cap %>%
+      rename(duration             = `Duration (ms)`,
+             start_time           = `Start date`,
+             end_time             = `End date`,
+             start_station_number = `Start station number`,
+             start_station        = `Start station`,
+             end_station_number   = `End station number`,
+             end_station          = `End station`,
+             bike_number          = `Bike number`,
+             member_type          = `Member Type`) ->
+      cap
+    ```
+
+
+3. Parse the start date and end date variables to be date-times if they 
+   aren't already.
+
+    ```{r}
+    cap %>%
+      mutate(start_time = mdy_hm(start_time),
+             end_time   = mdy_hm(end_time)) ->
+      cap
+    ```
+    
+4. Use the start date and end date variables to calculate the duration of each trip.
+   See if this duration is in agreement with the duration (ms) variable
+   provided in the data set. Can you explain any discrepancies?
+    ```{r}
+    cap %>%
+      mutate(my_duration = as.duration(end_time - start_time),
+             given_duration = dmilliseconds(duration),
+             dur_diff = my_duration - given_duration) ->
+      cap
+    
+    ## Seems to be around 50 trips where the durations differ significantly.
+    ggplot(cap, aes(x = dur_diff)) +
+      geom_histogram(bins = 30) +
+      coord_cartesian(ylim = c(0, 50))
+    
+    
+    ## The rest of the durations differ by less than 60 seconds
+    ## So this is just a result of us getting the start and end times to 
+    ## the nearest minute.
+    cap %>%
+      filter(dur_diff < dseconds(3000)) %>%
+      summarize(max_dur = max(dur_diff))
+    
+    ## Let's look at these weird durations
+    cap %>%
+      filter(dur_diff > dseconds(3000)) ->
+      weird_trips
+    
+    ## These all occur on march 13. This is daylight savings! We run into
+    ## trouble because R thinks we got these dates in UTC, not eastern.
+    weird_trips %>%
+      select(start_time, end_time)
+    ```
+    
+5. If you found any discrepancies in part 3, fix them now.
+
+    ```{r}
+    cap %>%
+      mutate(start_time  = force_tz(start_time, tzone = "America/New_York"),
+             end_time    = force_tz(end_time, tzone = "America/New_York"),
+             my_duration = as.duration(end_time - start_time),
+             dur_diff    = my_duration - given_duration) ->
+      cap
+
+    cap %>%
+      summarize(max_diff = max(dur_diff))
+    ```
+
+6. How much time elapsed between the start of the first trip and the end of the
+   the last trip.
+   
+    ```{r}
+    cap %>%
+      summarize(min_start = min(start_time),
+                max_end   = max(end_time)) ->
+      extremes
+    
+    as.duration(extremes$max_end - extremes$min_start)
+    ```
+   
+7. Is a trip's duration associated with the hour of day? Make a plot to explore.
+
+    ```{r}
+    cap %>%
+      mutate(hour = hour(start_time)) ->
+      cap
+    
+    ## Trips between 10AM and 5PM seem to take longer
+    cap %>%
+      group_by(hour) %>%
+      summarize(median_duration = median(given_duration)) %>%
+      ggplot(aes(x = hour, y = median_duration)) +
+      geom_line()
+    ```
+
+   
+
+ 
+

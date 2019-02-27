@@ -68,3 +68,4 @@ University by [David Gerard](https://dcgerard.github.io/).
     - [McNamara and Horton (2017)](./lectures/09_factors/mcnamara_horton_2017.pdf)
 - 10 Dates
     - [10 Dates](./lectures/10_dates/10_dates.pdf)
+    - [10 Dates Lab](./lectures/10_dates/10_dates_lab.pdf)

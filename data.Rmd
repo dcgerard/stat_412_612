@@ -23,12 +23,16 @@ knitr::opts_chunk$set(echo = TRUE)
     - [monkeymem](./data/monkeymem.csv)
     - [pew.csv](./data/pew.csv)
     - [preg.csv](./data/preg.csv)
-    - [sexlierel.txt](./data/sexlierel.txt)
     - [tb.csv](./data/tb.csv)
     - [weather.csv](./data/weather.csv)
     - [wine](./data/wine.csv)
-    - [wmata_ridership.csv](./data/wmata_ridership.csv): Ridership in the WMATA
-      by time and day.
 - Relational Soccer Data from https://www.kaggle.com/hugomathien/soccer
     - [soccer.zip](./data/soccer/soccer.zip)
 - List of words: [words.txt](./data/words.txt)
+- Capital Rideshare Data
+    - [capital_trips_2016.csv](./data/capital_trips_2016.csv)
+    - [capital_stations.csv](./data/capital_stations.csv)
+- Other Data
+    - [sexlierel.txt](./data/sexlierel.txt)
+    - [wmata_ridership.csv](./data/wmata_ridership.csv): Ridership in the WMATA
+      by day.
