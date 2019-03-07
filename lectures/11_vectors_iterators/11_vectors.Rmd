@@ -1,0 +1,290 @@
+---
+title: "Vectors and Lists"
+author: "David Gerard"
+date: "`r Sys.Date()`"
+output: pdf_document
+urlcolor: "blue"
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo       = TRUE, 
+                      fig.height = 3, 
+                      fig.width  = 6,
+                      fig.align  = "center")
+ggplot2::theme_set(ggplot2::theme_bw())
+```
+
+# Learning Objectives
+
+- Manipulating Vectors and Lists using base R syntax.
+- Chapter 20 of [RDS](https://r4ds.had.co.nz/).
+
+# Vector Basics
+
+- We'll use just a few tidyverse functions.
+    ```{r, message=FALSE}
+    library(tidyverse)
+    ```
+
+- Recall the vector material from the 
+  [R Basics Worksheet](https://dcgerard.github.io/stat_412_612/lectures/01_intro/01_worksheet.pdf).
+
+- A **vector** is a sequence of elements of the same type.
+
+- "type" = `integer`, `double`, `character`, `logical`, `factor`, or `date`.
+
+- `numeric` is used to represent vectors that are either integers or doubles.
+
+- Use `c()` to create vectors.
+
+- Use `typeof()` to see the type of vector and `is_*()` to check the type of 
+  vector.
+
+- Double:
+    ```{r}
+    x <- c(1, 10, 2)
+    typeof(x)
+    is_double(x) ## From purrr package
+    ```
+
+- Integer (use `L` to tell R that a number is an integer):
+
+    ```{r}
+    x <- c(1L, 10L, 2L)
+    typeof(x)
+    is_integer(x) ## From purrr package
+    ```
+
+- Character:
+    ```{r}
+    x <- c("hello", "good", "sir")
+    typeof(x)
+    is_character(x) ## From purrr package
+    ```
+
+- Logical:
+    ```{r}
+    x <- c(TRUE, FALSE, FALSE)
+    typeof(x)
+    is_logical(x) ## From purrr package
+    ```
+
+- Factor: Factors are actually integers with extra attributes.
+    ```{r}
+    x <- factor(c("A", "B", "B"))
+    typeof(x)
+    is.factor(x)
+    is_logical(x) ## From purrr package
+    ```
+    
+- Dates: Dates are actually doubles with extra attributes.
+    ```{r}
+    x <- lubridate::ymd(20150115, 20110630, 20130422)
+    typeof(x)
+    lubridate::is.Date(x)
+    is_double(x) ## From purrr package
+    ```
+
+- Each element of a vector can have a name
+
+    ```{r}
+    x <- c(horse = 7, man = 1, dog = 8)
+    x
+    ```
+
+- You can see and change the names with the `names()` function
+    ```{r}
+    names(x)
+    names(x)[1] <- "cat"
+    x
+    ```
+
+- Subset with brackets `[`
+    ```{r}
+    x <- c("I", "like", "dogs")
+    x[2:3]
+    lvec <- c(TRUE, FALSE, TRUE) 
+    x[lvec]
+    ```
+    
+- Substitute while subsetting
+
+    ```{r}
+    x[1] <- "You"
+    x
+    
+    x[lvec] <- "We"
+    x
+    ```
+
+- Subset with negative values to drop elements
+
+    ```{r}
+    x[-3]
+    ```
+
+- Subset a named vector with the name
+    ```{r}
+    x <- c(horse = 7, man = 1, dog = 8)
+    x["man"]
+    ```
+    
+- Two brackets `[[` only returns a single elements and drops the name.
+
+    ```{r}
+    x[3]
+    x[[3]]
+    ```
+    
+- **Exercise**: Consider the following vector:
+    ```{r}
+    x <- c(Yoshi = 10L,
+           Mario = 31L,
+           Luigi = 72L,
+           Peach = 11L,
+           Toad  = 38L)
+    ```
+
+    Extract Yoshi and Peach from the above vector using:
+
+    1. Integer subsetting.
+    2. Negative integer subsetting.
+    3. Logical subsetting.
+    4. Name subsetting.
+    
+    ```{r, echo = FALSE, eval = FALSE}
+    x[c(1, 4)]
+    x[c(-2, -3, -5)]
+    x[c(TRUE, FALSE, FALSE, TRUE, FALSE)]
+    x[c("Yoshi", "Peach")]
+    ```
+
+- **Exercise**: In the vector above, substitute Yoshi's number with `19L`.
+    ```{r, eval = FALSE, echo = FALSE}
+    x["Yoshi"] <- 19L
+    x
+    ```
+
+    
+
+- You are used to doing vectorized operations.
+    ```{r}
+    x <- c(1, 4, 1, 5)
+    x + 10
+    ```
+
+- This is called "recycling", because what R is internally doing is thinking 
+  this is the same as
+    ```{r}
+    x + c(10, 10, 10, 10)
+    ```
+    
+- You can recycle non-scalars (but it's almost never a good idea):
+    ```{r}
+    x + c(10, 20)
+    x + c(10, 20, 10, 20)
+    ```
+
+
+# Lists
+
+- Lists are vectors whose elements can be of different types.
+
+- Use `list()` to make a list.
+    ```{r}
+    my_first_list <- list(x = "a", y = 1, z = c(1L, 2L, 3L), list("a", 1))
+    my_first_list                      
+    ```
+
+- The above is a *named* list that contains a character, a numeric, a logical vector, and another list. The internal list is *unnamed*.
+
+- Use `str()` (for **str**ucture) to see the internal properties of a list.
+
+    ```{r}
+    str(my_first_list)
+    ```
+
+
+- Single brackets `[` return a sublist. You can use the same subsetting
+  strategies as for vectors.
+
+    ```{r}
+    my_first_list[1:2]
+    my_first_list["y"]
+    ```
+    
+- Double brackets `[[` returns a single list element.
+    ```{r}
+    my_first_list[[1]]
+    my_first_list[["z"]]
+    ```
+    
+- Use dollar signs `$` (just like in data frames) to extract named list elements.
+
+    ```{r}
+    my_first_list$z
+    ```
+
+
+- **Exercise**: Consider the following list:
+
+    ```{r}
+    wedding <- list(venue = "chick-fil-a",
+                    guest = tribble(~name,     ~meal, ~age,
+                                    ##--------/------/-----
+                                    "Yoshi",   "V",   29L,
+                                    "Wario",   "C",   27L,
+                                    "Bowser",  "V",   34L,
+                                    "Luigi",   "C",   36L,
+                                    "Toad",    "B",   34L), 
+                    bride = "Peach",
+                    groom = "Mario",
+                    date  = parse_date("11/10/2020", "%d/%m/%Y"))
+    ```
+    
+    a. Wario can't actually make it. Remove his row from the data frame.
+    ```{r, eval = FALSE, echo = FALSE}
+    wedding$guest %>%
+      filter(name != "Wario") ->
+      wedding$guest
+    wedding$guest
+    ```
+    
+    b. Add a new named vector called `meal` where `V` is `"Vegetarian"`, 
+       `C` is `"Chicken"`, and `B` is `"Beef"`.
+    ```{r, eval = FALSE, echo = FALSE}
+    wedding$meal <- c(V = "Vegetarian", C = "Chicken", B = "Beef")
+    wedding$meal
+    ```
+    
+    c. Extract the venue and the date from `wedding`. Use three different
+       techniques do this.
+    ```{r, eval = FALSE, echo = FALSE}
+    wedding[c(1, 5)]
+    wedding[c("venue", "date")]
+    wedding$venue
+    wedding$date
+    ```
+    
+    d. `"chick-fil-a"` should be capitalized. Capitalize the first `"c"`.
+    
+    ```{r, eval = FALSE, echo = FALSE}
+    wedding$venue %>%
+      str_replace(pattern = "^c", "C") ->
+      wedding$venue
+    wedding$venue
+    ```
+    
+       
+       
+    
+
+  
+
+
+
+
+
+
+
