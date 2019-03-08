@@ -1,0 +1,196 @@
+---
+title: "Vectors/Iterators Lab"
+date: "`r Sys.Date()`"
+author: "David Gerard"
+output: pdf_document
+urlcolor: "blue"
+params: 
+  solutions: FALSE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = params$solutions, 
+                      eval = params$solutions,
+                      fig.height = 3, 
+                      fig.width  = 6,
+                      fig.align  = "center")
+ggplot2::theme_set(ggplot2::theme_bw())
+```
+
+# Learning Objectives
+
+- Practice manipulating vectors.
+- Practice for loops.
+- Practice `purrr`.
+
+# Exercise 1: Simulations
+
+1. Write a function that uses a for loop that, for each iteration, randomly 
+   draws 5 observations from an exponential distribution with rate parameter 1
+   (use `rexp()`) and calculates its mean. It should do this 10,000 times. Choose
+   an appropriate plot to plot the distribution of means.
+   
+    ```{r}
+    maxit <- 10000
+    n <- 5
+    rate <- 1
+    meanvec <- vector(mode = "numeric", length = maxit)
+    for (i in seq_along(meanvec)) {
+      meanvec[i] <- mean(rexp(n = n, rate = rate))
+    }
+    
+    ggplot(data = tibble(meanvec), mapping = aes(x = meanvec)) +
+      geom_histogram(bins = 30) +
+      theme_bw() +
+      xlab("Mean")
+    ```
+    
+2. Repeat part 1 by using a `map_*()` function.
+
+    ```{r}
+    meanvec <- map_dbl(seq_len(maxit), ~mean(rexp(n = n, rate = rate)))
+    
+    ggplot(data = tibble(meanvec), mapping = aes(x = meanvec)) +
+      geom_histogram(bins = 30) +
+      theme_bw() +
+      xlab("Mean")
+    ```
+
+3. Repeat part 1 by using the `replicate()` function.
+
+    ```{r}
+    meanvec <- replicate(n = maxit, expr = mean(rexp(n = n, rate = rate)))
+    
+    ggplot(data = tibble(meanvec), mapping = aes(x = meanvec)) +
+      geom_histogram(bins = 30) +
+      theme_bw() +
+      xlab("Mean")
+    ```
+
+4. Use a another for loop that will print out plots for sample sizes of 5, 10,
+   and 20 observations (instead of just 5).
+   
+    ```{r}
+    nvec <- c(5, 10, 20)
+    for (n in nvec) {
+      meanvec <- replicate(n = maxit, expr = mean(rexp(n = n, rate = rate)))
+      
+      ggplot(data = tibble(meanvec), mapping = aes(x = meanvec)) +
+        geom_histogram(bins = 30) +
+        theme_bw() +
+        xlab("Mean") +
+        ggtitle(str_c("n = ", n)) ->
+        pl
+      print(pl)
+    }
+    ```
+   
+
+# Exercise 2: Star Trek
+
+For this exercise, load in the following dataset.
+
+```{r, message = FALSE, eval = TRUE, echo = TRUE}
+library(tidyverse)
+library(lubridate)
+```
+
+```{r, echo = TRUE, eval = TRUE}
+st <- list(
+  franchise = "Star Trek",
+  series = c("TOS", "TNG", "DS9", "VOY", "ENT"),
+  starship = tribble(~ID,         ~class,         ~name,       ~length,  ~launched,
+                     ##----------/---------------/------------/---------/----------
+                     "NCC-1701",  "constitution", "Enterprise", 288.646, 2245,
+                     "NCC-1701D", "galaxy",       "Enterprise", 642.5,   2361,
+                     "NX-74205",  "defiant",      "Defiant",    170,     2370,
+                     "NCC-74656", "intrepid",     "Voyager",    343,     2371),
+  captain = tribble(~firstname,  ~lastname, ~ship,       ~drink,
+                    ##----------/----------/------------/----------
+                    "James",     "Kirk",    "NCC-1701",  "brandy",
+                    "Jean-luc",  "Picard",  "NCC-1701D", "tea",
+                    "Benjamin",  "Sisko",   "NX-74205",  "coffee",
+                    "Katherine", "Janeway", "NCC-74656", "coffee"),
+  age = as.duration(today() - ymd(19660908))
+)
+```
+
+1. Use an appropriate function to see the components of `st` in a concise way.
+
+    ```{r}
+    str(st)
+    ```
+
+2. Use R code to determine the class of each element of `st`.
+
+    ```{r}
+    map(st, class)
+    ```
+    
+3. It seems that `starship` and `captain` can be merged into one data frame.
+   Do this now.
+   
+    Your `st` list should now look like this:
+    ```{r, eval = TRUE}
+    st$starship %>%
+      full_join(st$captain, by = c("ID" = "ship")) ->
+      st$starship
+    st$captain <- NULL
+    str(st)
+    ```
+   
+# Exercise 3: Diamonds
+
+1. Load in the `diamonds` data frame from the ggplot2 package.
+
+    ```{r, eval = TRUE}
+    data("diamonds")
+    ```
+
+2. Calculate summary statistics (using `summary()`) for all quantitative
+   variables.
+   
+    ```{r}
+    diamonds %>%
+      keep(is.numeric) %>%
+      map(summary)
+    ```
+    
+3. To fit a linear model of `price` on `depth` and extract the $p$-value for 
+   the regression coefficient of `depth`, you would use the following R code:
+   
+    ```{r, echo = TRUE}
+    lmout  <- lm(price ~ depth, data = diamonds)
+    sumout <- summary(lmout)
+    sumout$coefficients["depth", "Pr(>|t|)"]
+    ```
+    
+    Fit a separate linear model for `price` on `depth` for each level of 
+    `color`. Extract the $p$-values for the regression coefficients.
+    
+    ```{r}
+    diamonds %>%
+      split(.$color) %>%
+      map(~lm(price ~ depth, data = .)) %>%
+      map(~summary(.)) %>%
+      map_dbl(~.$coefficients["depth", "Pr(>|t|)"]) %>%
+      format(digits = 2, scientific = FALSE)
+    ```
+
+4. Plot `depth` vs `price`, faceting by `color`, including an OLS line. Do the
+   $p$-values in the previous question roughly match what you would expect based
+   on the plots?
+   
+    ```{r}
+    ## No. It seems that a linear model isn't appropriate here. I bet we would see
+    ## some weird residuals.
+    library(hexbin)
+    ggplot(diamonds, aes(x = depth, y = price)) +
+      geom_hex() +
+      facet_wrap(. ~ color) +
+      geom_smooth(method = lm) +
+      theme_bw()
+    ```
+   
+   
+

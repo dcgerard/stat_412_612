@@ -189,7 +189,7 @@ ggplot2::theme_set(ggplot2::theme_bw())
 
 # Lists
 
-- Lists are vectors whose elements can be of different types.
+- **Lists are vectors** whose elements can be of different types.
 
 - Use `list()` to make a list.
     ```{r}
@@ -225,6 +225,15 @@ ggplot2::theme_set(ggplot2::theme_bw())
     ```{r}
     my_first_list$z
     ```
+    
+- You can remove elements of a list by substituting them with `NULL`.
+
+    ```{r}
+    str(my_first_list)
+    my_first_list$x <- NULL
+    str(my_first_list)
+    ```
+
 
 
 - **Exercise**: Consider the following list:

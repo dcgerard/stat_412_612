@@ -11,23 +11,6 @@ params:
 knitr::opts_chunk$set(echo = params$solutions, eval = params$solutions)
 ```
 
-
-```{r, echo = FALSE, eval = FALSE}
-# Load in the following toy datasets
-library(tidyverse)
-starship <- tribble(~ID,         ~class,         ~name,       ~length,  ~launched,
-                    "NCC-1701",  "constitution", "Enterprise", 288.646, 2245,
-                    "NCC-1701D", "galaxy",       "Enterprise", 642.5,   2361,
-                    "NX-74205",  "defiant",      "Defiant",    170,     2370,
-                    "NCC-74656", "intrepid",     "Voyager",    343,     2371)
-
-captain <- tribble(~firstname,  ~lastname, ~ship,       ~drink,
-                   "James",     "Kirk",    "NCC-1701",  "brandy",
-                   "Jean-luc",  "Picard",  "NCC-1701D", "tea",
-                   "Benjamin",  "Sisko",   "NX-74205",  "coffee",
-                   "Katherine", "Janeway", "NCC-74656", "coffee")
-```
-
 We'll work more with the nycflights13 dataset here.
 
 1. Load the nycflights13 data frames into R.

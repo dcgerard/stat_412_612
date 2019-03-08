@@ -71,6 +71,8 @@ University by [David Gerard](https://dcgerard.github.io/).
     - [10 Dates Lab](./lectures/10_dates/10_dates_lab.pdf)
 - 11 Vectors and Iterators
     - [11 Vectors and Lists](./lectures/11_vectors_iterators/11_vectors.pdf)
+    - [11 Iterators](./lectures/11_vectors_iterators/11_iterators.pdf)
+    - [11 Vectors/Iterators Lab](./lectures/11_vectors_iterators/11_vectors_iterators_lab.pdf)
 - 12 Presentations
     - [12 Presentations with R Markdown (PDF)](./lectures/12_presentations/12_presentations.pdf)
     - [12 Presentations with R Markdown (revealjs)](./lectures/12_presentations/12_presentations.html)
