@@ -36,3 +36,4 @@ knitr::opts_chunk$set(echo = TRUE)
     - [sexlierel.txt](./data/sexlierel.txt)
     - [wmata_ridership.csv](./data/wmata_ridership.csv): Ridership in the WMATA
       by day.
+    - [BPD_Part_1_Victim_Based_Crime_Data.zip](./data/BPD_Part_1_Victim_Based_Crime_Data.zip): Baltimore Crime Data

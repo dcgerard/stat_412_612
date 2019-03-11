@@ -1,5 +1,5 @@
 ---
-title: "Vectors and Lists"
+title: "11 Vectors and Lists"
 author: "David Gerard"
 date: "`r Sys.Date()`"
 output: pdf_document
