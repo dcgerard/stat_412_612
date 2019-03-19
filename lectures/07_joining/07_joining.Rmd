@@ -119,13 +119,51 @@ knitr::opts_chunk$set(echo       = TRUE,
     ```
 
 
-- **Exercise** ([RDS](https://r4ds.had.co.nz/) 13.3.1.2): Identify the keys in the following datasets
+- **Exercise** ([RDS](https://r4ds.had.co.nz/) 13.3.1.2): Identify the primary 
+  keys in the following data frames.
 
     - `Lahman::Batting`,
+    ```{r, echo = FALSE, eval = FALSE}
+    ## playerID, yearID, and stint
+    Lahman::Batting %>%
+      count(playerID, yearID, stint) %>%
+      filter(n > 1)
+    ```
+    
     - `babynames::babynames`,
+    
+    ```{r, echo=FALSE, eval=FALSE}
+    ## year, sex, and name
+    babynames::babynames %>%
+      count(year, sex, name) %>%
+      filter(n > 1)
+    ```
+    
     - `nasaweather::atmos`,
+    ```{r, echo=FALSE, eval=FALSE}
+    ## lat, long, year, and month
+    nasaweather::atmos %>%
+      count(lat, long, year, month) %>%
+      filter(n > 1)
+    ```
+    
     - `fueleconomy::vehicles`,
+    ```{r, echo=FALSE, eval=FALSE}
+    ## id
+    fueleconomy::vehicles %>%
+      count(id) %>%
+      filter(n > 1)
+    ```
+    
     - `ggplot2::diamonds`.
+    
+    ```{r, echo=FALSE, eval=FALSE}
+    ## None
+    nrow(ggplot2::diamonds)
+    ggplot2::diamonds %>%
+      distinct() %>%
+      nrow()
+    ```
     
     (You might need to install some packages and read some documentation.)
 
