@@ -53,12 +53,6 @@ knitr::opts_chunk$set(echo       = TRUE,
         head(airports)
         ```
         
-    - `flights`: Flights data
-        ```{r}
-        data("flights")
-        head(flights)
-        ```
-        
     - `planes`: Plane metadata.
         ```{r}
         data("planes")
@@ -67,8 +61,14 @@ knitr::opts_chunk$set(echo       = TRUE,
         
     - `weather`: Hourly weather data
         ```{r}
-        data("airlines")
-        head(airlines)
+        data("weather")
+        head(weather)
+        ```
+        
+    - `flights`: Flights data
+        ```{r}
+        data("flights")
+        head(flights)
         ```
         
     ![](./relational-nycflights.png)\ 
@@ -133,7 +133,7 @@ knitr::opts_chunk$set(echo       = TRUE,
 
 - Suppose we have the following two data frames
 
-    ![](./join-setup.png)
+    ![](./join-setup.png)\ 
 
     ```{r}
     x <- tribble(~key, ~val_x,
@@ -149,9 +149,9 @@ knitr::opts_chunk$set(echo       = TRUE,
     ```
 
 
-- A join connects one row of `x` to one row of `y`
+- A join connects rows of `x` to rows of `y`.
 
-    ![](./join-setup2.png)
+    ![](./join-setup2.png)\ 
 
 - E.g. match row `1` of `x` with row `1` of `y`, and row `2` of `x` with row `2` of `y`.
 
