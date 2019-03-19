@@ -21,6 +21,7 @@ University by [David Gerard](https://dcgerard.github.io/).
 # Final Project
 
 - [Description](./admin/final_project.pdf)
+- [Progress Report](./admin/progress_report.pdf)
 
 # Lectures
 

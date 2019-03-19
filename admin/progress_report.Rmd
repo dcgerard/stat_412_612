@@ -1,0 +1,26 @@
+---
+title: "Progress Report"
+author: "David Gerard"
+date: "`r Sys.Date()`"
+output: pdf_document
+urlcolor: "blue"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
+```
+
+# Progress Report
+
+- Submit a 2-page progress report.
+
+- Figures do not contribute to the page limits.
+
+- Your report should be written in R Markdown and knitted to PDF. The names of all group members should be at the top of the page.
+
+- Provide the following details:
+    1. What peer-reviewed articles are you including in your report? Summarize each in 1-2 sentences.
+    2. Describe the work you've done so far. For each submitted hypothesis, provide some evidence that you are making initial explorations. This could, for example, be in the form of a plot or a table of summary statistics.
+    3. Write a paragraph on your next steps.
+    
+    
