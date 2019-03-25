@@ -89,11 +89,10 @@ knitr::opts_chunk$set(echo       = TRUE,
   strings (and they are a lot more user friendly than base R's string 
   manipulation functions like `grep()` and `gsub()`).
 
-- stingr is not part of the tidyverse so you have to load it separately.
+- stingr is part of the tidyverse so you do not have to load it separately.
 
     ```{r, message = FALSE}
     library(tidyverse)
-    library(stringr)
     ```
     
 - All of stringr's functions begin with "`str_`", so you can press tab after
