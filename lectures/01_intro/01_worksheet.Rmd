@@ -13,12 +13,14 @@ inline <- function(x = "") paste0("`` `r ", x, "` ``")
 
 ## Learning Objectives
 
-- Install R
-- Understand the basics of R
-- R Markdown
-- Chapters 1, 2, 4, and 27 of [RDS](https://r4ds.had.co.nz/)
-- [RStudio IDE Cheat Sheet](https://www.rstudio.com/resources/cheatsheets/#ide)
-- [R Markdown Cheat Sheet](https://www.rstudio.com/resources/cheatsheets/#rmarkdown)
+- Install R.
+- Understand the basics of R.
+- R Markdown.
+- Chapters 1, 2, 4, and 27 of [RDS](https://r4ds.had.co.nz/).
+- [RStudio IDE Cheat Sheet](https://github.com/rstudio/cheatsheets/blob/master/rstudio-ide.pdf).
+- [R Markdown Cheat Sheet](https://github.com/rstudio/cheatsheets/blob/master/rmarkdown-2.0.pdf).
+- [Introduction to R Markdown](https://rmarkdown.rstudio.com/articles_intro.html).
+- [Markdown Basics](https://rmarkdown.rstudio.com/authoring_basics.html).
 
 ## Installations
 

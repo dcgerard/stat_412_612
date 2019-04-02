@@ -21,7 +21,8 @@ ggplot2::theme_set(ggplot2::theme_bw())
 - Chapter 15 of [RDS](https://r4ds.had.co.nz/).
 - [Wrangling Categorical Data in R](https://doi.org/10.7287/peerj.preprints.3163v2).
 - [8.2: Chimeras of the R Inferno](https://www.burns-stat.com/pages/Tutor/R_inferno.pdf)
-- [Factors with forcats Cheat Sheet](https://www.rstudio.com/resources/cheatsheets/#forcats).
+- [Factors with forcats Cheat Sheet](https://github.com/rstudio/cheatsheets/blob/master/factors.pdf).
+- [Forcats Overview](https://forcats.tidyverse.org/).
 
 # Factors
 

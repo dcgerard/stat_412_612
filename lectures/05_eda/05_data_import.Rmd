@@ -18,7 +18,8 @@ knitr::opts_chunk$set(echo       = TRUE,
 - Import data from CSV's, 
 - Working Directories
 - Chapter 11 of [RDS](https://r4ds.had.co.nz/)
-- [Data Import Cheat Sheet](https://www.rstudio.com/resources/cheatsheets/#import)
+- [Data Import Cheat Sheet](https://github.com/rstudio/cheatsheets/blob/master/data-import.pdf).
+- [Readr Overview](https://readr.tidyverse.org/).
 
 # Working Directories
 

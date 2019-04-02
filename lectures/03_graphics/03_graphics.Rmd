@@ -16,10 +16,11 @@ knitr::opts_chunk$set(echo       = TRUE,
 
 # Learning Objectives
 
-- ggplot2
+- ggplot2.
 - Basics of data visualization.
-- Chapter 3 [RDS](https://r4ds.had.co.nz/)
-- [Data Visualization Cheat Sheet](https://www.rstudio.com/resources/cheatsheets/#ggplot2)
+- Chapter 3 [RDS](https://r4ds.had.co.nz/).
+- [Data Visualization Cheat Sheet](https://github.com/rstudio/cheatsheets/blob/master/data-visualization-2.1.pdf).
+- [Ggplot2 Overview](https://ggplot2.tidyverse.org/).
 
 # Background
 

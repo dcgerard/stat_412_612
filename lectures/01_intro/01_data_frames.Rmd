@@ -3,6 +3,7 @@ title: "Data Frames"
 author: "David Gerard"
 date: "`r Sys.Date()`"
 output: pdf_document
+urlcolor: "blue"
 ---
 
 ```{r setup, include=FALSE}
@@ -15,7 +16,8 @@ Based on a bootcamp originally written by Sohail Nizam.
 
 - Understand the fundamental type for storing data in R.
 - Create and manipulate data frames (Tibbles), extract variables.
-- Chapter 10 in [RDS](https://r4ds.had.co.nz/)
+- Chapter 10 in [RDS](https://r4ds.had.co.nz/).
+- [Tibble Overview](https://tibble.tidyverse.org/).
 
 # Data Frames
 

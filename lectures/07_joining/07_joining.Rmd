@@ -20,7 +20,8 @@ knitr::opts_chunk$set(echo       = TRUE,
 - `inner_join()`, `left_join()`, `right_join()`, `full_join()`, `semi_join()`, `anti_join()`.
 - SQL.
 - Chapter 13 of [RDS](https://r4ds.had.co.nz/).
-- [Data Transformation Cheatsheet](https://www.rstudio.com/resources/cheatsheets/#dplyr).
+- [Data Transformation Cheatsheet](https://github.com/rstudio/cheatsheets/blob/master/data-transformation.pdf).
+
 
 # Relational Data
 

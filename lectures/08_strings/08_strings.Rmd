@@ -19,7 +19,8 @@ knitr::opts_chunk$set(echo       = TRUE,
 - Manipulating strings with the stringr package.
 - Regular expressions
 - Chapter 14 of [RDS](https://r4ds.had.co.nz/).
-- [Work with Strings Cheatsheet](https://www.rstudio.com/resources/cheatsheets/#stringr).
+- [Work with Strings Cheatsheet](https://github.com/rstudio/cheatsheets/blob/master/strings.pdf).
+- [Stringr Overview](https://stringr.tidyverse.org/).
 
 # Strings
 

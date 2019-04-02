@@ -21,7 +21,8 @@ ggplot2::theme_set(ggplot2::theme_bw())
 - Iterators in base R.
 - Iterators in purrr.
 - Chapter 21 of [RDS](https://r4ds.had.co.nz/).
-- [Purrr Cheat Sheet](https://github.com/rstudio/cheatsheets/raw/master/purrr.pdf)
+- [Purrr Cheat Sheet](https://github.com/rstudio/cheatsheets/blob/master/purrr.pdf).
+- [Purrr Overview](https://purrr.tidyverse.org/).
 
 # For Loops
 
