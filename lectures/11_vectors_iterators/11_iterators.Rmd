@@ -126,7 +126,7 @@ ggplot2::theme_set(ggplot2::theme_bw())
     ```
   
 
-- Looping is most often done over the columns of a data frame. 
+- Looping is often done over the columns of a data frame. 
 
 - Note: for a 
   data frame `df`, `seq_along(df)` is the same as `1:ncol(df)` which is the

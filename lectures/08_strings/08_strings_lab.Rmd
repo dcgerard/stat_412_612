@@ -33,8 +33,7 @@ often used in the United States is the
     ```
     
     ```{r}
-    worddf <- read_csv("../../data/words.txt", na = character())
-    wordvec <- worddf$word
+    scrab <- read_csv("../../data/words.txt", na = character())
     ```
 
 2. There is a mnemonic rule in English: "i before e except after c". This states
@@ -44,16 +43,26 @@ often used in the United States is the
    words satisfy this rule. Hint: check for "EITHER" in your word list.
    
     ```{r}
-    is_cie <- str_detect(wordvec, "CIE")
-    is_ei  <- str_detect(wordvec, "[^C]EI") | str_detect(wordvec, "^EI")
-    sum(is_cie | is_ei) ## number of violations
+    scrab %>%
+      mutate(cei = str_detect(word, "CEI"),
+             cie = str_detect(word, "CIE"),
+             ncei = str_detect(word, "[^C]EI") | str_detect(word, "^EI"),
+             ncie = str_detect(word, "[^C]IE") | str_detect(word, "^IE"),
+             violate = cie | ncei,
+             adhere  = cei | ncie) ->
+      scrab
     
-    is_cei <- str_detect(wordvec, "CEI")
-    is_ie  <- str_detect(wordvec, "[^C]IE") | str_detect(wordvec, "^IE")
-    sum(is_cei | is_ie) ## number of satisfications
+    scrab %>%
+      summarize(num_violate = sum(violate),
+                num_adhere  = sum(adhere)) ->
+      sumdf
+    
+    sumdf
     
     ## So about 19% of candidate words violate this rule
-    sum(is_cie | is_ei) / sum(is_cei | is_ie | is_cie | is_ei)
+    sumdf %>%
+      mutate(prop_violate = num_violate / (num_violate + num_adhere)) %>%
+      select(prop_violate)
     ```
     
 3. Suppose you switch the "E" and the "I" in any word that contains an "EI" or 
@@ -61,23 +70,35 @@ often used in the United States is the
    What are the shortest and longest strings that are still words?
    
     ```{r}
-    is_eiwords  <- str_detect(wordvec, "EI")
-    switchwords <- str_replace(wordvec[is_eiwords], "EI", "IE")
-    stillword <- switchwords %in% wordvec
+    switch_ei_ie <- function(string) {
+      if (string == "IE") {
+        return("EI")
+      } else if (string == "EI") {
+        return("IE") 
+      } else {
+        return("")
+      }
+    }
     
-    subswitch <- switchwords[stillword]
+    scrab %>%
+      mutate(haseiie = str_detect(word, "IE") | str_detect(word, "IE"),
+             newword = str_replace_all(word, "IE|EI", switch_ei_ie)) ->
+      scrab
     
-    pairdf <- tibble(ie = subswitch, 
-                     ei = str_replace(subswitch, "IE", "EI"),
-                     length = str_length(subswitch))
+    scrab %>%
+      mutate(stillword_eiie = (newword %in% word) & haseiie,
+             length = str_length(word)) ->
+      scrab
     
-    pairdf %>%
-      arrange(length) %>%
-      head()
+    scrab %>%
+      filter(stillword_eiie) %>%
+      select(word, newword, length) %>%
+      arrange(length)
     
-    pairdf %>%
-      arrange(desc(length)) %>%
-      head()
+    scrab %>%
+      filter(stillword_eiie) %>%
+      select(word, newword, length) %>%
+      arrange(desc(length))
     ```
 
 4. Challenge (you can skip this one if you want).
@@ -86,17 +107,39 @@ often used in the United States is the
    the longest palindrome? You might need a `for` loop here.
    
     ```{r}
-    strmat <- str_split(wordvec, pattern = "", simplify = TRUE)
-    palvec <- apply(strmat[, ncol(strmat):1], 1, str_c, collapse = "")
-    whichpal <- palvec == wordvec
-    sum(whichpal)
+    reverse_word <- function(string) {
+      strmat <- str_split(string, "", simplify = TRUE) 
+      pal <- str_c(strmat[, ncol(strmat):1], collapse = "")
+      return(pal)
+    }
     
-    tibble(word = wordvec[whichpal]) %>%
-      mutate(length = str_length(word)) %>%
-      arrange(desc(length))
+    ## (very slow) for-loop solution
+    # scrab$pal <- NA
+    # for (i in 1:nrow(scrab)) {
+    #   scrab$pal[i] <- reverse_word(scrab$word[i])
+    # }
+    
+    ## (medium) purrr solution
+    # scrab %>%
+    #   mutate(pal = map_chr(word, reverse_word)) ->
+    #   scrab
+    
+    ## (fast) matrix solution
+    strmat <- str_split(scrab$word, pattern = "", simplify = TRUE)
+    scrab$pal <- apply(strmat[, ncol(strmat):1], 1, str_c, collapse = "")
+    
+    scrab %>%
+      mutate(ispal = word == pal) ->
+      scrab
+    
+    scrab %>%
+      summarise(num_pal = sum(ispal))
+    
+    scrab %>%
+      filter(ispal) %>%
+      arrange(desc(length)) %>%
+      select(word, length)
     ```
-   
-   
    
 
 # Exercise 2: Jane Austen
@@ -216,7 +259,7 @@ text and the book from which that line belongs.
     ```{r}
     bookdf %>%
       group_by(book) %>%
-      summarize(text = str_c(text, collapse = " ")) ->
+      summarize(text = str_squish(str_c(text, collapse = " "))) ->
       alldf
     ```
    
