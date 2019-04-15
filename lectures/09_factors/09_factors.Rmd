@@ -27,8 +27,8 @@ ggplot2::theme_set(ggplot2::theme_bw())
 # Factors
 
 - A "factor" is R's way to say that a variable is categorical 
-  (places observational/experimental units into different groups or categories 
-  based on its values.).
+  (puts observational/experimental units into different groups or categories 
+  based on their values.).
   
 - A factor is different from a character in that:
     1. There is a small predefined set of "levels" (possible values) of a 
@@ -84,8 +84,13 @@ ggplot2::theme_set(ggplot2::theme_bw())
     fac2 <- factor(c("y1", "y2", "y3"))
     c(fac1, fac2)
     ```
-
-
+  
+- If you are 100% sure that all levels are numerics and are incorrectly 
+  specified as factors, then do the following to convert to numeric:
+    ```{r}
+    parse_number(levels(xf)[xf])
+    ```
+  
 # Creating Factors
 
 - Use `factor()` or `parse_factor()` to create a factor variable 
@@ -296,6 +301,7 @@ ggplot2::theme_set(ggplot2::theme_bw())
     ```
   
 - New level goes on the left of the equals sign. Old level goes on the right.
+  (Just like `mutate()`!)
 
 - **Exercise**: Modify the factor levels of `marital` to be abbreviations of 
   their long-names. For example, "Divorced" can just be "D"
@@ -359,4 +365,5 @@ ggplot2::theme_set(ggplot2::theme_bw())
 
 
 
+  
 
