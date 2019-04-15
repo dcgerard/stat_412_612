@@ -105,6 +105,10 @@ I will not accept small curated datasets, or those that come from a paper where 
 - Prison data: 
 
     http://www.dc.state.fl.us/pub/obis_request.html
+    
+- College Scorecard: 
+
+    https://catalog.data.gov/dataset/college-scorecard
 
 
 # Important Dates

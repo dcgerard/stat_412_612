@@ -1,5 +1,5 @@
 ---
-title: "Tentative Course Plan for STAT 412/612"
+title: "Course Plan for STAT 412/612"
 author: "David Gerard"
 date: "`r Sys.Date()`"
 output: pdf_document
@@ -42,39 +42,29 @@ knitr::opts_chunk$set(echo       = TRUE,
     - Exploratory Data Analysis (EDA).
     - EDA exercise.
 - Week 6: 02/20
-    - Midterm exam covering weeks 1 through 4.
+    - Snow day, AU closed.
 - Week 7: 02/27
+    - Midterm exam covering weeks 1 through 4.
+- Week 8: 03/06
     - Chapter 12 of [RDS](https://r4ds.had.co.nz/)
     - Tidying data
     - tidyr
-- Week 8: 03/06
-    - Chapter 13 of [RDS](https://r4ds.had.co.nz/)
-    - Relational Data
-    - SQL?
 - NO CLASS ON 03/13 (Spring Break)
 - Week 9: 03/20
-    - [Git Appendix in r-pkgs](http://r-pkgs.had.co.nz/git.html)
-    - [Happy git with R](https://happygitwithr.com/)
-    - [Setting up GitHub Classroom](https://github.com/jfiksel/github-classroom-for-students)
-    - Git and GitHub.
+    - Chapter 13 of [RDS](https://r4ds.had.co.nz/)
+    - Relational Data
 - Week 10: 03/27
     - Chapter 14 of [RDS](https://r4ds.had.co.nz/)
     - Strings and regular expressions
 - Week 11: 04/03
-    - Midterm exam covering weeks 5, 7, 8, 9, and 10.
+    - Presentations using R Markdown.
+    - Stringr Lab.
 - Week 12: 04/10
-    - Chapters 15 and 16 of [RDS](https://r4ds.had.co.nz/)
-    - Factors (forcats)
-    - Dates/Times (lubridate)
+    - Midterm exam covering chapters 7, 11, 12, 13, and 14.
 - Week 13: 04/17
-    - TBD. Possible topics:
-        - Make your own website (personal/project) in R (Chapter 10 of 
-          [R Markdown Book](https://bookdown.org/yihui/rmarkdown/)). 
-        - Making presentations using R Markdown (Chapter 4 or 
-          [R Markdown Book](https://bookdown.org/yihui/rmarkdown/)).
-        - Plotting spatial data in R (Chapter 9 of 
-          [Case Studies Book](https://eriqande.github.io/rep-res-eeb-2017/plotting-spatial-data-with-ggplot.html)).
-        - Linear/Logistic Regression in R.
+    - Chapter 15 of [RDS](https://r4ds.had.co.nz/)
+    - Factors (forcats)
+    - If we have time: Dates/Times (lubridate). Chapter 16 of [RDS](https://r4ds.had.co.nz/)
 - Week 14: 04/24
     - Project Presentations
 - FINAL EXAM ON 05/01
