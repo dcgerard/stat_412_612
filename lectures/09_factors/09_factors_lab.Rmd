@@ -31,6 +31,7 @@ fc <- factor(c("D", "C", "C", "A", "A",
 1. `fc` should also have a level called `E`. Add this level to `fc`.
 
 ```{r}
+library(tidyverse)
 fct_expand(fc, "E")
 ```
 

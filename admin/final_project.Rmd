@@ -60,55 +60,60 @@ I will not accept small curated datasets, or those that come from a paper where 
 
 - Federal bridge inspections from the Federal Highway Admin: 
 
-    https://www.fhwa.dot.gov/bridge/nbi/ascii.cfm
+    <https://www.fhwa.dot.gov/bridge/nbi/ascii.cfm>
     
 - Drinking water violations from the EPA: 
 
-    https://www.epa.gov/ground-water-and-drinking-water/drinking-water-data-and-reports
+    <https://www.epa.gov/ground-water-and-drinking-water/drinking-water-data-and-reports>
 
 - Contracts or grants from USA Spending: 
 
-    https://www.usaspending.gov/#/
+    <https://www.usaspending.gov/#/>
 
 - DC Crime incident data from the DC police: 
 
-    https://mpdc.dc.gov/page/statistics-and-data
+    <https://mpdc.dc.gov/page/statistics-and-data>
 
 - SBA disaster loans from the Small Business Administration: 
 
-    https://www.sba.gov/offices/headquarters/oda/resources/1407821
+    <https://www.sba.gov/offices/headquarters/oda/resources/1407821>
 
 - Fatal accidents from the NHTSA: 
 
-    https://www.nhtsa.gov/research-data/fatality-analysis-reporting-system-fars
+    <https://www.nhtsa.gov/research-data/fatality-analysis-reporting-system-fars>
 
 - Baltimore crime data from the Baltimore police: 
 
-    https://www.baltimorepolice.org/crime-stats/open-data
+    <https://www.baltimorepolice.org/crime-stats/open-data>
 
 - Aircraft animal strikes from the FAA: 
 
-    https://wildlife.faa.gov/databaseSearch.aspx
+    <https://wildlife.faa.gov/databaseSearch.aspx>
 
 - Bank health data from the FDIC (also see banktracker at IRW): 
 
-    https://www.fdic.gov/bank/statistical/guide/data.html
+    <https://www.fdic.gov/bank/statistical/guide/data.html>
 
 - WMATA elevators and escalators from the WMATA: 
 
-    http://data.codefordc.org/dataset/wmata-escalators-elevators-hotcars
+    <http://data.codefordc.org/dataset/wmata-escalators-elevators-hotcars>
 
 - USGS water quality data from the USGS: 
 
-    https://water.usgs.gov/owq/data.html
+    <https://water.usgs.gov/owq/data.html>
 
 - Prison data: 
 
-    http://www.dc.state.fl.us/pub/obis_request.html
+    <http://www.dc.state.fl.us/pub/obis_request.html>
     
 - College Scorecard: 
 
-    https://catalog.data.gov/dataset/college-scorecard
+    <https://catalog.data.gov/dataset/college-scorecard>
+    
+- Reporting Carrier On-Time Performance (1987-present) from the Bureau of 
+  Transportation Statistics:
+
+    <https://www.transtats.bts.gov/DL_SelectFields.asp?Table_ID=236>
 
 
 # Important Dates
