@@ -114,6 +114,10 @@ I will not accept small curated datasets, or those that come from a paper where 
   Transportation Statistics:
 
     <https://www.transtats.bts.gov/DL_SelectFields.asp?Table_ID=236>
+    
+- The General Social Survey from the non-partisan and objective research organization at the University of Chicago (NORC):
+
+    <https://gssdataexplorer.norc.org/>
 
 
 # Important Dates
