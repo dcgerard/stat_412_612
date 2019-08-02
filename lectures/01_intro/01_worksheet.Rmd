@@ -28,7 +28,7 @@ inline <- function(x = "") paste0("`` `r ", x, "` ``")
 
     - You will have to choose the appropriate operating system.
       If you are using Ubuntu, there are special instructions if you want the 
-      newest version of R (v3.5.2 as of writing this document) as the default
+      newest version of R (v3.6.1 as of writing this document) as the default
       is to install an older version. This is not
       too important for this class, but some packages (mainly the ones in 
       [Bioconductor](https://www.bioconductor.org/)) require the newest 
@@ -172,11 +172,11 @@ inline <- function(x = "") paste0("`` `r ", x, "` ``")
 - I've chosen horrible variable names so far. Generally variable names should 
   be:
 
-      - Nouns
-      - Informative about what it is storing, yet concise.
-      - Use either the `camelCaseSystem` or the `snake_case_system`.
-      - You are also able to use periods in variable names, but only noobs do
-        that (it makes things more confusing in more advanced R).
+    - Nouns
+    - Informative about what it is storing, yet concise.
+    - Use either the `camelCaseSystem` or the `snake_case_system`.
+    - You are also able to use periods in variable names, but only noobs do
+      that (it makes things more confusing in more advanced R).
 
 - Variables are **case sensitive**, so `Variable` is different from `variable`.
   Try this out:
@@ -190,7 +190,7 @@ inline <- function(x = "") paste0("`` `r ", x, "` ``")
 
 - When I write a variable inline, it will look like `this`.
 
-- Exercise: Why doesn't this code work?
+- **Exercise**: Why doesn't this code work?
 
     ```{r, eval=FALSE}
     my_variable <- 10
@@ -304,13 +304,13 @@ inline <- function(x = "") paste0("`` `r ", x, "` ``")
 
 - Generally function names should be:
 
-      - Verbs
-      - Informative about what it is does, yet concise.
-      - `useTheCamelCaseSystem()` or `use_the_snake_case_system()`.
-      - You are also able to use periods in function names, but only noobs do
-        that (it makes things more confusing in more advanced R).
-      - But lots of base R functions have periods in them: `is.na()`, 
-        `which.max()`, `data.frame()`, etc.
+    - Verbs
+    - Informative about what it is does, yet concise.
+    - `useTheCamelCaseSystem()` or `use_the_snake_case_system()`.
+    - You are also able to use periods in function names, but only noobs do
+      that (it makes things more confusing in more advanced R).
+    - But lots of base R functions have periods in them: `is.na()`, 
+      `which.max()`, `data.frame()`, etc.
         
 ### Vectors and Indexing
 
@@ -387,7 +387,7 @@ inline <- function(x = "") paste0("`` `r ", x, "` ``")
     ```
   
 
-## R Markdown
+## R Markdown Introduction
 
 - R Markdown is a file format that is a combination of plain text and R code.
 
@@ -405,6 +405,28 @@ inline <- function(x = "") paste0("`` `r ", x, "` ``")
     3. Using it as a modern lab notebook to *do* data science.
     
 - *You will use R Markdown for all assignments in this class.*
+
+## Installing R Markdown
+
+- You can install R Markdown from CRAN:
+    ```{r, eval=FALSE}
+    install.packages("rmarkdown")
+    ```
+    
+- To make PDF files, you will need to install \LaTeX\ if you don't have it 
+  already. To install it, type in R:
+    ```{r, eval=FALSE}
+    install.packages("tinytex")
+    tinytex::install_tinytex()
+    ```
+    
+- If you get an error while trying to install tinytex, try manually 
+  installing \LaTeX\ instead:
+    - For Windows users, go to <http://miktex.org/download>
+    - For OS users, go to <https://tug.org/mactex/>
+    - For Linux users, go to <https://www.tug.org/texlive/>
+    
+## Playing with R Markdown
 
 - Open up a new R Markdown file:
 
@@ -478,9 +500,9 @@ as the output of some chunk). You can do this by placing code within
 
 - I used this in the previous section for automatically writing the date. 
 
-```{r}
-my_name <- "David"
-```
+    ```{r}
+    my_name <- "David"
+    ```
 
 - Then "my name is `r inline("my_name")`" will result in "my name is `r my_name`".
 

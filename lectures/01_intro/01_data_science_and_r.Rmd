@@ -1,5 +1,5 @@
 ---
-title: 'Chapter 1: Introduction'
+title: 'Data Science and R'
 author: "David Gerard"
 date: "`r Sys.Date()`"
 output:
@@ -121,19 +121,6 @@ qplot(namevec, skillvec, geom = "blank") +
   ylim(0, 1)
 ```
 
-## Machine Learner
-
-```{r, echo=FALSE}
-skillvec <- c(0.8, 1.4/3, 0.2)
-qplot(namevec, skillvec, geom = "blank") +
-  geom_bar(stat = "identity") +
-  xlab("Skill") +
-  ylab("Level of Expertise") +
-  theme_bw() +
-  theme(text = element_text(size = 20)) +
-  ylim(0, 1)
-```
-
 ## Data Scientist
 
 ```{r, echo=FALSE}
@@ -210,24 +197,25 @@ qplot(namevec, skillvec, geom = "blank") +
 - tidyverse is much more convenient for the vast majority of tasks as long as 
   you drink the kool aid.
 
-
 # This Class
 
-## Schedule
+## Tentative Schedule
 
-- Week 1: Intro (chapters 1--2), install R, Rmarkdown (chapter 27), R basics (chapters 4).
-- Week 2: R Programming (Chapters 17--21)
+\small
+- Week 1: Intro (chapters 1--2), R basics (chapter 4), data frames (chapter 10), R Markdown (chapter 27)
+- Week 2: R Programming (pipes, functions, R scripts) (Chapters 6, 17--19)
 - Week 3: Data Visualization (chapter 3)
-- Week 4: Manipulating Data Frames with dplyr (chapter 5), R scripts (chapter 6)
-- Week 5: Exam 1, dplyr (chapter 5)
-- Week 6: dplyr lab (chapter 5)
-- Week 7: sploratory data analysis: (chapters 7--11)
+- Week 4: Manipulating data frames with dplyr (chapter 5)
+- Week 5: dplyr lab (chapter 5)
+- Week 6: Exam 1
+- Week 7: Data import and exploratory data analysis: (chapters 7, 11)
 - Week 8: tidyr (chapter 12)
 - Week 9: tidyr lab (chapter 12)
 - Week 10: Exam 2
 - Week 11: Relational Data (chapter 13)
-- Week 12: Strings (Chapter 14)
-- Week 13: Either factors or dates or git
+- Weeks 12/13: Strings (Chapter 14)
+- Week 14: Factors
+\normalsize
 
 ## Books and Resources:
 
@@ -255,7 +243,7 @@ qplot(namevec, skillvec, geom = "blank") +
 
 ## Exams
 
-- The exams will be in-class coding assignments. You will have 1.5 hours to
+- The exams will be in-class coding assignments. You will have 2.5 hours to
   complete some coding questions.
 
 ## Curve
@@ -270,6 +258,13 @@ qplot(namevec, skillvec, geom = "blank") +
 
 - My classes usually finish with the pre-curve median being around 75%.
 
+## One last note
 
+- The course notes will **not** contain everything you need for the assignments.
+
+- You will need to use Google. Just make sure you understand any support you get
+  and cite your sources.
+
+- This is how most people learn how to code now.
 
 
