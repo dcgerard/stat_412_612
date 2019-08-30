@@ -6,6 +6,7 @@ output:
   beamer_presentation:
     slide_level: 2
     theme: "metropolis"
+urlcolor: "blue"
 ---
 
 ```{r setup, include=FALSE}

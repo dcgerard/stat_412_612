@@ -63,14 +63,23 @@ knitr::opts_chunk$set(echo = TRUE)
 
 - Use pipe
 
-    ```{r}
-    suppressPackageStartupMessages(library(tidyverse))
+    ```{r, message = FALSE}
+    library(tidyverse)
     x %>%
       log() %>%
       mean() %>%
       exp() ->
       geo_mean
     geo_mean
+    ```
+    
+- The term on the left of the pipe becomes the *first* argument of the function
+  on the right of the pipe. Thus, the following two expressions are the exact same:
+    ```{r}
+    4 %>%
+      log(base = 2)
+    
+    log(4, base = 2)
     ```
     
 - Note that the output is only placed in the *first* argument of the next
@@ -328,19 +337,20 @@ knitr::opts_chunk$set(echo = TRUE)
     
         
     ```{r condition2}
-    # note that a function returns the last value computed
-    has_name <- function(x) {
-      nms <- names(x)
-      if (is.null(nms)) {
-        rep(FALSE, length(x))
+    # input: x a numeric
+    # output: TRUE if x > 0, FALSE if x <= 0
+    is_positive <- function(x) {
+      if (x > 0) {
+        pos_logic <- TRUE
       } else {
-        !is.na(nms) & nms != ""
+        pos_logic <- FALSE
       }
+      return(pos_logic)
     }
-    x1 <- c(1,2,3)
-    x2 <- c(a = 1, 2,3)
-    has_name(x1)
-    has_name(x2)
+    
+    is_positive(10)
+    is_positive(-1)
+    is_positive(0)
     ```
 
 - The condition for an if statement must be a single logical element, 
