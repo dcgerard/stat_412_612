@@ -38,7 +38,7 @@ University by [David Gerard](https://dcgerard.github.io/).
     - [02 R Scripts](./lectures/02_functions_pipes/02_scripts.pdf)
 - 03 Visualizations
     - [03 Visualization with ggplot2](./lectures/03_graphics/03_graphics.pdf)
-    - [03 Visualization Lab](./lectures/03_graphics/03_lab.pdf)
+    - [03 Visualization Lab](./lectures/03_graphics/03_lab_2.pdf)
     - [03 `qplot()` Cheat Sheet](./lectures/03_graphics/03_qplot_cheatsheet.pdf)
     - [03 Base R Graphics Cheat Sheet](./lectures/03_graphics/03_base_r_cheatsheet.pdf)
     - [03 Lattice R Graphics Cheat Sheet](./lectures/03_graphics/03_lattice_cheatsheet.pdf)

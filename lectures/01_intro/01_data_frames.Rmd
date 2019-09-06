@@ -33,7 +33,7 @@ Based on a bootcamp originally written by Sohail Nizam.
   `data.frame()` function taking a collection of vectors as input. 
 - The vectors can be of differing data types. 
 
-- Let's play around with a dataframe from the `mtcars` dataset. To see a 
+- Let's play around with a dataframe from the [`mtcars`](https://twitter.com/ZachDrakeTweets/status/1151549076992876551?s=20) dataset. To see a 
   description of these data, type
   
     ```{r, eval = FALSE}

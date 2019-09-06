@@ -1,0 +1,127 @@
+---
+title: 'Lab 03: ggplot2'
+author: "David Gerard"
+date: "`r Sys.Date()`"
+output: pdf_document
+params:
+  solutions: FALSE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo       = params$solutions, 
+                      eval       = params$solutions,
+                      fig.align  = "center",
+                      fig.height = 3, 
+                      fig.width  = 5)
+```
+
+# Chick Weight
+
+The `ChickWeight` data frame contains information on the effect of diet
+on the weight of chicks in an experiment from 1990. Load it into R and
+read about it with:
+```{r, echo = TRUE, eval = FALSE}
+data("ChickWeight")
+help("ChickWeight")
+```
+
+Reproduce the following plots exploring the effect of diet on weight.
+```{r, eval = TRUE, message = FALSE}
+library(tidyverse)
+library(ggthemes)
+ggplot(ChickWeight, aes(x = Time, y = weight, color = Diet, group = Chick)) +
+  geom_line(alpha = 1/2) +
+  scale_color_colorblind() +
+  xlab("Time (days)") +
+  ylab("Weight (grams)") +
+  theme_bw()
+```
+
+```{r, eval = TRUE}
+ggplot(ChickWeight, aes(x = factor(Time), y = weight, color = Diet)) +
+  geom_boxplot(outlier.size = 0.3) +
+  xlab("Time (days)") +
+  ylab("Weight (grams)") +
+  theme_bw()
+```
+
+# Insect Sprays
+
+Read about the `InsectSprays` data frame by typing into R:
+```{r, echo = TRUE, eval = FALSE}
+data("InsectSprays")
+help("InsectSprays")
+```
+
+These data contain one categorical and one quantitative variable. We can
+explore their association through a boxplot. Reproduce the plot below:
+```{r, eval = TRUE}
+ggplot(InsectSprays, aes(x = spray, y = count)) +
+  geom_boxplot(fill = "red", alpha = 1/2) +
+  xlab("Spray Type") +
+  ylab("Insect Count") +
+  theme_bw()
+```
+
+Since there are few observations, you decide to just plot the points, but you
+want to account for overlapping points. Try
+to approximate this plot (you won't be able to get it *exactly* the same):
+```{r, eval = TRUE}
+set.seed(1)
+ggplot(InsectSprays, aes(x = spray, y = count)) +
+  xlab("Spray Type") +
+  ylab("Insect Count") +
+  geom_jitter(width = 0.1, height = 0) +
+  theme_bw()
+```
+
+
+# Michelson Speed of Light
+
+Load in and read about the `morley` data frame in R:
+```{r, eval = FALSE, echo = TRUE}
+data("morley")
+help("morley")
+```
+
+Do the different experiments predict different speeds of light? Reproduce the
+following plot:
+```{r, eval = TRUE}
+ggplot(morley, aes(x = factor(Expt), y = Speed)) +
+  geom_boxplot() +
+  xlab("Experiment Number") +
+  ylab("Speed") +
+  theme_bw()
+```
+
+Is there a trend in the experimental runs? Reproduce this plot in R:
+```{r, fig.height=9, eval = TRUE}
+## no trend observed
+ggplot(morley, aes(x = Run, y = Speed)) +
+  facet_grid(Expt ~ .) +
+  geom_line() +
+  theme_bw() +
+  theme(strip.background = element_rect(fill = "white")) +
+  scale_x_continuous(breaks = 1:20)
+```
+
+
+# Rock
+
+Read about the `rock` data frame by:
+```{r, eval = FALSE, echo = TRUE}
+data("rock")
+help("rock")
+```
+
+Does area seem to be associated with permeability? Justify with a plot.
+```{r}
+## hard to say
+ggplot(rock, aes(x = area, y = perm)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)
+```
+
+
+
+
