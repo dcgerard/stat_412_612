@@ -67,8 +67,8 @@ knitr::opts_chunk$set(echo       = TRUE,
     ```
 
 - In tidyverse, this looks like
-    ```{r}
-    suppressPackageStartupMessages(library(tidyverse))
+    ```{r, message = FALSE}
+    library(tidyverse)
     ```
     ```{r, eval = FALSE}
     flights %>%
@@ -260,7 +260,7 @@ knitr::opts_chunk$set(echo       = TRUE,
 
 ### `near()`
 
-- Unless you explicitely tell it, R treats all numerics as floats.
+- Unless you explicitely tell it, R treats all numerics as doubles.
 
 - It's thus dangerous to use `==` for numerics.
 
@@ -559,7 +559,7 @@ knitr::opts_chunk$set(echo       = TRUE,
     ```{r, eval = FALSE, echo = FALSE}
     flights %>%
       mutate(is_cancelled = is.na(dep_delay) | is.na(arr_delay)) %>%
-      group_by(day) %>%
+      group_by(month, day) %>%
       summarize(prop_canc = mean(is_cancelled), 
                 tot_canc = sum(is_cancelled), 
                 n = n(),
@@ -584,7 +584,6 @@ knitr::opts_chunk$set(echo       = TRUE,
     
     ## The total also seems to peak on certain days
     
-    
     ggplot(data = sumdat, mapping = aes(x = ave_delay, y = prop_canc)) +
       geom_point() +
       theme_bw() +
@@ -602,8 +601,7 @@ knitr::opts_chunk$set(echo       = TRUE,
       geom_smooth(se = FALSE, method = loess)
     
     ## It seems that as we increase the the average delay, there are a higher
-    ## proportion of cancelled flights. This relationship appears linear on the
-    ## logit scale.
+    ## proportion of cancelled flights. 
     
     
     ```

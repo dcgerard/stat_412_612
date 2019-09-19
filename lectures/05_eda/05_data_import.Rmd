@@ -42,8 +42,8 @@ knitr::opts_chunk$set(echo       = TRUE,
   from the position of the working directory.
 
 - Suppose we want to save the following figure:  
-    ```{r}
-    suppressPackageStartupMessages(library(tidyverse))
+    ```{r, message = FALSE}
+    library(tidyverse)
     data("mpg")
     pl <- ggplot(mpg, aes(x = hwy, y = cty)) +
       geom_point()
@@ -102,7 +102,6 @@ knitr::opts_chunk$set(echo       = TRUE,
   function from the readr package.
   
     ```{r}
-    library(tidyverse)
     hate_crimes <- read_csv(file = "../../data/hate_crimes1.csv")
     ```
     
@@ -110,7 +109,6 @@ knitr::opts_chunk$set(echo       = TRUE,
   the `file` argument.
   
     ```{r}
-    library(tidyverse)
     hate_crimes <- read_csv(file = "https://dcgerard.github.io/stat_412_612/data/hate_crimes2.csv")
     ```
 
@@ -150,7 +148,7 @@ knitr::opts_chunk$set(echo       = TRUE,
       summarize_all(class)
     
     hate_crimes %>%
-      summarize_all(funs(sum(is.na(.))))
+      summarize_all(~sum(is.na(.)))
     
     head(hate_crimes)
     ```

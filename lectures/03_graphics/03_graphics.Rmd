@@ -168,6 +168,15 @@ knitr::opts_chunk$set(echo       = TRUE,
     ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) +
           geom_point()
     ```
+    
+- **Exercise**: Create a scatterplot of engine displacement vs city miles per gallon. Think
+  carefully about which variable should be on the $x$-axis.
+  
+    ```{r, eval = FALSE, echo = FALSE}
+    ggplot(mpg, aes(x = displ, y = cty)) +
+      geom_point()
+    ```
+  
 
   
 ## Annotating by a categorical variable
