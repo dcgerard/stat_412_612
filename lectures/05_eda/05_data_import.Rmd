@@ -102,7 +102,7 @@ knitr::opts_chunk$set(echo       = TRUE,
   function from the readr package.
   
     ```{r}
-    hate_crimes <- read_csv(file = "../../data/hate_crimes1.csv")
+    hate_crimes <- read_csv(file = "../../data/hate_crimes2.csv")
     ```
     
 - If the CSV is online and you know the URL, you can use that URL for 
@@ -144,11 +144,9 @@ knitr::opts_chunk$set(echo       = TRUE,
       resulted because of a problem during data import.
     
     ```{r}
-    hate_crimes %>%
-      summarize_all(class)
+    map(hate_crimes, class)
     
-    hate_crimes %>%
-      summarize_all(~sum(is.na(.)))
+    map(hate_crimes, ~sum(is.na(.)))
     
     head(hate_crimes)
     ```

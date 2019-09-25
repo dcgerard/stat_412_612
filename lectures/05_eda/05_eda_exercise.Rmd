@@ -61,7 +61,7 @@ suggested ways to focus your research:
 ```{block}
 Load required packages
 ```
-```{r}
+```{r, message = FALSE}
 library(tidyverse)
 library(GGally) ## for pairs plot
 theme_set(theme_bw())
@@ -132,7 +132,7 @@ estate %>%
   weird_house_price
 mean(estate$Price < weird_house_price)
 
-## I woul dkeep in mind removing that house if I was to go on and do a 
+## I would keep in mind removing that house if I was to go on and do a 
 ## Linear regression
 ```
 
