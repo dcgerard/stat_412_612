@@ -34,7 +34,7 @@ during the year 2002. The 13 variables are
 - `Lot`: Lot size (in square feet)
 - `Highway`: 1 = highway adjacent, 0 = highway not adjacent.
 
-The data are available in "estate.csv" at https://dcgerard.github.io/stat_412_612/data/estate.csv.
+The data are available in "estate.csv" at <https://dcgerard.github.io/stat_412_612/data/estate.csv>.
 
 Perform an exploratory data analysis to come up with some hypotheses. Some 
 suggested ways to focus your research:

@@ -1,0 +1,279 @@
+---
+title: "Recoding Variable Values"
+author: "David Gerard"
+date: "`r Sys.Date()`"
+output: pdf_document
+urlcolor: "blue"
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo       = TRUE, 
+                      fig.height = 3, 
+                      fig.width  = 6,
+                      fig.align  = "center")
+```
+
+# Learning Objectives
+
+- Changing the values of a variable based on its current value with `recode()`.
+- Changing the values of a variable based on logical statements with `if_else()`.
+- Replacing `NA`'s with `replace_na()`.
+
+# Change variable values with `recode()`
+
+- Variable values are sometimes uninformative. You might want to 
+  change these values before plotting or calculating summary statistics.
+  
+- E.g. the estate data in "estate.csv" at 
+  <https://dcgerard.github.io/stat_412_612/data/estate.csv>:
+  
+    ```{r, message = FALSE}
+    library(tidyverse)
+    estate <- read_csv(file = "https://dcgerard.github.io/stat_412_612/data/estate.csv")
+    ```
+  
+- `estate` contains the following variables:
+    - `Price`: Sales price of residence (in dollars)
+    - `Area`: Finished area of residence (in square feet)
+    - `Bed`: Total number of bedrooms in residence
+    - `Bath`: Total number of bathrooms in residence
+    - `AC`: `1` = presence of air conditioning, `0` = absence of air conditioning
+    - `Garage`: Number of cars that a garage will hold
+    - `Pool`: `1` = presence of a pool, `0` = absence of a pool
+    - `Year`: Year property was originally constructed
+    - `Quality`: Index for quality of construction. `High`, `Medium`, or `Low`.
+    - `Style`: Categorical variable indicating architectural style 
+    - `Lot`: Lot size (in square feet)
+    - `Highway`: `1` = highway adjacent, `0` = highway not adjacent.  
+
+- It would be better if we could change the `0`/`1` coding for `AC`, `Pool`,
+  and `Highway` to something more informative. That way we won't have to 
+  always look up the coding during our analysis.
+  
+- `recode()`:
+    - Takes a vector as its first argument. 
+    - Each subsequent argument contains two values separated by an equals sign. 
+    - The value on the left of the equals sign is the current value inside the vector. 
+    - The value on the right of the equals sign is the new value for the vector.
+    - If the current current value inside the vector is a numeric,
+      then you need to surround its value by backticks "` `` `".
+    - It returns a vector with replaced values.
+
+- Toy example:
+    ```{r}
+    char_vec <- c("a", "a", "b", "c", "c", "a", "b", "b", "c")
+    recode(char_vec, 
+           a = "Apple")
+    recode(char_vec,
+           b = "Banana")
+    recode(char_vec,
+           a = "Apple", 
+           b = "Banana",
+           c = "Carrot")
+    ```
+
+- **Exercise**: In the below vector, recode `"Bob"` to be `"Robert"`, `"John"` to be
+  `"Jonathan"`, and `"Dave"` to be `"David"`.
+  
+    ```{r, echo = TRUE}
+    namevec <- c("Bob", "John", "John", "John", "Dave", "Bob", "Bob", "Dave", "John")
+    ```
+    
+    ```{r, echo = FALSE, eval = FALSE}
+    recode(namevec,
+           Bob = "Robert",
+           John = "Jonathan",
+           Dave = "David")
+    ```
+    
+- Let's use `recode()` in to change the `Quality` values in the `estate`
+  data frame. Recall: we need to use `mutate()` to modify a variable in a 
+  data frame.
+      
+    ```{r}
+    estate %>%
+      mutate(Quality = recode(Quality,
+                              High   = "Palace",
+                              Medium = "Home",
+                              Low    = "Slum")) ->
+      estate
+    glimpse(estate)
+    ```
+
+- Let's modify `AC`. We'll need backticks here since `1` and `0` are numerics.
+
+    ```{r}
+    estate %>%
+      mutate(AC = recode(AC,
+                         `1` = "AC",
+                         `0` = "No AC")) ->
+      estate
+    glimpse(estate)
+    ```
+
+- **Exercise**: Recode the `Highway` and `Pool` variables to have more 
+  informative values.
+  
+    ```{r, eval = FALSE, echo = FALSE}
+    estate %>%
+      mutate(Highway = recode(Highway,
+                              `1` = "Highway",
+                              `0` = "No Highway"),
+             Pool = recode(Pool,
+                           `1` = "Pool",
+                           `0` = "No Pool"))
+    ```
+  
+  
+# Recode with Logicals with `if_else()`
+
+- Sometimes, it is easier to recode based on logical statements.
+
+- For example, suppose we want to recode the "Bath" variable to have values
+  `1`, `2`, `3`, and `>3`. One way to do this would be:
+  
+    ```{r}
+    estate %>%
+      mutate(Bath = as.character(Bath),
+             Bath = recode(Bath,
+                           `4` = ">3",
+                           `5` = ">3",
+                           `6` = ">3",
+                           `7` = ">3")) ->
+      estate_temp
+    glimpse(estate_temp)
+    ```
+    
+- But this is a lot of typing. But we know how to get obtain `TRUE`'s and
+  `FALSE`'s based on whether a house has more than 3 bathrooms.
+  
+    ```{r}
+    estate %>%
+      mutate(Bath > 3) %>%
+      select(contains("Bath")) %>%
+      glimpse()
+    ```
+
+- `if_else()`:
+    - Takes a *logical* vector as its first argument.
+    - It takes a vector that populates the `TRUE` values as its second argument.
+    - It takes a vector that populates the `FALSE` values as its third argument.
+    - The second and third arguments *must be the same type* (e.g. both logical,
+      both numeric, both character, etc).
+    - The second and third arguments must either be of length 1, or the same
+      length as the logical vector.
+    - It returns a vector with replaced values.
+  
+- Toy Example:
+
+    ```{r, error = TRUE}
+    x <- c(1, 2, 3, 4, 5, 6, 7, 8)
+    if_else(x > 4, 4, x)
+    if_else(x > 4, x, 4)
+    if_else(x > 4, "x > 4", as.character(x)) 
+    if_else(x > 4, "x > 4", x) ## should error 
+    ```
+
+
+- **Exercise**: Why did the last `if_else()` call error?
+    ```{block, eval = FALSE, echo = FALSE}
+    `x` is a numeric and "x > 4" is a character. `if_else()` expects the second
+    and third arguments to be the same type.
+    ```
+
+- Let's apply `if_else()` to the `estate` data frame.
+  Recall: we need to use `mutate()` to modify a variable in a data frame.
+
+    ```{r}
+    estate %>%
+      mutate(Bath = if_else(Bath > 3,
+                            ">3",
+                            as.character(Bath))) ->
+      estate_temp
+    glimpse(estate_temp)
+    ```
+
+- **Exercise**: Recode `Price` so that any price less than \$250,000 is
+  just listed as `"<250,000"`.
+    ```{r, eval = FALSE, echo = FALSE}
+    estate %>%
+      mutate(Price = if_else(Price < 250000,
+                             "<250,000",
+                             as.character(Price))) %>%
+      glimpse()
+    ```
+    
+# Dealing with `NA`'s by `replace_na()`
+
+- The `starwars` data frame from the dplyr package contains information on 
+  different characters from the [Star Wars](https://en.wikipedia.org/wiki/Star_Wars)
+  franchise:
+    ```{r}
+    data("starwars")
+    glimpse(starwars)
+    ```
+    
+- The `gender` variable is missing for some individuals
+    ```{r}
+    starwars %>%
+      filter(is.na(gender)) %>%
+      select(name, gender)
+    ```
+    
+- But all of those individuals are 
+  [droids](https://en.wikipedia.org/wiki/Droid_(Star_Wars)), so it 
+  would be reasonable to replace all of the `NA`s in `gender` with `"droid"`.
+  
+- `replace_na()`
+    - Takes a vector as its first argument.
+    - The second argument is the value with which to replace all `NA`'s.
+    - It returns a vector with the `NA`'s replaced.
+    
+- Toy example:
+
+    ```{r}
+    x <- c("This", "is", "a", NA, NA, "vector")
+    replace_na(x, "foo")
+    ```
+
+- Let's replace the `NA`'s in the `gender` variable in the `starwars` data frame.
+  Recall: we need to use `mutate()` to modify a variable in a data frame.
+
+    ```{r}
+    starwars %>%
+      mutate(gender = replace_na(gender, "droid")) %>%
+      select(name, gender) %>%
+      glimpse()
+    ```
+
+- **Exercise**: In the `starwars` data frame, replace the `NA`'s in 
+  `hair_color` with `"bald"`.
+  
+    ```{r, eval = FALSE, echo = FALSE}
+    starwars %>%
+      mutate(hair_color = replace_na(hair_color, "bald"))
+    ```
+
+  
+
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+
+
+
+`

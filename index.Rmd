@@ -49,6 +49,7 @@ University by [David Gerard](https://dcgerard.github.io/).
     - [04 dplyr Lab](./lectures/04_dplyr/04_dplyr_lab.pdf)
 - 05 Data Import and EDA
     - [05 Data Import](./lectures/05_eda/05_data_import.pdf)
+    - [05 Recoding Variable Values](./lectures/05_eda/05_recoding.pdf)
     - [05 EDA Basics](./lectures/05_eda/05_eda.pdf)
     - [05 EDA Exercise](./lectures/05_eda/05_eda_exercise.pdf)
 - [Mid-semester Debugging Advice](./lectures/common_coding_issues.pdf)
