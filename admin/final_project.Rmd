@@ -98,6 +98,8 @@ open data portals from state agencies (<https://opendata.dc.gov/>).
 
 I will not accept small curated datasets, or those that come from a paper where the data has already been analyzed.
 
+You should not select a dataset that you have used before, or are currently using in another class.
+
 - Federal bridge inspections from the Federal Highway Admin: 
 
     <https://www.fhwa.dot.gov/bridge/nbi/ascii.cfm>
@@ -162,6 +164,10 @@ I will not accept small curated datasets, or those that come from a paper where 
 - FBI National Incident-Based Reporting System (NIBRS) 
 
     <https://crime-data-explorer.fr.cloud.gov/downloads-and-docs>
+    
+- World Bank Country-level Statistics
+
+    <https://databank.worldbank.org/>
 
 
 
