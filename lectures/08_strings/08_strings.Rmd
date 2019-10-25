@@ -83,7 +83,7 @@ knitr::opts_chunk$set(echo       = TRUE,
     mu <- "\u00b5"
     writeLines(mu)
     ```
-  
+
 # stringr Intro
 
 - The stringr package contains a lot of convenience functions for manipulating
@@ -142,6 +142,16 @@ knitr::opts_chunk$set(echo       = TRUE,
     str_c("Faithless is he that says", NA)
     ```
     
+- **Exercise**: In the `flights` data frame from the nycflights13 package,
+  use string concatenation to create a new variable called `date` which
+  is of the form `"DD-MM-YYYY"`.
+  
+    ```{r, eval = FALSE, echo = FALSE}
+    flights %>%
+      mutate(date = str_c(day, month, year, sep = "-")) %>%
+      select(date)
+    ```
+  
 
 ## Extracting substrings
 
@@ -173,7 +183,13 @@ knitr::opts_chunk$set(echo       = TRUE,
     ```{r, echo = FALSE, eval = FALSE}
     str_c(w, str_sub(x, 7, str_length(x)), y, z, sep = " ")
     ```
-    
+
+- You can index from the end of the string using negative indices:
+
+    ```{r}
+    x <- "The Road goes ever on and on"
+    str_sub(x, -9, -1)
+    ```
 
 # Regular Expressions
 
@@ -304,26 +320,25 @@ knitr::opts_chunk$set(echo       = TRUE,
 - **Exercise**: Create separate regular expressions to find all words that:
 
     1. Start with a vowel. Test on 
-    ```{r}
-    x1 <- c("abba", "cat", "eal", "ion", "oops", "Uganda", "Anna", "dog")
-    ```
+        ```{r}
+        x1 <- c("abba", "cat", "eal", "ion", "oops", "Uganda", "Anna", "dog")
+        ```
 
     2. That end in consonants. (Hint: thinking about matching "not"-vowels.) 
        test on
-    ```{r}
-    x2 <- c("bob", "Anna", "dog")
-    ```
+        ```{r}
+        x2 <- c("bob", "Anna", "dog")
+        ```
 
     3. End with `ed`, but not with `eed`. Test on
-    ```{r}
-    x3 <- c("tired", "need", "bad", "rod")
-    ```
+        ```{r}
+        x3 <- c("tired", "need", "bad", "rod")
+        ```
     
-
     4. End with `ing` or `ise`. Test on
-    ```{r}
-    x4 <- c("paradise", "firing", "jaded", "kin")
-    ```
+        ```{r}
+        x4 <- c("paradise", "firing", "jaded", "kin")
+        ```
     
     
     ```{r, echo = FALSE, eval = FALSE}
@@ -380,19 +395,19 @@ knitr::opts_chunk$set(echo       = TRUE,
 - **Exercise**: Create regular expressions to find all words that:
 
     1. Start with three consonants. Test on
-    ```{r}
-    x1 <- c("string", "priority", "value", "distinction")
-    ```
+        ```{r}
+        x1 <- c("string", "priority", "value", "distinction")
+        ```
     
     2. Have three or more vowels in a row. Test on
-    ```{r}
-    x2 <- c("honorific", "delicious", "priority", "queueing")
-    ```
+        ```{r}
+        x2 <- c("honorific", "delicious", "priority", "queueing")
+        ```
     
     3. Have two or more vowel-consonant pairs in a row. Test on
-    ```{r}
-    x3 <- c("honorific", "sam", "prior")
-    ```
+        ```{r}
+        x3 <- c("honorific", "sam", "prior")
+        ```
     
     ```{r, eval = FALSE, echo = FALSE}
     str_replace_all(x1, "^[^aeiouAEIOU]{3}", "X")

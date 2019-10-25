@@ -15,6 +15,9 @@ knitr::opts_chunk$set(echo = params$solutions, eval = params$solutions)
 # Learning Objectives
 
 - Practice `stringr`, `dplyr`, and `ggplot2`.
+- **WARNING**: Do **not** use `str_view()` or `str_view_all()` on these data.
+  It will stall your computer. The data aren't *that* large, but `str_view()`
+  and `str_view_all()` are inefficient with medium data.
 
 # Exercise 1: Scrabble Words
 
@@ -32,7 +35,7 @@ often used in the United States is the
     library(tidyverse)
     ```
     
-    ```{r}
+    ```{r, eval = TRUE, message = FALSE}
     scrab <- read_csv("../../data/words.txt", na = character())
     ```
 
@@ -100,9 +103,32 @@ often used in the United States is the
       select(word, newword, length) %>%
       arrange(desc(length))
     ```
+    
+4. Let's look at the distribution of vowels the english language. For each
+   vowel (`A`, `E`, `I`, `O`, and `U`), count the number of occurances
+   in each word. Then make this plot:
+   
+    ```{r, eval = TRUE}
+    scrab %>%
+      mutate(a = str_count(word, "A"),
+             e = str_count(word, "E"),
+             i = str_count(word, "I"),
+             o = str_count(word, "O"),
+             u = str_count(word, "U")) %>%
+      select(word, a, e, i, o, u) ->
+      scrab_count
+    ```
+    
+    ```{r, eval = TRUE, fig.height = 3.5}
+    ggplot(scrab_count, aes(x = a)) +
+      geom_bar() +
+      scale_y_log10() +
+      theme_bw() +
+      xlab("Number of A's")
+    ```
 
-4. Challenge (you can skip this one if you want).
-   A *palindrome* is a word that is the same read backword as forward. 
+5. Challenge (you can skip this one if you want).
+   A *palindrome* is a word that is the same read backward as forward. 
    For example *racecar* and *madam*. How many palindromes are there? What is
    the longest palindrome? You might need a `for` loop here.
    
@@ -140,9 +166,50 @@ often used in the United States is the
       arrange(desc(length)) %>%
       select(word, length)
     ```
-   
 
-# Exercise 2: Jane Austen
+# Exercise 2: From RDS:
+
+1. Replace all forward slashes in a string with backslashes. Test it out on
+   the following string:
+    ```{r, echo = TRUE}
+    x <- "hello\\////how//are////you////"
+    ```
+    
+    ```{r}
+    y <- str_replace_all(x, "/", "\\\\")
+    writeLines(x)
+    writeLines(y)
+    ```
+
+2. Construct regular expressions to match words that:
+    a. Start and end with the same character. A word of length 1 should be matched.
+       Test it out on `"A"`, `"AB"`, and `"ABA"`.
+    
+    ```{r, echo = FALSE}
+    str_detect("A", "^((.).*\\2|.)$")
+    str_detect("AB", "^((.).*\\2|.)$")
+    str_detect("ABA", "^((.).*\\2|.)$")
+    ```
+    
+    b. Contain a repeated pair of letters (e.g. "church" contains "ch" repeated twice.)
+       Test it out on `"AAA"`, `"AAAA"`, and `"AABAA"`.
+    
+    ```{r, echo = FALSE}
+    str_detect("AAA", "(..).*\\1")
+    str_detect("AAAA", "(..).*\\1")
+    str_detect("AABAA", "(..).*\\1")
+    ```
+    
+    c. Contain one letter repeated in at least three places (e.g. "eleven" contains three "e"s.)
+       Test it out on `"AAA"`, `"AAB"`, and `"AABA"`.
+    ```{r, echo = FALSE}
+    str_detect("AAA", "(.).*\\1.*\\1")
+    str_detect("AAB", "(.).*\\1.*\\1")
+    str_detect("AABA", "(.).*\\1.*\\1")
+    ```
+
+
+# Exercise 3: Jane Austen
 
 For this exercise, we will consider the works of 
 [Jane Austen](https://en.wikipedia.org/wiki/Jane_Austen) as stored in the
