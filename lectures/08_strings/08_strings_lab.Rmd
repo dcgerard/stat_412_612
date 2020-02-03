@@ -70,7 +70,9 @@ often used in the United States is the
     
 3. Suppose you switch the "E" and the "I" in any word that contains an "EI" or 
    "IE" pair. How many of these resulting strings still valid scrabble words?
-   What are the shortest and longest strings that are still words?
+   What are the shortest and longest strings that are still words? Hint: read
+   the help file of `str_replace_all()`. You can pass a function to the 
+   `replacement` argument.
    
     ```{r}
     switch_ei_ie <- function(string) {
