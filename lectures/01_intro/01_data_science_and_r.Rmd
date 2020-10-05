@@ -172,10 +172,13 @@ qplot(namevec, skillvec, geom = "blank") +
     - Just use Google to check.
 \pause
 3. It's easy (especially graphics and data munging).
-\pause
+
+## Motivation for R
+
 4. It makes reproducible research easy. 
     - When part of the pipeline is copying and pasting excel spreadsheets, people make mistakes. 
     - E.g. an [\textcolor{blue}{excel mistake}](https://www.peri.umass.edu/fileadmin/pdf/working_papers/working_papers_301-350/WP322.pdf) led countries to adopt austerity measures to increase economic growth.
+    - E.g. an [\textcolor{blue}{excel mistake}](https://www.theguardian.com/politics/2020/oct/05/how-excel-may-have-caused-loss-of-16000-covid-tests-in-england) resulted in a backlog of misplaced COVID tests in England.
     - In R, you can automate your analysis, reducing the chance for mistakes and making your analysis transparent to the wider research community.
 
 ## Could Also Learn Python
