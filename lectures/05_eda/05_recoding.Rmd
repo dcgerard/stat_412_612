@@ -221,9 +221,7 @@ knitr::opts_chunk$set(echo       = TRUE,
       select(name, gender)
     ```
     
-- But all of those individuals are 
-  [droids](https://en.wikipedia.org/wiki/Droid_(Star_Wars)), so it 
-  would be reasonable to replace all of the `NA`s in `gender` with `"droid"`.
+- But because programmers typically remove `NA`'s, it might be reasonable to change this to something else like `"other"`.
   
 - `replace_na()`
     - Takes a vector as its first argument.
@@ -242,7 +240,7 @@ knitr::opts_chunk$set(echo       = TRUE,
 
     ```{r}
     starwars %>%
-      mutate(gender = replace_na(gender, "droid")) %>%
+      mutate(gender = replace_na(gender, "other")) %>%
       select(name, gender) %>%
       glimpse()
     ```
@@ -254,26 +252,3 @@ knitr::opts_chunk$set(echo       = TRUE,
     starwars %>%
       mutate(hair_color = replace_na(hair_color, "bald"))
     ```
-
-  
-
-
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
-
-
-
-
-`
