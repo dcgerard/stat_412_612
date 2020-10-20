@@ -7,7 +7,7 @@ urlcolor: "blue"
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo       = TRUE, 
+knitr::opts_chunk$set(echo       = TRUE,
                       fig.height = 3, 
                       fig.width  = 6,
                       fig.align  = "center")

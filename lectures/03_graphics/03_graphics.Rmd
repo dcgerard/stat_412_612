@@ -215,19 +215,21 @@ knitr::opts_chunk$set(echo       = TRUE,
     ```
   
   
-- **Exercise**: Consider the `iris` dataset that comes with R by default:
+- **Exercise**: Consider the `penguins` dataset that comes from the `palmerpenguins` package:
     ```{r}
-    data("iris")
+    # install.packages("palmerpenguins")
+    library(palmerpenguins)
+    data("penguins")
     ```
     
-    Make a plot of petal length vs petal width, color coding by the species of 
-    iris. What do you notice?
+    Make a plot of bill length vs bill depth, color coding by the species of 
+    penguin. What do you notice?
     
     ```{r, eval = FALSE, echo = FALSE}
     ## Good separation of species using two variables.
-    ggplot(data = iris, mapping = aes(x = Petal.Length, 
-                                      y = Petal.Width, 
-                                      color = Species)) +
+    ggplot(data = penguins, mapping = aes(x = bill_length_mm, 
+                                          y = bill_depth_mm, 
+                                          color = species)) +
       geom_point()
     ```
     
@@ -279,17 +281,19 @@ knitr::opts_chunk$set(echo       = TRUE,
               geom_point()
     ```
 
-- **Exercise**: Using the `iris` dataset, plot petal length vs petal width,
-  annotating by sepal length and sepal width and species. Do you notice anything?
+- **Exercise**: Using the `penguins` dataset, plot bill length vs bill depth,
+  annotating by flipper length and body mass and species. Do you notice anything?
   
     ```{r, echo = FALSE, eval = FALSE}
-    ## Virginica appears to have larger sepal length. But the plot is too cluttered
+    ## The plot is too cluttered
     ## for me to make anything else out.
-    ggplot(data = iris, mapping = aes(x = Petal.Length,
-                                      y = Petal.Width,
-                                      color = Species,
-                                      size = Sepal.Length,
-                                      alpha = Sepal.Width)) +
+    library(palmerpenguins)
+    data("penguins")
+    ggplot(data = penguins, mapping = aes(x = bill_length_mm,
+                                          y = bill_depth_mm,
+                                          color = species,
+                                          size = flipper_length_mm,
+                                          alpha = body_mass_g)) +
       geom_point()
     ```
   
@@ -371,12 +375,11 @@ knitr::opts_chunk$set(echo       = TRUE,
       geom_smooth(se = FALSE)
     ```
 
-- **Exercise**: Try adding the OLS line to the scatterplot of petal length vs petal 
-  width. Color code by species, but the OLS line should not depend on species.
+- **Exercise**: From the `penguins` dataset, try adding the OLS line to the scatterplot of bill length vs bill depth. Color code by species, but the OLS line should not depend on species.
   
     ```{r, echo = FALSE, eval = FALSE}
-    ggplot(data = iris, mapping = aes(x = Petal.Length, y = Petal.Width)) +
-      geom_point(mapping = aes(color = Species)) +
+    ggplot(data = penguins, mapping = aes(x = bill_length_mm, y = bill_depth_mm)) +
+      geom_point(mapping = aes(color = species)) +
       geom_smooth(method = lm, se = FALSE)
     ```
   
@@ -721,7 +724,7 @@ knitr::opts_chunk$set(echo       = TRUE,
       pl
     ```
 
-- It's better to automatic this process using the `ggsave()` function
+- It's better to automate this process using the `ggsave()` function
     ```{r}
     ggsave(filename = "my_first_plot.pdf",
            plot = pl,
