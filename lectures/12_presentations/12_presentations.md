@@ -1,7 +1,7 @@
 ---
 title: "Presenatations in R Markdown"
 author: "David Gerard"
-date: "2019-03-07"
+date: "2021-04-02"
 output: 
   revealjs::revealjs_presentation: 
     keep_md: true
@@ -64,7 +64,7 @@ urlcolor: "blue"
 ---
 title: "Presenatations in R Markdown"
 author: "David Gerard"
-date: "2019-03-07"
+date: "2021-04-02"
 output: 
   beamer_presentation: 
     theme: "CambridgeUS"
