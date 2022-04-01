@@ -224,7 +224,7 @@ knitr::opts_chunk$set(echo       = TRUE,
     ```{r, eval = FALSE, echo = FALSE}
     airlines
     flights %>%
-      filter(arr_delay >= 2,
+      filter(arr_delay >= 120,
              dest == "IAH" | dest == "HOU",
              carrier == "AA" | carrier == "DL" | carrier == "UA",
              month %in% 6:8,
