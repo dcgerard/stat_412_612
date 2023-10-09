@@ -80,6 +80,8 @@ knitr::opts_chunk$set(echo       = TRUE,
   from "C" if you use Windows. This makes your code non-transferable to other
   users.
   
+- **Exercise**: Suppose a project has two subdirectories called "work" and "play". Your working directory is in "play", but you want to save a figure to "work". What path do you use?
+  
 # readr
 
 - A lot of datasets come in comma-separated or tab-separated formats. For
@@ -154,10 +156,9 @@ knitr::opts_chunk$set(echo       = TRUE,
 
 - Sometimes the files code missing data other than `NA`. For example, it's common
   to use periods `.`, or in some genomic settings they use `-9` as missing.
-  
-- R won't know how to handle this without you telling it, so you'll have to 
-  know what the missing data encoding is and specify it with the `na` argument
-  in `read_csv()`.
+    - R won't know how to handle this without you telling it, so you'll have to 
+      know what the missing data encoding is and specify it with the `na` argument
+      in `read_csv()`.
   
 - readr will try to guess the type for each column (double, integer, character,
   logic, etc). Sometimes it guesses wrong. If it seems to be guessing wrong,
