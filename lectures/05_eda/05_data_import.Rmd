@@ -164,6 +164,34 @@ knitr::opts_chunk$set(echo       = TRUE,
   logic, etc). Sometimes it guesses wrong. If it seems to be guessing wrong,
   use the `col_types` to explicitly specify the column types.
   
+  - Use `spec()` to get the column specifications `{readr}` chose
+    ```{r}
+    spec(hate_crimes)
+    ```
+    
+  - Then modify that spec, such as
+    ```{r, eval = FALSE}
+    read_csv(
+      "https://dcgerard.github.io/stat_412_612/data/hate_crimes2.csv", 
+      col_types = cols(
+        state = col_character(),
+        median_house_inc = col_character(), ## I changed this line
+        share_unemp_seas = col_double(),
+        share_pop_metro = col_double(),
+        share_pop_hs = col_double(),
+        share_non_citizen = col_double(),
+        share_white_poverty = col_double(),
+        gini_index = col_double(),
+        share_non_white = col_double(),
+        share_vote_trump = col_double(),
+        hate_crimes_per_100k_splc = col_double(),
+        avg_hatecrimes_per_100k_fbi = col_double()
+      )
+    )
+    ```
+  
+  
+  
 - Sometimes there are comments at the start of a data file. You can skip the 
   first few lines before starting to read data with the `skip` argument.
   
