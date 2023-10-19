@@ -34,7 +34,7 @@ We'll work more with the nycflights13 dataset here.
     flights %>%
       group_by(dest) %>%
       summarize(arr_delay = mean(arr_delay, na.rm = TRUE)) %>%
-      left_join(airports, by = c("dest" = "faa")) %>%
+      left_join(airports, by = join_by(dest == faa)) %>%
       select(arr_delay, tz) %>%
       mutate(tz_fac = factor(tz)) %>%
       ggplot(aes(x = tz_fac, y = arr_delay)) +
@@ -51,7 +51,7 @@ We'll work more with the nycflights13 dataset here.
     flights %>%
       select(origin) %>%
       distinct() %>%
-      left_join(airports, by = c("origin" = "faa")) %>%
+      left_join(airports, by = join_by(origin == faa)) %>%
       summarize(lon = mean(lon), lat = mean(lat)) ->
       nyc_location
     nyc_location
@@ -96,7 +96,7 @@ We'll work more with the nycflights13 dataset here.
     flights %>%
       group_by(dest) %>%
       summarize(arr_delay = mean(arr_delay, na.rm = TRUE)) %>%
-      left_join(airports, by = c("dest" = "faa")) %>%
+      left_join(airports, by = join_by(dest == faa)) %>%
       ggplot(aes(x = distNYC, y = arr_delay)) +
       geom_point() +
       geom_smooth(se = FALSE) +
@@ -115,7 +115,7 @@ We'll work more with the nycflights13 dataset here.
     flights %>%
       select(tailnum, origin, year, month, day, dep_time) %>%
       mutate(hour = dep_time %/% 100) %>%
-      left_join(weather, by = c("origin", "year", "month", "day", "hour")) %>%
+      left_join(weather, by = join_by(origin, year, month, day, hour)) %>%
       mutate(is_fair = precip == 0 & wind_speed < 20 & visib >= 10) %>%
       group_by(tailnum) %>%
       summarize(prop_fair = mean(is_fair, na.rm = TRUE)) %>%
@@ -128,7 +128,4 @@ We'll work more with the nycflights13 dataset here.
       ylab("Proportion Fair") +
       geom_smooth(method = "lm", se = FALSE)
     ```
-   
-
-
 

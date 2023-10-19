@@ -203,8 +203,10 @@ knitr::opts_chunk$set(echo       = TRUE,
     ![](./join-inner.png)\
 
     ```{r}
-    inner_join(x, y, by = "key")
+    inner_join(x, y, by = join_by(key))
     ```
+    
+- Put the key you are joining by inside `join_by()`.
 
 - Keeps all rows that appear in *both* data frames.
 
@@ -213,7 +215,7 @@ knitr::opts_chunk$set(echo       = TRUE,
   annotation.
 
     ```{r, echo = FALSE, eval = FALSE}
-    inner_join(flights, planes, by = "tailnum")
+    inner_join(flights, planes, by = join_by(tailnum))
     ```
 
 
@@ -226,7 +228,7 @@ knitr::opts_chunk$set(echo       = TRUE,
 
 - `left_join(x, y)` keeps all rows of `x`.
     ```{r}
-    left_join(x, y, by = "key")
+    left_join(x, y, by = join_by(key))
     ```
     
 - `left_join()` is by far the most common joiner, and you should always use this
@@ -235,19 +237,19 @@ knitr::opts_chunk$set(echo       = TRUE,
 - `right_join(x, y)` keeps all rows of `y`.
 
     ```{r}
-    right_join(x, y, by = "key")
+    right_join(x, y, by = join_by(key))
     ```
 
 - `full_join(x, y)` keeps all rows of both.
 
     ```{r}
-    full_join(x, y, by = "key")
+    full_join(x, y, by = join_by(key))
     ```
     
 
 - **Exercise**: Add the full airline names to the `flights` data frame.
     ```{r, eval = FALSE, echo = FALSE}
-    left_join(flights, airlines, by = "carrier") %>%
+    left_join(flights, airlines, by = join_by(carrier)) %>%
       select(name, everything())
     ```
     
@@ -269,13 +271,13 @@ knitr::opts_chunk$set(echo       = TRUE,
                       2,    "x3",
                       1,    "x4")
     
-    left_join(x_mult, y, by = "key")
+    left_join(x_mult, y, by = join_by(key))
     ```
     
 
 - If you have duplicate keys in both (usually a mistake), then you get every 
   possible combination of the values in x and y at the key values where there
-  are duplications.
+  are duplications. You'll get a warning about this.
 
     ![](./join-many-to-many.png)\
     
@@ -287,17 +289,14 @@ knitr::opts_chunk$set(echo       = TRUE,
                       2,    "y3",
                       1,    "y4")
     
-    left_join(x_mult, y_mult, by = "key")
+    left_join(x_mult, y_mult, by = join_by(key))
     ```
 
 - **Exercise**: In the previous two exercises, we had some duplicate keys. For
   each exercise, which data frame had the duplicate keys?
   
     ```{block, echo = FALSE, eval = FALSE}
-    `flights` had the duplicate keys both times. We added the plane annotation to
-    each flight (where multiple flights used the same plane) in the first exercise
-    and we added the carrier name (where multiple flights used the same carrier)
-    in the second exercise.
+    `flights` had the duplicate keys both times. We added the plane annotation to  each flight (where multiple flights used the same plane) in the first exercise  and we added the carrier name (where multiple flights used the same carrier) in the second exercise.
     ```
   
   
@@ -307,7 +306,7 @@ knitr::opts_chunk$set(echo       = TRUE,
     library(hexbin)
     flights %>%
       select(tailnum, contains("delay")) %>%
-      left_join(planes, by = "tailnum") %>%
+      left_join(planes, by = join_by(tailnum)) %>%
       select(year, contains("delay")) %>%
       mutate(age = 2013 - year) ->
       subflight
@@ -349,7 +348,7 @@ knitr::opts_chunk$set(echo       = TRUE,
     ![](join-semi.png)\
   
     ```{r}
-    semi_join(x, y, by = "key")
+    semi_join(x, y, by = join_by(key))
     ```
     
 - `anti_join()` *drops* all of the rows in `x` that have a match in `y` (but
@@ -358,7 +357,7 @@ knitr::opts_chunk$set(echo       = TRUE,
     ![](join-anti.png)\
   
     ```{r}
-    anti_join(x, y, by = "key")
+    anti_join(x, y, by = join_by(key))
     ```
   
 - **Exercise**: Find the 10 days of the year that have the highest median 
@@ -378,27 +377,14 @@ knitr::opts_chunk$set(echo       = TRUE,
   
 # Other Key Names
 
-- If the primary and foreign keys do not match, you need to specify that using 
-  a named vector as `left_join(x, y, by = c("a" = "b"))`, where `a` is the key
-  in `x` and `b` is the key in `y`.
+- If the primary and foreign keys do not match, you need to specify that using a logical condition inside `join_by()`. E.g. `join_by(a == b)`, where `a` is the key in `x` and `b` is the key in `y`.
 
     ```{r}
-    left_join(flights, airports, by = c("origin" = "faa"))
+    left_join(flights, airports, by = join_by(origin == faa))
     ```
     
-- If you have multiple variables acting as the key, you need the `by` argument 
-  to be a vector.
+- If you have multiple variables acting as the key, you just add those arguments in `join_by()`.
 
     ```{r}
-    left_join(flights, weather, by = c("origin", "year", "month", "day", "hour"))
+    left_join(flights, weather, by = join_by(origin, year, month, day, hour))
     ```
-  
-
-  
-
-
-
-
-
-
-

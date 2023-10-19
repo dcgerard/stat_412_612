@@ -105,10 +105,8 @@ knitr::opts_chunk$set(echo       = TRUE,
 - Specify
 
     i. `cols`: The columns that are values, not variables,
-    ii. `names_to`: The name of the variable that will take the values of the column names 
-        (`key`), and
-    iii. `values_to`: The name of the variable that will take the values spread in the cells 
-         (`value`).
+    ii. `names_to`: The name of the variable that will take the values of the column names, and
+    iii. `values_to`: The name of the variable that will take the values spread in the cells.
   
     ```{r}
     tidyr::table4a |>
